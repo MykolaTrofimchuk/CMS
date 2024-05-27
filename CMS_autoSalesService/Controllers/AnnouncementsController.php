@@ -2,33 +2,23 @@
 
 namespace Controllers;
 
+use core\Controller;
 use core\Template;
 
-class AnnouncementsController
+class AnnouncementsController extends Controller
 {
     public function actionAdd()
     {
-        $template = new Template('views/announcements/add.php');
-        return [
-            'Content' => $template->getHTML(),
-            'Title' => 'Додавання оголошення'
-        ];
+        return $this->render();
     }
 
     public function actionIndex()
     {
-        $template = new Template('views/announcements/index.php');
-        return [
-            'Content' => $template->getHTML(),
-            'Title' => 'Список оголошень'
-        ];
+        return $this->render();
     }
 
     public function actionView($params)
     {
-        return [
-            'Content' => 'Announcement View',
-            'Title' => 'Перегляд оголошень'
-        ];
+        return $this->render();
     }
 }

@@ -7,7 +7,13 @@
     <list default="true" id="476e006c-1597-466a-a042-f9c2ea25e4cf" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/SiteController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/SiteController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/announcements/add.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/add.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/announcements/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/layouts/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/layouts/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/site/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/site/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/Router.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Router.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/Template.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Template.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,20 +35,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/wamp64/www/2 course Coursework/CMS_autoSalesService&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/wamp64/www/2 course Coursework/CMS_autoSalesService",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -60,7 +66,9 @@
       <updated>1714318864997</updated>
       <workItem from="1714318866253" duration="48000" />
       <workItem from="1714320651826" duration="3543000" />
-      <workItem from="1715270040286" duration="4580000" />
+      <workItem from="1715270040286" duration="4881000" />
+      <workItem from="1715889073009" duration="49000" />
+      <workItem from="1716816468006" duration="4588000" />
     </task>
     <servers />
   </component>

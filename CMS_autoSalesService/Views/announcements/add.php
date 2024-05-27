@@ -1,3 +1,6 @@
+<?php
+$this->Title = 'Додавання оголошень';
+?>
 <form>
     <table>
         <tr>

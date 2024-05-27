@@ -6,10 +6,20 @@ class Template
 {
     protected $tempFilePath;
     protected $paramsArray;
+
+    public function __set($name, $value){
+        Core::get()->template->setParam($name, $value);
+    }
+
     public function __construct($tempPath)
     {
         $this->tempFilePath = $tempPath;
         $this->paramsArray = [];
+    }
+
+    public function setTemplateFilePath($path)
+    {
+        $this->tempFilePath = $path;
     }
 
     public function setParam($paramName, $paramValue)

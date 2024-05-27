@@ -1,3 +1,6 @@
+<?php
+    $this->Title = 'Список оголошень';
+?>
 <div>
     <div>
         Mercedes-Benz E200
