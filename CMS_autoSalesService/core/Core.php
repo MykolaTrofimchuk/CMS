@@ -9,12 +9,18 @@ class Core
     public $router;
     public $template;
     public $defaultLayoutPath = 'Views/layouts/index.php';
+    public $db;
     private static $instance;
 
     private function __construct()
     {
-
         $this->template = new Template($this->defaultLayoutPath);
+
+        $host = Config::get()->dbHost;
+        $name = Config::get()->dbName;
+        $login = Config::get()->dbLogin;
+        $password = Config::get()->dbPass;
+        $this->db = new DB($host, $name, $login, $password);
     }
 
     public function run($route)
