@@ -2,15 +2,16 @@
 
 namespace Models;
 
-class Announcements
+use core\Core;
+use core\Model;
+
+/**
+ * @property string $title Заголовок оголошення
+ * @property string $text Текст оголошення
+ * @property string $date Дата оголошення
+ * @property int $id ID оголошення
+*/
+class Announcements extends Model
 {
-    public $id;
-    public $title;
-    public $text;
-    public $date;
-
-    public function __construct()
-    {
-
-    }
+    public $table = 'announcements';
 }
