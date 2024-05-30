@@ -35,7 +35,7 @@ class Users extends Model
         Core::get()->session->set('user', $user);
     }
 
-    public static function LogoutUser($user)
+    public static function LogoutUser()
     {
         Core::get()->session->remove('user');
     }
