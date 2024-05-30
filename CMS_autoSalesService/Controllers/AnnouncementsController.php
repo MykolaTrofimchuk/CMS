@@ -17,7 +17,7 @@ class AnnouncementsController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('Views/announcements/view.php');
+        return $this->render();
     }
 
     public function actionView($params)
