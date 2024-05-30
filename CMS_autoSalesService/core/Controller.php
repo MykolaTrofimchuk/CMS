@@ -14,8 +14,9 @@ class Controller
         $this->template = new Template($path);
     }
 
-    public function render()
+    public function render($pathToView)
     {
+        $this->template->setTemplateFilePath($pathToView);
         return [
             'Content' => $this->template->getHTML()
         ];

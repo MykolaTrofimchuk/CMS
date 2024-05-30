@@ -13,5 +13,5 @@ use core\Model;
 */
 class Announcements extends Model
 {
-    public $table = 'announcements';
+    public static $tableName = 'announcements';
 }

@@ -15,7 +15,6 @@ class Core
     private function __construct()
     {
         $this->template = new Template($this->defaultLayoutPath);
-
         $host = Config::get()->dbHost;
         $name = Config::get()->dbName;
         $login = Config::get()->dbLogin;
