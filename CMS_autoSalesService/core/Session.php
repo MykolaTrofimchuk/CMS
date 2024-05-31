@@ -24,6 +24,6 @@ class Session
 
     public function remove($name)
     {
-        unset($_SESSION['name']);
+        unset($_SESSION[$name]);
     }
 }

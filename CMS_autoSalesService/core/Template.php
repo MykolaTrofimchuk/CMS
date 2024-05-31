@@ -6,6 +6,7 @@ class Template
 {
     protected $tempFilePath;
     protected $paramsArray;
+    public Controller $controller;
 
     public function __set($name, $value){
         Core::get()->template->setParam($name, $value);
@@ -37,6 +38,7 @@ class Template
     public function getHTML()
     {
         ob_start();
+        $this->controller = \core\Core::get()->controllerObj;
         extract($this->paramsArray);
         include($this->tempFilePath);
         $str = ob_get_contents();

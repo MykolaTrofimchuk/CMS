@@ -10,9 +10,13 @@ class RequestMethod
     {
         $this->array = $array;
     }
+
     public function __get($name)
     {
-        return $this->array[$name];
+        if (isset($this->array[$name]))
+            return $this->array[$name];
+        else
+            return null;
     }
 
     public function getAll()

@@ -25,9 +25,28 @@ class Users extends Model
             return null;
     }
 
+    public static function FindByLogin($login)
+    {
+        $rows = self::findByCondition(['login' => $login]);
+        if (!empty($rows))
+            return $rows[0];
+        else
+            return null;
+    }
+
     public static function IsUserLogged()
     {
         return !empty(Core::get()->session->get('user'));
+    }
+
+    public static function RegisterUser($login, $password, $firstName, $lastName)
+    {
+        $user = new Users();
+        $user->login = $login;
+        $user->password = $password;
+        $user->first_name = $firstName;
+        $user->last_name = $lastName;
+        $user->save();
     }
 
     public static function LoginUser($user)

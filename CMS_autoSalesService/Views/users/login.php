@@ -1,4 +1,6 @@
 <?php
+/** @var string $error_message Повідомлення про помилку */
+
 $this->Title = 'Вхід на сайт';
 ?>
 <!doctype html>
@@ -12,7 +14,8 @@ $this->Title = 'Вхід на сайт';
 </head>
 <body>
 <form method="post" action="">
-    <?php if (!empty($error_message)) : ?>
+    <?php
+    if (!empty($error_message)) : ?>
         <div style="color: red">
             <?= $error_message ?>
         </div>
