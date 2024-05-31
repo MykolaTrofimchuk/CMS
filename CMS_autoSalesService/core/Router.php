@@ -42,12 +42,21 @@ class Router
 
     public function finish()
     {
-
+        // Закінчення роботи маршрутизатора (можливо, очищення ресурсів)
     }
 
     public function error($errorCode)
     {
         http_response_code($errorCode);
-        echo 'Error: ' . $errorCode;
+        Core::get()->moduleName = 'Error';
+        Core::get()->actionName = 'error';
+
+        $controller = 'Controllers\\ErrorController';
+        $method = 'actionError';
+
+        $controllerObj = new $controller();
+        Core::get()->controllerObj = $controllerObj;
+
+        return $controllerObj->$method($errorCode);
     }
 }

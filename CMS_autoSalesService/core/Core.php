@@ -10,7 +10,7 @@ class Core
     public $template;
     public $defaultLayoutPath = 'Views/layouts/index.php';
     public $db;
-    public Controller $controllerObj;
+    public ?Controller $controllerObj = null; // Ініціалізуємо як null
     public $session;
     private static $instance;
 

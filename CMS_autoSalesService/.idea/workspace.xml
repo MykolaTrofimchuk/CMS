@@ -5,18 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="476e006c-1597-466a-a042-f9c2ea25e4cf" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/UsersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/UsersController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Users.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Users.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/users/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/users/login.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/layouts/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/layouts/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/Core.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Core.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/Model.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Model.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/RequestMethod.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/RequestMethod.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/Router.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/Session.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Session.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/Template.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Template.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +17,13 @@
   </component>
   <component name="ComposerSettings">
     <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -44,6 +43,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/wamp64/www/2 course Coursework/CMS_autoSalesService",
+    "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -53,6 +53,12 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\wamp64\www\2 course Coursework\CMS_autoSalesService\Views\layouts" />
+      <recent name="C:\wamp64\www\2 course Coursework\CMS_autoSalesService\Views\layouts\styles" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -75,7 +81,8 @@
       <workItem from="1716816468006" duration="4878000" />
       <workItem from="1717005643063" duration="4409000" />
       <workItem from="1717067911226" duration="15131000" />
-      <workItem from="1717167074267" duration="8692000" />
+      <workItem from="1717167074267" duration="9464000" />
+      <workItem from="1717182948273" duration="6397000" />
     </task>
     <servers />
   </component>
