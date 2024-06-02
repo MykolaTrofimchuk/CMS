@@ -97,12 +97,24 @@ class UsersController extends Controller
                 }
 
                 if (!$this->isErrorMessagesExists()) {
-                    $userData->login = $this->post->login;
-                    $userData->first_name = $this->post->firstName;
-                    $userData->last_name = $this->post->lastName;
-                    $userData->email = $this->post->email;
-                    $userData->phone_number = $this->post->phone_number;
-                    $userData->region = $this->post->region;
+                    if (strlen($this->post->login) > 0) {
+                        $userData->login = $this->post->login;
+                    }
+                    if (strlen($this->post->firstName) > 0) {
+                        $userData->first_name = $this->post->firstName;
+                    }
+                    if (strlen($this->post->lastName) > 0) {
+                        $userData->last_name = $this->post->lastName;
+                    }
+                    if (strlen($this->post->email) > 0) {
+                        $userData->email = $this->post->email;
+                    }
+                    if (strlen($this->post->phone_number) > 0) {
+                        $userData->phone_number = $this->post->phone_number;
+                    }
+                    if (strlen($this->post->region) > 0) {
+                        $userData->region = $this->post->region;
+                    }
 
                     if (Users::EditUserInfo($userId, $userData)) {
                         $this->redirect("/users/me");
