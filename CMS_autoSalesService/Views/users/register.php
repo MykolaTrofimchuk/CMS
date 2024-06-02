@@ -57,6 +57,11 @@ $this->Title = 'Реєстрація користувача';
                        id="phone_number" name="phone_number" value="<?= $this->controller->post->phone_number ?>">
                 <label for="phone_number">Номер телефону</label>
             </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" placeholder="регіон (необов'язково)"
+                       id="region" name="region" value="<?= $this->controller->post->region ?>">
+                <label for="region">Регіон проживання</label>
+            </div>
             <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Реєстрація</button>
             <small class="text-body-secondary">Натискаючи «Зареєструватися», ви погоджуєтеся з умовами
                 використання.</small>

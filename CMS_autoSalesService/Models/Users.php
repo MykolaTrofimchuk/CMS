@@ -13,6 +13,7 @@ use core\Model;
  * @property string $last_name Прізвище
  * @property string $email Ел.пошта
  * @property string $phone_number Номер телефону користувача
+ * @property string $region Місце (регіон) проживання користувача
  * @property string $image_path Фото користувача
  */
 class Users extends Model

@@ -102,6 +102,7 @@ class UsersController extends Controller
                     $userData->last_name = $this->post->lastName;
                     $userData->email = $this->post->email;
                     $userData->phone_number = $this->post->phone_number;
+                    $userData->region = $this->post->region;
 
                     if (Users::EditUserInfo($userId, $userData)) {
                         $this->redirect("/users/me");
@@ -156,4 +157,48 @@ class UsersController extends Controller
         }
         return $this->render();
     }
+
+    public function actionEditphoto()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        if ($this->isPost) {
+            $userId = \core\Core::get()->session->get('user')['id'];
+            $userData = Users::findById($userId);
+
+            if (!$userData) {
+                $this->addErrorMessage('Користувача не знайдено!');
+            } else {
+                // Перевірка чи був вибраний файл
+                if (isset($_FILES['file-upload']) && $_FILES['file-upload']['error'] === UPLOAD_ERR_OK) {
+                    // Переміщення завантаженого файлу у відповідну папку
+                    $uploadDir = "src/database/users/user" . $userId . "/";
+                    $uploadFile = $uploadDir . basename($_FILES['file-upload']['name']);
+
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+
+                    if (move_uploaded_file($_FILES['file-upload']['tmp_name'], $uploadFile)) {
+                        // Оновлення шляху зображення в базі даних
+                        $userData->image_path = $uploadFile;
+                        if (Users::EditUserInfo($userId, $userData)) {
+                            $this->redirect("/users/me");
+                        } else {
+                            $this->addErrorMessage('Помилка при зміні даних користувача!');
+                        }
+                    } else {
+                        $this->addErrorMessage('Помилка при завантаженні файлу!');
+                    }
+                } else {
+                    $this->addErrorMessage('Не вдалося завантажити файл!');
+                }
+            }
+        }
+
+        return $this->render();
+    }
+
 }

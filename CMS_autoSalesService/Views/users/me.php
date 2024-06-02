@@ -4,6 +4,7 @@
 $this->Title = 'Профіль користувача';
 
 $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['id']);
+$userImage = isset($userInfo[0]['image_path']) ? $userInfo[0]['image_path'] : 'https://cdn-icons-png.flaticon.com/512/4837/4837857.png';
 ?>
 <!doctype html>
 <html lang="en">
@@ -13,6 +14,26 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        .custom-file-upload {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #0056b3;
+        }
+
+        .custom-file-upload i {
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -33,7 +54,7 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center text-center">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+                            <img src="<?php echo "../". $userImage; ?>" alt="User" class="rounded-circle" width="150">
                             <div class="mt-3">
                                 <h4><?php echo $userInfo[0]['first_name'] ." ". $userInfo[0]['last_name']; ?></h4>
                                 <p class="text-secondary mb-1 "><?php echo "ID ". $userInfo[0]['id']; ?></p>
@@ -49,7 +70,13 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                     endswitch;
                                     ?>
                                 </p>
-                                <button class="btn btn-primary">Змінити Фото</button>
+                                <form action="/users/editphoto" method="post" enctype="multipart/form-data">
+                                    <button type="button" class="custom-file-upload" onclick="document.getElementById('file-upload').click();">
+                                        <i class="fas fa-cloud-upload-alt"></i> Змінити Фото
+                                    </button>
+                                    <input id="file-upload" name="file-upload" type="file" accept="image/jpeg, image/png, image/gif" style="display: none;" onchange="handleFileChange()"/>
+                                    <button id="upload-button" type="submit" class="btn btn-primary" style="display: none;">Завантажити зміни</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -115,7 +142,7 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                 <h6 class="mb-0">Address</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                Bay Area, San Francisco, CA
+                                <?php echo $userInfo[0]['region']; ?>
                             </div>
                         </div>
                         <hr>
@@ -194,5 +221,16 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
 
     </div>
 </div>
+<script>
+    function handleFileChange() {
+        var fileUpload = document.getElementById('file-upload');
+        var uploadButton = document.getElementById('upload-button');
+        if (fileUpload.files && fileUpload.files.length > 0) {
+            uploadButton.style.display = 'inline-block';
+        } else {
+            uploadButton.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>

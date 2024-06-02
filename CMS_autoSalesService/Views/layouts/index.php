@@ -6,6 +6,9 @@ if (empty($Title))
     $Title = '';
 if (empty($Content))
     $Content = '';
+
+$userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['id']);
+$userPhoto = isset($userInfo[0]['image_path']) ? $userInfo[0]['image_path'] : 'https://cdn-icons-png.flaticon.com/512/4837/4837857.png';
 ?>
 
 <!doctype html>
@@ -55,7 +58,8 @@ if (empty($Content))
                 <div class="dropdown text-end">
                     <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                        <img src="<?php echo "../" . htmlspecialchars($userPhoto); ?>" alt="User" width="32" height="32"
+                             class="rounded-circle">
                     </a>
                     <ul class="dropdown-menu text-small" style="">
                         <li><a class="dropdown-item" href="/users/me">Профіль</a></li>
@@ -90,11 +94,13 @@ if (empty($Content))
     </div>
 
     <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/instagram.png" alt="instagram"
+        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/instagram.png"
+                                                                         alt="instagram"
                                                                          class="bi" width="24" height="24"></a></li>
         <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/twitter.png" alt="twitter"
                                                                          class="bi" width="24" height="24"></a></li>
-        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/facebook.png" alt="facebook"
+        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/facebook.png"
+                                                                         alt="facebook"
                                                                          class="bi" width="24" height="24"></a></li>
     </ul>
 </footer>

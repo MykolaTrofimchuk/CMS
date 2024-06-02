@@ -45,9 +45,14 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                 <label for="email">Змінити e-mail</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control rounded-3" placeholder="+380(066)7771122"
+                <input type="text" class="form-control rounded-3" placeholder="+380(XXX)YYYEEAA"
                        id="phone_number" name="phone_number" value="<?= $userInfo[0]['phone_number'] ?>">
                 <label for="phone_number">Змінити номер телефону</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" placeholder="Область, місто"
+                       id="region" name="region" value="<?= $userInfo[0]['region'] ?>">
+                <label for="region">Змінити адресу</label>
             </div>
             <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Зберегти</button>
             <small class="text-body-secondary">Уважно перевірте введені дані для зміни.</small>
