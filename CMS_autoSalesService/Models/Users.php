@@ -12,6 +12,8 @@ use core\Model;
  * @property string $first_name Ім'я
  * @property string $last_name Прізвище
  * @property string $email Ел.пошта
+ * @property string $phone_number Номер телефону користувача
+ * @property string $image_path Фото користувача
  */
 class Users extends Model
 {
@@ -64,5 +66,31 @@ class Users extends Model
     public static function LogoutUser()
     {
         Core::get()->session->remove('user');
+    }
+
+    public static function GetUserInfo($userId)
+    {
+        return self::findByCondition(['id' => $userId]);
+    }
+
+    public static function EditUserInfo($userId, $userData)
+    {
+        $user = Users::findById($userId);
+
+        if ($user) {
+            foreach ($userData as $field => $value) {
+                if ($field === 'password') {
+                    // Якщо поле - пароль, хешуємо його перед збереженням
+                    $user->{$field} = password_hash($value, PASSWORD_DEFAULT);
+                } elseif (isset($value) && !empty($value)) {
+                    // Встановлюємо інші поля, якщо вони не порожні
+                    $user->{$field} = $value;
+                }
+            }
+            $user->save(); // Зберігаємо зміни в базі даних
+            return true;
+        } else {
+            return false;
+        }
     }
 }

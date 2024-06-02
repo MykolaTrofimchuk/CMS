@@ -5,7 +5,7 @@ namespace core;
 class Core
 {
     public $moduleName;
-    public $actionName;
+    public $actionName = 'actionIndex';
     public $router;
     public $template;
     public $defaultLayoutPath = 'Views/layouts/index.php';

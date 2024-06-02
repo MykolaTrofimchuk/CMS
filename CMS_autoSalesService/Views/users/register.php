@@ -23,34 +23,39 @@ $this->Title = 'Реєстрація користувача';
                 </div>
             <?php endif; ?>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control rounded-3" placeholder="name"
+                <input type="text" class="form-control rounded-3" placeholder="логін"
                        id="login" name="login" value="<?= $this->controller->post->login ?>">
                 <label for="login">Логін*</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control rounded-3" placeholder="Password"
+                <input type="password" class="form-control rounded-3" placeholder="пароль"
                        id="password" name="password">
                 <label for="password">Пароль*</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control rounded-3" placeholder="Password"
+                <input type="password" class="form-control rounded-3" placeholder="пароль (повтор)"
                        id="password2" name="password2">
                 <label for="password2">Пароль (повторити)*</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control rounded-3" placeholder="Password"
+                <input type="text" class="form-control rounded-3" placeholder="прізвище"
                        id="lastName" name="lastName" value="<?= $this->controller->post->lastName ?>">
                 <label for="lastName">Прізвище*</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control rounded-3" placeholder="Password"
+                <input type="text" class="form-control rounded-3" placeholder="ім'я"
                        id="firstName" name="firstName" value="<?= $this->controller->post->firstName ?>">
                 <label for="firstName">Ім'я*</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control rounded-3" placeholder="name"
+                <input type="email" class="form-control rounded-3" placeholder="e-mail (необов'язково)"
                        id="email" name="email" value="<?= $this->controller->post->email ?>">
                 <label for="email">E-mail</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" placeholder="телефон (необов'язково)"
+                       id="phone_number" name="phone_number" value="<?= $this->controller->post->phone_number ?>">
+                <label for="phone_number">Номер телефону</label>
             </div>
             <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Реєстрація</button>
             <small class="text-body-secondary">Натискаючи «Зареєструватися», ви погоджуєтеся з умовами

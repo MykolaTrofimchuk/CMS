@@ -58,7 +58,7 @@ if (empty($Content))
                         <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
                     </a>
                     <ul class="dropdown-menu text-small" style="">
-                        <li><a class="dropdown-item" href="#">Профіль</a></li>
+                        <li><a class="dropdown-item" href="/users/me">Профіль</a></li>
                         <li><a class="dropdown-item" href="#">Про нас</a></li>
                         <li><a class="dropdown-item" href="#">Налаштування</a></li>
                         <li>
@@ -90,11 +90,11 @@ if (empty($Content))
     </div>
 
     <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/-resourses/instagram.png" alt="instagram"
+        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/instagram.png" alt="instagram"
                                                                          class="bi" width="24" height="24"></a></li>
-        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/-resourses/twitter.png" alt="twitter"
+        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/twitter.png" alt="twitter"
                                                                          class="bi" width="24" height="24"></a></li>
-        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/-resourses/facebook.png" alt="facebook"
+        <li class="ms-md-3"><a class="text-body-secondary" href="#"><img src="/src/resourses/facebook.png" alt="facebook"
                                                                          class="bi" width="24" height="24"></a></li>
     </ul>
 </footer>

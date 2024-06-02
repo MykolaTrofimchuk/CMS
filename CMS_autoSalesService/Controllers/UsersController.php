@@ -9,6 +9,11 @@ use Models\Users;
 
 class UsersController extends Controller
 {
+    public function actionIndex()
+    {
+        return $this->render('Views/users/me.php');
+    }
+
     public function actionRegister()
     {
         if ($this->isPost) {
@@ -62,5 +67,93 @@ class UsersController extends Controller
     {
         Users::LogoutUser();
         $this->redirect('/users/login');
+    }
+
+    public function actionMe()
+    {
+        if (!Users::IsUserLogged())
+            $this->redirect('/');
+        return $this->render();
+    }
+
+    public function actionEdit()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        if ($this->isPost) {
+            $userId = \core\Core::get()->session->get('user')['id'];
+            $userData = Users::findById($userId);
+
+            if (!$userData) {
+                $this->addErrorMessage('Користувача не знайдено!');
+            } else {
+                if ($userData->login !== $this->post->login) {
+                    $existingUser = Users::FindByLogin($this->post->login);
+                    if (!empty($existingUser)) {
+                        $this->addErrorMessage('Користувач із таким логіном вже існує!');
+                    }
+                }
+
+                if (!$this->isErrorMessagesExists()) {
+                    $userData->login = $this->post->login;
+                    $userData->first_name = $this->post->firstName;
+                    $userData->last_name = $this->post->lastName;
+                    $userData->email = $this->post->email;
+                    $userData->phone_number = $this->post->phone_number;
+
+                    if (Users::EditUserInfo($userId, $userData)) {
+                        $this->redirect("/users/me");
+                    } else {
+                        $this->addErrorMessage('Помилка при зміні даних користувача!');
+                    }
+                }
+            }
+        }
+
+        return $this->render();
+    }
+
+    public function actionEditpassword()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        if ($this->isPost) {
+            $userId = \core\Core::get()->session->get('user')['id'];
+            $userData = Users::findById($userId);
+
+            if (!$userData) {
+                $this->addErrorMessage('Користувача не знайдено!');
+            } else {
+                $currentPassword = $this->post->oldPassword;
+                $newPassword = $this->post->newPassword;
+                $newPassword2 = $this->post->newPassword2;
+
+                if (password_verify($currentPassword, $userData->password)) {
+
+                    if ($newPassword === $newPassword2) {
+                        if (strlen($newPassword) >= 8) {
+                            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                            $userData->password = $hashedPassword;
+                            if (Users::EditUserInfo($userId, $userData)) {
+                                $this->redirect("/users/me");
+                            } else {
+                                $this->addErrorMessage('Помилка при зміні даних користувача!');
+                            }
+                        } else {
+                            $this->addErrorMessage('Новий пароль має містити мінімум 8 символів!');
+                        }
+                    } else {
+                        $this->addErrorMessage('Нові введені паролі не збігаються!');
+                    }
+                } else {
+                    $this->addErrorMessage('Дійсний пароль введено невірно!');
+                }
+            }
+        }
+        return $this->render();
     }
 }

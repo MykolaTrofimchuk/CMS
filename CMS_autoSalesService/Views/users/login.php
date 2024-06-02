@@ -23,11 +23,11 @@ $this->Title = 'Вхід на сайт';
                 </div>
             <?php endif; ?>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control rounded-3" id="login" placeholder="name" name="login">
+                <input type="text" class="form-control rounded-3" id="login" placeholder="Логін" name="login">
                 <label for="login">Логін</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control rounded-3" id="password" placeholder="Password"
+                <input type="password" class="form-control rounded-3" id="password" placeholder="Пароль"
                        name="password">
                 <label for="password">Пароль</label>
             </div>
