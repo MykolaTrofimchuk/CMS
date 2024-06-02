@@ -76,4 +76,13 @@ class Model
         else
             return null;
     }
+
+    public static function findAll()
+    {
+        $arr = Core::get()->db->select(static::$tableName);
+        if(count($arr) > 0)
+            return $arr;
+        else
+            return null;
+    }
 }

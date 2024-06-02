@@ -18,11 +18,11 @@ class DB
 
     protected function where($where)
     {
-        if (is_array($where)){
+        if (is_array($where)) {
             $where_string = "WHERE ";
             $where_fields = array_keys($where);
             $parts = [];
-            foreach ($where_fields as $field){
+            foreach ($where_fields as $field) {
                 $parts[] = "{$field} = :{$field}";
 
             }
@@ -50,8 +50,9 @@ class DB
 
         $sql = "SELECT {$fields_string} FROM {$table} {$where_string}";
         $sth = $this->pdo->prepare($sql);
-        foreach ($where as $key => $value)
-            $sth->bindValue(":{$key}", $value);
+        if ($where !== null)
+            foreach ($where as $key => $value)
+                $sth->bindValue(":{$key}", $value);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -60,7 +61,7 @@ class DB
     {
         $fields_list = implode(", ", array_keys($row_to_insert));
         $params_array = [];
-        foreach ($row_to_insert as $key => $value){
+        foreach ($row_to_insert as $key => $value) {
             $params_array[] = ":{$key}";
         }
         $params_list = implode(", ", $params_array);
@@ -89,7 +90,7 @@ class DB
     {
         $where_string = $this->where($where);
         $set_array = [];
-        foreach ($row_to_update as $key => $value){
+        foreach ($row_to_update as $key => $value) {
             $set_array[] = "{$key} = :{$key}";
         }
         $set_string = implode(", ", $set_array);

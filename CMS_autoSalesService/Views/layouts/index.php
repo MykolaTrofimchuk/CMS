@@ -38,7 +38,7 @@ $userPhoto = isset($userInfo[0]['image_path']) ? $userInfo[0]['image_path'] : 'h
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="/" class="nav-link px-2 link-body-emphasis">Головна</a></li>
                 <li><a href="/" class="nav-link px-2 link-secondary">Нові авто</a></li>
-                <li><a href="/" class="nav-link px-2 link-secondary">Вживані авто</a></li>
+                <li><a href="/announcements/view" class="nav-link px-2 link-secondary">Вживані авто</a></li>
                 <li><a href="/" class="nav-link px-2 link-secondary">Новини</a></li>
             </ul>
             <?php if (\Models\Users::IsUserLogged()): ?>
