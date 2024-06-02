@@ -13,39 +13,52 @@ $this->Title = 'Реєстрація користувача';
     <title>Document</title>
 </head>
 <body>
-<form method="post" action="">
-    <?php
-    if (!empty($error_message)) : ?>
-        <div style="color: red">
-            <?= $error_message ?>
-        </div>
-    <?php endif; ?>
-    <table>
-        <tr>
-            <td><label for="login">Логін: </label></td>
-            <td><input type="text" id="login" name="login" value="<?=$this->controller->post->login ?>"></td>
-        </tr>
-        <tr>
-            <td><label for="password">Пароль: </label></td>
-            <td><input type="password" id="password" name="password" ></td>
-        </tr>
-        <tr>
-            <td><label for="password2">Пароль (повторити): </label></td>
-            <td><input type="password" id="password2" name="password2" ></td>
-        </tr>
-        <tr>
-            <td><label for="lastName">Прізвище: </label></td>
-            <td><input type="text" id="lastName" name="lastName" value="<?=$this->controller->post->lastName ?>"></td>
-        </tr>
-        <tr>
-            <td><label for="firstName">Ім'я: </label></td>
-            <td><input type="text" id="firstName" name="firstName" value="<?=$this->controller->post->firstName ?>"></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input type="submit" value="Зареєструвати"></td>
-        </tr>
-    </table>
-</form>
+<div class="modal-content rounded-4 shadow">
+
+    <div class="modal-body p-5 pt-0">
+        <form class="" method="post" action="">
+            <?php if (!empty($error_message)) : ?>
+                <div class="alert alert-danger" role="alert">
+                    <?= $error_message ?>
+                </div>
+            <?php endif; ?>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" placeholder="name"
+                       id="login" name="login" value="<?= $this->controller->post->login ?>">
+                <label for="login">Логін*</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3" placeholder="Password"
+                       id="password" name="password">
+                <label for="password">Пароль*</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3" placeholder="Password"
+                       id="password2" name="password2">
+                <label for="password2">Пароль (повторити)*</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" placeholder="Password"
+                       id="lastName" name="lastName" value="<?= $this->controller->post->lastName ?>">
+                <label for="lastName">Прізвище*</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" placeholder="Password"
+                       id="firstName" name="firstName" value="<?= $this->controller->post->firstName ?>">
+                <label for="firstName">Ім'я*</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control rounded-3" placeholder="name"
+                       id="email" name="email" value="<?= $this->controller->post->email ?>">
+                <label for="email">E-mail</label>
+            </div>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Реєстрація</button>
+            <small class="text-body-secondary">Натискаючи «Зареєструватися», ви погоджуєтеся з умовами
+                використання.</small>
+            <hr class="my-4">
+
+        </form>
+    </div>
+</div>
 </body>
 </html>

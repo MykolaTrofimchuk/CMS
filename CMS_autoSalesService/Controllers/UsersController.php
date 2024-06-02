@@ -11,25 +11,26 @@ class UsersController extends Controller
 {
     public function actionRegister()
     {
-        if ($this->isPost){
-            $user = Users::findByLogin($this->post->login);
+        if ($this->isPost) {
+            $user = Users::FindByLogin($this->post->login);
 
             if (strlen($this->post->login) === 0)
                 $this->addErrorMessage('Логін не вказаний!');
-            if (strlen($this->post->password) === 0 )
-                $this->addErrorMessage('Пароль не вказаний!');
+            if (strlen($this->post->password) <= 8)
+                $this->addErrorMessage('Пароль має містити мінімум 8 символів!');
             if (strlen($this->post->firstName) === 0)
                 $this->addErrorMessage('Ім\'я не вказано!');
             if (strlen($this->post->lastName) === 0)
                 $this->addErrorMessage('Прізвище не вказано!');
-            if (!empty($user)){
+            if (!empty($user)) {
                 $this->addErrorMessage('Користувач із таким логіном вже існує!');
             }
-            if ($this->post->password != $this->post->password2){
-                $this->addErrorMessage('Паролі не зівпадають!');
+            if ($this->post->password != $this->post->password2) {
+                $this->addErrorMessage('Паролі не збігаються!');
             }
-            if(!$this->isErrorMessagesExists()){
-                Users::RegisterUser($this->post->login, $this->post->password, $this->post->firstName, $this->post->lastName);
+            if (!$this->isErrorMessagesExists()) {
+                Users::RegisterUser($this->post->login, $this->post->password, $this->post->firstName,
+                    $this->post->lastName, $this->post->email);
                 $this->redirect("/users/registersuccess");
             }
         }
@@ -50,8 +51,9 @@ class UsersController extends Controller
             if (!empty($user)) {
                 Users::LoginUser($user);
                 $this->redirect('/');
-            } else
-                $this->addErrorMessage('Нерпавильний логін та/або пароль!');
+            } else {
+                $this->addErrorMessage('Неправильний логін та/або пароль!');
+            }
         }
         return $this->render();
     }
