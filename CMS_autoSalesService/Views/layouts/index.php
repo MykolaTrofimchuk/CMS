@@ -6,9 +6,10 @@ if (empty($Title))
     $Title = '';
 if (empty($Content))
     $Content = '';
-
-$userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['id']);
-$userPhoto = isset($userInfo[0]['image_path']) ? $userInfo[0]['image_path'] : 'https://cdn-icons-png.flaticon.com/512/4837/4837857.png';
+if (\Models\Users::IsUserLogged()) {
+    $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['id']);
+    $userPhoto = isset($userInfo[0]['image_path']) ? $userInfo[0]['image_path'] : 'https://cdn-icons-png.flaticon.com/512/4837/4837857.png';
+}
 ?>
 
 <!doctype html>

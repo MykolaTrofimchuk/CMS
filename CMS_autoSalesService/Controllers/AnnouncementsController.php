@@ -46,7 +46,29 @@ class AnnouncementsController extends Controller
 
     public function actionView($params)
     {
+        $announcements = Announcements::SelectAll();
+
+        foreach ($announcements as &$announcement) {
+            $statusId = $announcement['status_id'];
+            $announcement['statusText'] = $this->mapStatusToText($statusId);
+        }
+
+        $GLOBALS['announcements'] = $announcements;
         return $this->render();
+    }
+
+    private function mapStatusToText($statusId)
+    {
+        switch ($statusId) {
+            case 1:
+                return 'Активно';
+            case 2:
+                return 'Продано';
+            case 3:
+                return 'Видалено';
+            default:
+                return 'Невідомо';
+        }
     }
 
 }

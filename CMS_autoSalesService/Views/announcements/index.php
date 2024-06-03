@@ -14,18 +14,18 @@ $vehicle = $GLOBALS['vehicle'];
     <title>Document</title>
     <style>
         .big-photo {
-            width: 100%; /* Розтягніть велику фотографію на всю ширину */
-            height: auto; /* Забезпечте висоту, пропорційну до ширини */
+            width: 100%;
+            height: auto;
         }
 
         .small-photos {
-            max-height: 300px; /* Максимальна висота контейнера для менших фотографій */
-            overflow-y: auto; /* Прокрутка, якщо є більше фотографій */
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .small-photos .col-md-4 {
-            flex: 0 0 calc(33.33% - 10px); /* Визначте ширину для кожної меншої фотографії (з урахуванням відступів) */
-            margin-bottom: 10px; /* Відстань між фотографіями */
+        .small-photos {
+            flex: 0 0 calc(33.33% - 10px);
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -40,19 +40,19 @@ $vehicle = $GLOBALS['vehicle'];
                     </div>
                     <div class="col-12">
                         <div class="row small-photos">
-                            <div class="col-md-3 mb-2"> <!-- Зменшено відступи до mb-2 -->
+                            <div class="col-md-3 mb-2">
                                 <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
                             </div>
-                            <div class="col-md-3 mb-2"> <!-- Зменшено відступи до mb-2 -->
+                            <div class="col-md-3 mb-2">
                                 <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
                             </div>
-                            <div class="col-md-3 mb-2"> <!-- Зменшено відступи до mb-2 -->
+                            <div class="col-md-3 mb-2">
                                 <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
                             </div>
-                            <div class="col-md-3 mb-2"> <!-- Зменшено відступи до mb-2 -->
+                            <div class="col-md-3 mb-2">
                                 <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
                             </div>
-                            <div class="col-md-3 mb-2"> <!-- Зменшено відступи до mb-2 -->
+                            <div class="col-md-3 mb-2">
                                 <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
                             </div>
                         </div>
