@@ -77,12 +77,41 @@ class Model
             return null;
     }
 
-    public static function findAll()
+    public static function findRowsByCondition($rows, $conditionAssocArr = null)
     {
-        $arr = Core::get()->db->select(static::$tableName);
+        $arr = Core::get()->db->select(static::$tableName, $rows, $conditionAssocArr);
         if(count($arr) > 0)
             return $arr;
         else
             return null;
     }
+
+    public static function findByLimitAndOffset($limit, $offset)
+    {
+        $arr = Core::get()->db->select(static::$tableName, '*', null, $limit, $offset);
+        if(count($arr) > 0)
+            return $arr;
+        else
+            return null;
+    }
+
+    public static function findAll()
+    {
+        $arr = Core::get()->db->select('announcements');;
+        if(count($arr) > 0)
+            return $arr;
+        else
+            return null;
+    }
+
+//    public static function count()
+//    {
+//        $result = Core::get()->db->select('announcements', 'COUNT(*)')[0]['COUNT(*)'];
+//        if ($result === false) {
+//            // Handle query error
+//            echo "Error executing query";
+//            return false;
+//        }
+//        return isset($result[0]['count']) ? (int)$result[0]['count'] : 0;
+//    }
 }

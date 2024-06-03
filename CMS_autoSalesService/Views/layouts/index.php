@@ -39,7 +39,7 @@ if (\Models\Users::IsUserLogged()) {
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="/" class="nav-link px-2 link-body-emphasis">Головна</a></li>
                 <li><a href="/" class="nav-link px-2 link-secondary">Нові авто</a></li>
-                <li><a href="/announcements/view" class="nav-link px-2 link-secondary">Вживані авто</a></li>
+                <li><a href="/announcements/view/1" class="nav-link px-2 link-secondary">Вживані авто</a></li>
                 <li><a href="/" class="nav-link px-2 link-secondary">Новини</a></li>
             </ul>
             <?php if (\Models\Users::IsUserLogged()): ?>
@@ -59,7 +59,7 @@ if (\Models\Users::IsUserLogged()) {
                 <div class="dropdown text-end">
                     <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="<?php echo "../" . htmlspecialchars($userPhoto); ?>" alt="User" width="32" height="32"
+                        <img src="<?php echo "../../../../../" . htmlspecialchars($userPhoto); ?>" alt="User" width="32" height="32"
                              class="rounded-circle">
                     </a>
                     <ul class="dropdown-menu text-small" style="">

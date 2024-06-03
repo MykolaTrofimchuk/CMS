@@ -21,27 +21,30 @@ class Announcements extends Model
 {
     public static $tableName = 'announcements';
 
-    public static function SelectAll()
+    public static function SelectPaginated($limit, $offset)
     {
-        $rows = self::findAll();
+        $rows = self::findByLimitAndOffset($limit, $offset);
         $validAnnouncements = [];
 
         $oneDayAgo = new DateTime();
         $oneDayAgo->modify('-1 day');
-
         foreach ($rows as $announcement) {
-            $statusId = $announcement['status_id']; // Retrieve status ID
-            $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null; // Parse deactivation date if not null
+            $statusId = $announcement['status_id'];
+            $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
 
-            // Check if the announcement should be excluded
             if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
-                continue; // Skip this announcement
+                continue;
             }
 
             $validAnnouncements[] = $announcement;
         }
 
         return $validAnnouncements;
+    }
+
+    public static function CountAll()
+    {
+        return self::findRowsByCondition('COUNT(*) as count');
     }
 
     public static function SelectById($announcementId)
@@ -57,7 +60,6 @@ class Announcements extends Model
             $vehicleId = $announcement->vehicle_id;
             if ($vehicleId) {
                 $vehicle = Vehicles::FindVehicleById($vehicleId);
-
                 return $vehicle;
             }
         }
@@ -71,7 +73,6 @@ class Announcements extends Model
             $statusId = $announcement->status_id;
             if ($statusId) {
                 $status = AnnouncementStatuses::FindStatusById($statusId);
-
                 return $status;
             }
         }

@@ -21,13 +21,38 @@ $this->Title = 'Список оголошень';
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(255, 0, 0, 0.7);
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
             font-size: 18px;
             font-weight: bold;
             text-align: center;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #007bff;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
         }
     </style>
 </head>
@@ -58,6 +83,14 @@ $this->Title = 'Список оголошень';
                     </div>
                 </div>
             <?php endforeach; ?>
+        </div>
+
+        <div class="pagination">
+            <?php for ($i = 1; $i <= $GLOBALS['totalPages']; $i++): ?>
+                <a href="/announcements/view/<?= $i ?>" class="<?= $i == $GLOBALS['currentPage'] ? 'active' : '' ?>">
+                    <?= $i ?>
+                </a>
+            <?php endfor; ?>
         </div>
     </div>
 </div>

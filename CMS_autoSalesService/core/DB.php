@@ -36,23 +36,35 @@ class DB
         return $where_string;
     }
 
-    public function select($table, $fields = "*", $where = null)
+    public function select($table, $fields = "*", $where = null, $limit = null, $offset = 0)
     {
-        if (is_array($fields))
+        if (is_array($fields)) {
             $fields_string = implode(', ', $fields);
-        else
-            if (is_string($fields))
-                $fields_string = $fields;
-            else
-                $fields_string = "*";
+        } elseif (is_string($fields)) {
+            $fields_string = $fields;
+        } else {
+            $fields_string = "*";
+        }
 
         $where_string = $this->where($where);
 
-        $sql = "SELECT {$fields_string} FROM {$table} {$where_string}";
+        $limit_string = '';
+        if ($limit !== null) {
+            $limit_string = "LIMIT {$limit}";
+        }
+
+        $offset_string = '';
+        if ($offset !== null && $offset > 0) {
+            $offset_string = "OFFSET {$offset}";
+        }
+
+        $sql = "SELECT {$fields_string} FROM {$table} {$where_string} {$limit_string} {$offset_string}";
         $sth = $this->pdo->prepare($sql);
-        if ($where !== null)
-            foreach ($where as $key => $value)
+        if ($where !== null) {
+            foreach ($where as $key => $value) {
                 $sth->bindValue(":{$key}", $value);
+            }
+        }
         $sth->execute();
         return $sth->fetchAll();
     }

@@ -20,16 +20,13 @@ class AnnouncementsController extends Controller
 
     public function actionIndex()
     {
-        // Отримати значення параметра id зі шляху
         $routeParams = $this->get->route;
         $queryParts = explode('/', $routeParams);
         $id = end($queryParts);
 
-        // Перевіряємо, чи є в запиті параметр 'id'
         if ($id !== null) {
             $announcementId = $id;
 
-            // Отримати дані про оголошення за його ID
             $announcement = Announcements::SelectById($announcementId);
             $vehicle = Announcements::SelectVehicleFromAnnouncement($announcementId);
 
@@ -44,17 +41,44 @@ class AnnouncementsController extends Controller
         }
     }
 
-    public function actionView($params)
+    public function actionView()
     {
-        $announcements = Announcements::SelectAll();
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $currentPage = end($queryParts);
 
-        foreach ($announcements as &$announcement) {
-            $statusId = $announcement['status_id'];
-            $announcement['statusText'] = $this->mapStatusToText($statusId);
+        if ($currentPage === null || $currentPage === 'null') {
+            $currentPage = 1;
+        } else {
+            $currentPage = (int) $currentPage;
+        }
+        if ($currentPage < 1) {
+            $this->redirect("1");
         }
 
-        $GLOBALS['announcements'] = $announcements;
-        return $this->render();
+        if ($currentPage !== null) {
+            $announcementsPerPage = 7;
+            $totalAnnouncements = Announcements::CountAll(); // Get the total number of announcements
+            $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
+
+            $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+            if ($currentPage > $totalPages) {
+                $this->redirect("$totalPages");
+            }
+            $offset = ($currentPage - 1) * $announcementsPerPage;
+            $announcements = Announcements::SelectPaginated($announcementsPerPage, $offset);
+
+            foreach ($announcements as &$announcement) {
+                $statusId = $announcement['status_id'];
+                $announcement['statusText'] = $this->mapStatusToText($statusId);
+            }
+
+            $GLOBALS['announcements'] = $announcements;
+            $GLOBALS['currentPage'] = $currentPage;
+            $GLOBALS['totalPages'] = $totalPages;
+            return $this->render();
+        }
+        return $this->render('Views/announcements/view.php');
     }
 
     private function mapStatusToText($statusId)
