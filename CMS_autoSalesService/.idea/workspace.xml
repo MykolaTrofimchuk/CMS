@@ -5,13 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="476e006c-1597-466a-a042-f9c2ea25e4cf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/CMS_autoSalesService.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CMS_autoSalesService.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Announcements.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Announcements.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/announcements/view.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/view.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/AnnouncementStatuses.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/AnnouncementStatuses.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/announcements/add.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/add.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Views/layouts/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/layouts/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/DB.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/DB.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/Model.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Model.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/users/me.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/users/me.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +57,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\wamp64\www\2 course Coursework\CMS_autoSalesService\Views\announcements" />
       <recent name="C:\wamp64\www\2 course Coursework\CMS_autoSalesService\src" />
       <recent name="C:\wamp64\www\2 course Coursework\CMS_autoSalesService\Views\layouts" />
       <recent name="C:\wamp64\www\2 course Coursework\CMS_autoSalesService\Views\layouts\styles" />
@@ -88,7 +88,8 @@
       <workItem from="1717167074267" duration="9464000" />
       <workItem from="1717182948273" duration="6681000" />
       <workItem from="1717319109218" duration="33515000" />
-      <workItem from="1717428743699" duration="7467000" />
+      <workItem from="1717428743699" duration="8238000" />
+      <workItem from="1717439540101" duration="10267000" />
     </task>
     <servers />
   </component>

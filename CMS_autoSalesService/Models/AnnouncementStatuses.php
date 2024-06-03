@@ -4,6 +4,11 @@ namespace Models;
 
 use core\Model;
 
+/**
+ * @property int $id ID статусу
+ * @property string $status Статус
+ */
+
 class AnnouncementStatuses extends Model
 {
     public static $tableName = 'announcement_statuses';

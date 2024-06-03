@@ -54,7 +54,7 @@ $userImage = isset($userInfo[0]['image_path']) ? $userInfo[0]['image_path'] : 'h
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center text-center">
-                            <img src="<?php echo "../". $userImage; ?>" alt="User" class="rounded-circle" width="150">
+                            <img src="<?php echo "../../../../../". $userImage; ?>" alt="User" class="rounded-circle" width="150">
                             <div class="mt-3">
                                 <h4><?php echo $userInfo[0]['first_name'] ." ". $userInfo[0]['last_name']; ?></h4>
                                 <p class="text-secondary mb-1 "><?php echo "ID ". $userInfo[0]['id']; ?></p>
