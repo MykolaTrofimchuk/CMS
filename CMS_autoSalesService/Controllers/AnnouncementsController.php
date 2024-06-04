@@ -105,7 +105,7 @@ class AnnouncementsController extends Controller
                 }
 
                 // Переадресація на сторінку успіху або виконання інших необхідних дій
-                $this->redirect('announcements/addsuccess');
+                $this->redirect('/announcements/addsuccess');
             }
         } else {
             if (!Users::IsUserLogged()) {
@@ -114,6 +114,14 @@ class AnnouncementsController extends Controller
             return $this->render();
         }
 
+        return $this->render();
+    }
+
+    public function actionAddsuccess()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
         return $this->render();
     }
 
@@ -156,7 +164,7 @@ class AnnouncementsController extends Controller
         }
 
         if ($currentPage !== null) {
-            $announcementsPerPage = 7;
+            $announcementsPerPage = 6;
             $totalAnnouncements = Announcements::CountAll(); // Get the total number of announcements
             $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
 
@@ -170,6 +178,7 @@ class AnnouncementsController extends Controller
             foreach ($announcements as &$announcement) {
                 $statusId = $announcement['status_id'];
                 $announcement['statusText'] = $this->mapStatusToText($statusId);
+                $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
             }
 
             $GLOBALS['announcements'] = $announcements;

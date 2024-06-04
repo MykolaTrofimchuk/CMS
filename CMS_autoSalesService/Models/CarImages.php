@@ -21,4 +21,13 @@ class CarImages extends Model
         $image->image_path = $imagePath;
         $image->save();
     }
+
+    public static function FindPathByAnnouncementId($announcementId)
+    {
+        $rows = self::findRowsByCondition('image_path', ['announcement_id' => $announcementId]);
+        if (!empty($rows))
+            return implode(',', $rows[0]);
+        else
+            return null;
+    }
 }

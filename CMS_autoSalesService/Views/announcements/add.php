@@ -32,7 +32,6 @@
             <div class="form-row">
                 <h3>Додайте фото автомобіля: </h3>
                 <div class="form-group col">
-                    <input type="file" class="form-control file-input" name="carImages[]" id="fileInput">
                     <button type="button" id="addPhoto" class="btn btn-secondary mt-2">Додати фото</button>
                 </div>
                 <div id="preview" class="preview"></div>
@@ -242,14 +241,19 @@
             carModelInput.disabled = selectedBrand === "Оберіть марку авто";
         });
 
-        var fileInput = document.getElementById('fileInput');
         var previewContainer = document.getElementById('preview');
 
         document.getElementById('addPhoto').addEventListener('click', function() {
-            fileInput.click(); // Automatically trigger file input click event
-        });
+            var newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.classList.add('form-control', 'file-input');
+            newInput.name = 'carImages[]';
+            newInput.style.display = 'none';
+            document.querySelector('.form-group').appendChild(newInput);
 
-        fileInput.addEventListener('change', handleFileSelect);
+            newInput.addEventListener('change', handleFileSelect);
+            newInput.click();
+        });
 
         function handleFileSelect(event) {
             var files = event.target.files;
@@ -262,13 +266,13 @@
                     var img = document.createElement('img');
                     img.src = e.target.result;
                     img.addEventListener('click', function() {
-                        this.remove(); // Remove image on click
+                        this.remove();
                     });
                     img.addEventListener('mouseover', function() {
-                        this.style.filter = 'blur(3px)'; // Apply blur effect on hover
+                        this.style.filter = 'blur(3px)';
                     });
                     img.addEventListener('mouseout', function() {
-                        this.style.filter = 'none'; // Remove blur effect when not hovered
+                        this.style.filter = 'none';
                     });
                     previewContainer.appendChild(img);
                 };
@@ -282,6 +286,5 @@
         });
     });
 </script>
-
 </body>
 </html>

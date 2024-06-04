@@ -61,7 +61,7 @@ $vehicle = $GLOBALS['vehicle'];
             </div>
             <div class="col-md-6" style="margin-top: -250px;">
                 <?php if (isset($announcement)): ?>
-                    <div class="small mb-1"><?= htmlspecialchars($announcement->publicationDate) ?></div>
+                    <div class="small mb-1"><?= htmlspecialchars($announcement->publicationDate) ?> <?= htmlspecialchars($announcement->id) ?></div>
                     <h1 class="display-5 fw-bolder"><?= htmlspecialchars($announcement->title) ?></h1>
                     <div class="fs-3 mb-5">
                         <span>$ <?= htmlspecialchars(number_format($announcement->price, 0)) ?></span>
@@ -103,7 +103,7 @@ $vehicle = $GLOBALS['vehicle'];
                         </div>
 
                     </div>
-                    <p class="lead"><?= htmlspecialchars($announcement->description) ?></p>
+                    <p class="lead"><?= $announcement->description ?></p>
 
                     <div class="d-flex flex-wrap">
                         <?php if (!is_null($vehicle->plate)): ?>

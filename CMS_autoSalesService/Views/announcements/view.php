@@ -64,20 +64,35 @@ $this->Title = 'Список оголошень';
                 <?php
                 $isInactive = in_array($announcement['statusText'], ['Продано', 'Видалено']);
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
+
+                // Default image path
+                $imageSrc = "../../../../src/resourses/no-photo.jpg";
+                $imagesPath = "./" . $announcement['pathToImages'];
+
+                // Use realpath to debug the path issue
+                $realImagesPath = realpath($imagesPath);
+                $realImagesPath = str_replace('\\', '/', $realImagesPath);
+
+                if (!is_null($announcement['pathToImages']) && is_dir($realImagesPath)) {
+                    $images = scandir($realImagesPath);
+                    $images = array_diff($images, array('.', '..'));
+                    $firstImage = !empty($images) ? reset($images) : null;
+                    $imageSrc = "../../../../../". $announcement['pathToImages'] . "/" . $firstImage;
+                }
                 ?>
                 <div class="col-md-4">
-                    <div class="card mb-4 box-shadow <?= $inactiveClass ?>" data-status="<?= $announcement['statusText'] ?>">
-                        <img class="card-img-top" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22348%22%20height%3D%22225%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20348%20225%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_18fd9edd36b%20text%20%7B%20fill%3A%23eceeef%3Bfont-weight%3Abold%3Bfont-family%3AA'4l%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A17pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_18fd9edd36b%22%3E%3Crect%20width%3D%22348%22%20height%3D%22225%22%20fill%3D%22%2355595c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22116.71875%22%20y%3D%22120.3%22%3EThumbnail%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">
+                    <div class="card mb-4 box-shadow <?= $inactiveClass ?>" data-status="<?= htmlspecialchars($announcement['statusText']) ?>">
+                        <img class="card-img-top" alt="<?php echo($imageSrc) ?>" style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>" data-holder-rendered="true">
                         <div class="card-body">
-                            <p class="card-text"><?= $announcement['title'] ?></p>
-                            <p class="card-text"><?= $announcement['price'] . " $"?></p>
+                            <p class="card-text"><?= htmlspecialchars($announcement['title']) ?></p>
+                            <p class="card-text"><?= htmlspecialchars($announcement['price']) . " $"?></p>
                             <p class="card-text"><?= $announcement['description'] ?></p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <a href="/announcements/index/<?= $announcement['id'] ?>" class="btn btn-sm btn-outline-secondary">Переглянути</a>
                                     <button type="button" class="btn btn-sm btn-outline-secondary">В обране</button>
                                 </div>
-                                <small class="text-muted"><?= $announcement['publicationDate'] ?></small>
+                                <small class="text-muted"><?= htmlspecialchars($announcement['publicationDate']) ?></small>
                             </div>
                         </div>
                     </div>
