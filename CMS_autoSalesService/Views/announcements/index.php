@@ -171,12 +171,19 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
+                <?php
+                $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement->id);
+
+                if (!$isFavorite) : ?>
                 <div class="d-flex">
-                    <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                        <i class="bi-cart-fill me-1"></i>
-                        В обрані
-                    </button>
+                    <a href="/announcements/addtofavorites/<?= $announcement->id ?>" class="btn btn-sm btn-outline-secondary">Додати в обрані</a>
                 </div>
+                <?php endif;?>
+                <?php if ($isFavorite) : ?>
+                    <div class="d-flex">
+                        <a href="/announcements/removefromfavorites/<?= $announcement->id ?>" class="btn btn-sm btn-outline-secondary">Видалити з обраних</a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

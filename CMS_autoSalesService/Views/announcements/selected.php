@@ -1,5 +1,5 @@
 <?php
-$this->Title = 'Список оголошень';
+$this->Title = 'Обрані оголошення';
 ?>
 <!doctype html>
 <html lang="en">
@@ -60,7 +60,7 @@ $this->Title = 'Список оголошень';
 <div class="album py-5 bg-light">
     <div class="container">
         <div class="row">
-            <?php foreach ($GLOBALS['announcements'] as $announcement): ?>
+            <?php foreach ($GLOBALS['selectedAnnouncements'] as $announcement): ?>
                 <?php
                 $isInactive = in_array($announcement['statusText'], ['Продано', 'Видалено']);
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
@@ -127,7 +127,7 @@ $this->Title = 'Список оголошень';
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <a href="/announcements/index/<?= $announcement['id'] ?>" class="btn btn-sm btn-outline-secondary">Переглянути</a>
-                                    <a href="/announcements/addtofavorites?announcementId=<?= $announcement['id'] ?>" class="btn btn-sm btn-outline-secondary">Додати в обрані</a>
+<!--                                    <a href="/announcements/addtofavorites?announcementId=--><?php //= $announcement['id'] ?><!--" class="btn btn-sm btn-outline-secondary">Додати в обрані</a>-->
                                 </div>
                                 <small class="text-muted"><?= htmlspecialchars($announcement['publicationDate']) ?></small>
                             </div>
@@ -138,8 +138,8 @@ $this->Title = 'Список оголошень';
         </div>
 
         <div class="pagination">
-            <?php for ($i = 1; $i <= $GLOBALS['totalPages']; $i++): ?>
-                <a href="/announcements/view/<?= $i ?>" class="<?= $i == $GLOBALS['currentPage'] ? 'active' : '' ?>">
+            <?php for ($i = 1; $i <= $GLOBALS['selectedTotalPages']; $i++): ?>
+                <a href="/announcements/selected/<?= $i ?>" class="<?= $i == $GLOBALS['selectedCurrentPage'] ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>

@@ -6,8 +6,10 @@ use core\Controller;
 use core\Core;
 use core\DB;
 use core\Template;
+use DateTime;
 use Models\Announcements;
 use Models\CarImages;
+use Models\UserFavouritesAnnouncements;
 use Models\Users;
 use Models\Vehicles;
 
@@ -275,5 +277,143 @@ class AnnouncementsController extends Controller
             return $this->render();
         }
         return $this->render('Views/announcements/my.php');
+    }
+
+    public function actionAddtofavorites()
+    {
+        if (!\Models\Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $announcementId = $id;
+            $userId = \core\Core::get()->session->get('user')['id'];
+
+            $existingFavorite = \Models\UserFavouritesAnnouncements::findByCondition(['user_id' => $userId, 'announcement_id' => $announcementId]);
+
+            if ($existingFavorite) {
+                $successMessage = "Це оголошення вже додане в обрані!";
+            } else {
+                \Models\UserFavouritesAnnouncements::AddRow($userId,  $announcementId);
+                $successMessage = "Оголошення успішно додане в обрані!";
+            }
+            $GLOBALS['successMessage'] = isset($successMessage) ? $successMessage : null;
+            return $this->render();
+        }
+    }
+
+    public function actionRemovefromfavorites()
+    {
+        if (!\Models\Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $announcementId = $id;
+
+            $userId = \core\Core::get()->session->get('user')['id'];
+
+            $existingFavorite = \Models\UserFavouritesAnnouncements::findByCondition(['user_id' => $userId, 'announcement_id' => $announcementId]);
+
+            if ($existingFavorite) {
+                \Models\UserFavouritesAnnouncements::RemoveRow($userId,  $announcementId);
+                $successMessage = "Оголошення успішно видалено з обраних!";
+            } else {
+                $successMessage = "Оголошення не знаходиться в обраних!";
+            }
+            $GLOBALS['successMessage'] = isset($successMessage) ? $successMessage : null;
+            return $this->render();
+        }
+    }
+
+    public function actionSelected()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        // Отримуємо ID поточного користувача
+        $userId = \core\Core::get()->session->get('user')['id'];
+
+        // Отримуємо поточну сторінку з параметрів запиту
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $currentPage = end($queryParts);
+
+        if ($currentPage === null || $currentPage === 'null') {
+            $currentPage = 1;
+        } else {
+            $currentPage = (int)$currentPage;
+        }
+
+        if ($currentPage < 1) {
+            $this->redirect("/announcements/selected/1");
+        }
+
+        $announcementsPerPage = 6;
+
+        $totalAnnouncements = UserFavouritesAnnouncements::CountAll();
+        $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
+        $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+
+        if ($currentPage > $totalPages) {
+            $this->redirect("/announcements/selected/$totalPages");
+        }
+
+        $offset = ($currentPage - 1) * $announcementsPerPage;
+
+        $announcements = UserFavouritesAnnouncements::SelectByUserIdPaginated($userId, $announcementsPerPage, $offset);
+
+        $oneDayAgo = new DateTime();
+        $oneDayAgo->modify('-1 day');
+
+        foreach ($announcements as &$announcement) {
+            // Отримання ID оголошення та користувача
+            $announcementId = $announcement['announcement_id'];
+
+            if ($announcementId !== 0) {
+                // Отримання даних про оголошення та автомобіль за їх ID
+                $announcementData = Announcements::SelectById($announcementId);
+                $vehicleData = Vehicles::FindVehicleById($announcementData->vehicle_id);
+
+                // Перевірка статусу оголошення та деактивації
+                $statusId = $announcementData->status_id;
+                $deactivationDate = isset($announcementData->deactivationDate) ? new DateTime($announcementData->deactivationDate) : null;
+
+                $oneDayAgo = new DateTime();
+                $oneDayAgo->modify('-1 day');
+
+                if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
+                    continue;
+                }
+
+                // Створення нового масиву з копією даних про оголошення
+                $newAnnouncementData = (array)$announcementData;
+
+                // Додавання тексту статусу та шляху до зображень до нового масиву
+                $newAnnouncementData['statusText'] = $this->mapStatusToText($statusId);
+                $newAnnouncementData['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
+
+                // Зберігання нового масиву даних про оголошення та автомобіль в окремих масивах
+                $selectedAnnouncements[] = $newAnnouncementData;
+                $selectedVehicles[] = $vehicleData;
+            }
+        }
+
+        // Передаємо дані у представлення
+        $GLOBALS['selectedAnnouncements'] = $selectedAnnouncements;
+        $GLOBALS['selectedCurrentPage'] = $currentPage;
+        $GLOBALS['selectedTotalPages'] = $totalPages;
+
+        // Відображаємо представлення
+        return $this->render();
     }
 }
