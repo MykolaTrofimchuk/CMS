@@ -149,6 +149,21 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                                 <span><?= htmlspecialchars($vehicle->body_type) ?></span>
                             </div>
                         <?php endif; ?>
+                        <?php if (!is_null($vehicle->transmission)): ?>
+                            <div class="border rounded p-3 mb-3">
+                                <span><?= htmlspecialchars($vehicle->transmission) ?></span>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!is_null($vehicle->drive)): ?>
+                            <div class="border rounded p-3 mb-3">
+                                <span><?= htmlspecialchars($vehicle->drive) ?></span>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!is_null($vehicle->color)): ?>
+                            <div class="border rounded p-3 mb-3">
+                                <span><?= htmlspecialchars($vehicle->color) ?></span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
                 <div class="d-flex">

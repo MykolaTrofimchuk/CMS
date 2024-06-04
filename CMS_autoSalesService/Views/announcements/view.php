@@ -65,6 +65,7 @@ $this->Title = 'Список оголошень';
                 $isInactive = in_array($announcement['statusText'], ['Продано', 'Видалено']);
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
 
+                $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement['id']);
                 // Default image path
                 $imageSrc = "../../../../src/resourses/no-photo.jpg";
                 $imagesPath = "./" . $announcement['pathToImages'];
@@ -84,9 +85,44 @@ $this->Title = 'Список оголошень';
                     <div class="card mb-4 box-shadow <?= $inactiveClass ?>" data-status="<?= htmlspecialchars($announcement['statusText']) ?>">
                         <img class="card-img-top" alt="<?php echo($imageSrc) ?>" style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>" data-holder-rendered="true">
                         <div class="card-body">
-                            <p class="card-text"><?= htmlspecialchars($announcement['title']) ?></p>
-                            <p class="card-text"><?= htmlspecialchars($announcement['price']) . " $"?></p>
-                            <p class="card-text"><?= $announcement['description'] ?></p>
+                            <p class="card-text fs-5"><?= htmlspecialchars($announcement['title']) ?></p>
+                            <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement['price'])) . " $"?></p>
+                            <?php if ($announcement['description'] !== null): ?>
+                                <p class="card-text"><?= substr($announcement['description'], 0, 64) . '...' ?></p>
+                            <?php else: ?>
+                                <p class="card-text">Опис відсутній</p>
+                            <?php endif; ?>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group" style="display: flex; justify-content: space-between;">
+                                    <p class="card-text"><?= htmlspecialchars(substr($vehicleInfo->model_year, 0, 4)) ?></p>
+                                </div>
+                                <p class="card-text"><?php
+                                    if (is_null($vehicleInfo->body_type)) {
+                                        echo "Не вказано";
+                                    } else {
+                                        echo htmlspecialchars($vehicleInfo->body_type);
+                                    }
+                                    ?>
+                                </p>
+                            </div><hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group" style="display: flex; justify-content: space-between;">
+                                    <p class="card-text"><?php
+                                        if (is_null($vehicleInfo->engine_capacity)) {
+                                            echo "Не вказано";
+                                        } else {
+                                            echo htmlspecialchars($vehicleInfo->engine_capacity) . "L";
+                                        }
+                                        ?></p>
+                                </div>
+                                <p class="card-text"><?= htmlspecialchars($vehicleInfo->fuel_type) ?></p>
+                            </div><hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group" style="display: flex; justify-content: space-between;">
+                                    <p class="card-text"><?= htmlspecialchars($vehicleInfo->transmission) ?></p>
+                                </div>
+                                <p class="card-text"><?= htmlspecialchars($vehicleInfo->color) ?></p>
+                            </div><hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <a href="/announcements/index/<?= $announcement['id'] ?>" class="btn btn-sm btn-outline-secondary">Переглянути</a>
