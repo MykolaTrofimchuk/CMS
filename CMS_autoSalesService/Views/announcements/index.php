@@ -3,6 +3,9 @@ $this->Title = '';
 
 $announcement = $GLOBALS['announcement'];
 $vehicle = $GLOBALS['vehicle'];
+$pathToImages = $GLOBALS['images'];
+
+$userInfo = \Models\Users::GetUserInfo($announcement->user_id);
 ?>
 <!doctype html>
 <html lang="en">
@@ -12,6 +15,7 @@ $vehicle = $GLOBALS['vehicle'];
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <script src="lightbox.js"></script>
     <style>
         .big-photo {
             width: 100%;
@@ -35,31 +39,46 @@ $vehicle = $GLOBALS['vehicle'];
         <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6">
                 <div class="row">
+                    <?php
+                    // Default image path
+                    $imageSrc = "../../../../src/resourses/no-photo.jpg";
+                    $imagesPath = "./" . $pathToImages;
+
+                    // Use realpath to debug the path issue
+                    $realImagesPath = realpath($imagesPath);
+                    $realImagesPath = str_replace('\\', '/', $realImagesPath);
+
+                    if (!is_null($pathToImages) && is_dir($realImagesPath)) {
+                        $images = scandir($realImagesPath);
+                        $images = array_diff($images, array('.', '..'));
+                        $firstImage = !empty($images) ? reset($images) : null;
+                        $firstImageSrc = "../../../../../" . $pathToImages . "/" . $firstImage;
+                        array_shift($images);
+                    }else{
+                        $images = ['../../../src/resourses/no-photo.jpg'];
+                        $firstImageSrc = '../../../src/resourses/no-photo.jpg';
+                    }
+                    ?>
                     <div class="col-12 mb-3">
-                        <img class="card-img-top big-photo" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
+                        <img class="card-img-top big-photo" src="<?php echo($firstImageSrc) ?>" alt="...">
                     </div>
                     <div class="col-12">
                         <div class="row small-photos">
-                            <div class="col-md-3 mb-2">
-                                <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <img class="card-img-top" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="...">
-                            </div>
+                            <?php foreach ($images as $image): ?>
+                                <div class="col-md-3 mb-2">
+                                    <a href="<?php echo "../../../../../" . $pathToImages . "/" . $image ?>"
+                                       data-lightbox="gallery">
+                                        <img class="card-img-top"
+                                             src="<?php echo "../../../../../" . $pathToImages . "/" . $image ?>"
+                                             alt="...">
+                                    </a>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6" style="margin-top: -250px;">
+            <div class="col-md-6" style="margin-top: -50px;">
                 <?php if (isset($announcement)): ?>
                     <div class="small mb-1"><?= htmlspecialchars($announcement->publicationDate) ?> <?= htmlspecialchars($announcement->id) ?></div>
                     <h1 class="display-5 fw-bolder"><?= htmlspecialchars($announcement->title) ?></h1>
@@ -92,6 +111,7 @@ $vehicle = $GLOBALS['vehicle'];
                                                                         d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z"
                                                                         fill="#1F2024"></path></svg>
                                 <?= htmlspecialchars($vehicle->transmission) ?></span>
+                            <?php if (!is_null($vehicle->region) || strlen($vehicle->region) > 0 || !is_null($userInfo[0]['region']) || strlen($userInfo[0]['region']) > 0): ?>
                             <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                        xmlns="http://www.w3.org/2000/svg" class="common-icon mr-8"><path
                                             fill-rule="evenodd" clip-rule="evenodd"
@@ -99,19 +119,27 @@ $vehicle = $GLOBALS['vehicle'];
                                             fill="#1F2024"></path><path fill-rule="evenodd" clip-rule="evenodd"
                                                                         d="M15 7C15 11 8 16 8 16C8 16 1 11 1 7C1 3.13401 4.13401 0 8 0C11.866 0 15 3.13401 15 7ZM13 7C13 7.44952 12.7871 8.12714 12.2189 9.02C11.6702 9.88226 10.9049 10.7667 10.0858 11.5858C9.34429 12.3273 8.59649 12.9779 8 13.4675C7.40351 12.9779 6.65571 12.3273 5.91421 11.5858C5.09513 10.7667 4.32979 9.88226 3.78107 9.02C3.21289 8.12714 3 7.44952 3 7C3 4.23858 5.23858 2 8 2C10.7614 2 13 4.23858 13 7Z"
                                                                         fill="#1F2024"></path></svg>
-                                <?= htmlspecialchars($vehicle->region) ?></span>
+                            <?php
+                            if (is_null($vehicle->region) || strlen($vehicle->region) === 0) {
+                                echo $userInfo[0]['region'];
+                            } else {
+                                echo htmlspecialchars($vehicle->region);
+                            }
+                            ?>
+                            </span>
+                            <?php endif; ?>
                         </div>
 
                     </div>
                     <p class="lead"><?= $announcement->description ?></p>
 
                     <div class="d-flex flex-wrap">
-                        <?php if (!is_null($vehicle->plate)): ?>
+                        <?php if (!is_null($vehicle->plate) && strlen($vehicle->plate) >= 3): ?>
                             <div class="border rounded p-3 mb-3 me-3">
                                 <span><?= htmlspecialchars($vehicle->plate) ?></span>
                             </div>
                         <?php endif; ?>
-                        <?php if (!is_null($vehicle->vin_code)): ?>
+                        <?php if (!is_null($vehicle->vin_code) && strlen($vehicle->vin_code) >= 16): ?>
                             <div class="border rounded p-3 mb-3 me-3">
                                 <span><?= htmlspecialchars($vehicle->vin_code) ?></span>
                             </div>

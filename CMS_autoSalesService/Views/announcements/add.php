@@ -1,5 +1,7 @@
 <?php
 /** @var string $error_message Повідомлення про помилку */
+
+var_dump($this->controller->post);
 ?>
 <!doctype html>
 <html lang="en">
@@ -45,7 +47,7 @@
             <div class="form-group">
                 <label for="description">Опис</label>
                 <textarea class="form-control rounded-3" id="description" rows="5"
-                          placeholder="Основний опис автомобіля..."><?= $this->controller->post->description ?>"</textarea>
+                          placeholder="Основний опис автомобіля..."><?= $this->controller->post->description ?></textarea>
             </div>
             <div class="form-floating mb-3">
                 <input type="number" class="form-control rounded-3" id="price"
@@ -165,12 +167,13 @@
                         <div class="col">
                             <label for="engineCapacity">Об’єм двигуна (л)</label>
                             <input type="text" class="form-control" id="engineCapacity"
-                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity">
+                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity" value="<?= $this->controller->post->engineCapacity ?>">
                         </div>
+
                         <div class="col">
                             <label for="horsePowers">Потужність двигуна (к.с.)</label>
                             <input type="number" class="form-control" id="horsePowers"
-                                   placeholder="Потужність (кінських сил)" name="horsePower">
+                                   placeholder="Потужність (кінських сил)" name="horsePower" value="<?= $this->controller->post->horsePower ?>">
                         </div>
                     </div>
                 </div>

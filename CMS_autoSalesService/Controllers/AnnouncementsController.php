@@ -20,8 +20,9 @@ class AnnouncementsController extends Controller
         if ($this->isPost) {
             $userId = \core\Core::get()->session->get('user')['id'];
 
-            if (strlen($this->post->title) === 0)
-                $this->addErrorMessage('Заголовок не вказаний!');
+            if (mb_strlen($this->post->title) > 10) {
+                $this->addErrorMessage('Заголовок вказано некоректно! Довжина має бути до 10 символів');
+            }
             if (strlen($this->post->price) === 0)
                 $this->addErrorMessage('Ціну не вказано!');
             if (strlen($this->post->brand) === 0) {
@@ -40,13 +41,18 @@ class AnnouncementsController extends Controller
                 $this->addErrorMessage('Тип коробки передач не вказано!');
             if (strlen($this->post->fuelType) === 0)
                 $this->addErrorMessage('Тип палива двигуна не вказано!');
-            if (strlen($this->post->engineCapacity) === 0)
-                $this->addErrorMessage('Об\'єм двигуна не вказано!');
+            if (!preg_match('/^\d{1}\.\d+$/', $this->post->engineCapacity)) {
+                $this->addErrorMessage('Об\'єм двигуна повинен однозначним числом з однією цифрою після крапки!');
+            }
             if (strlen($this->post->color) === 0)
                 $this->addErrorMessage('Колір кузова не вказано!');
             $region = "";
-            if (strlen($this->post->regionObl) !== 0 || strlen($this->post->regionCity) !== 0) {
+            if (strlen($this->post->regionObl) !== 0 && strlen($this->post->regionCity) !== 0) {
                 $region = "{$this->post->regionObl} область, місто {$this->post->regionCity}";
+            } elseif (strlen($this->post->regionObl) !== 0) {
+                $region = "{$this->post->regionObl} область";
+            } elseif (strlen($this->post->regionCity) !== 0) {
+                $region = "місто {$this->post->regionCity}";
             }
 
             if (!$this->isErrorMessagesExists()) {
@@ -69,12 +75,16 @@ class AnnouncementsController extends Controller
 
                 $vehicleId = Vehicles::lastInsertedId();
 
+                $modelYear = substr($this->post->modelYear, 0, 4);
+                $title = $this->post->title . " " . $this->post->brand . " " . $this->post->model . " " . $modelYear;
                 $price = (int)$this->post->price;
-                $publicationDate = date('Y-m-d'); // Assuming publication date is today
+
+                date_default_timezone_set('Europe/Kiev');
+                $publicationDate = date('Y-m-d H:i:s'); // Assuming publication date is today
                 $statusId = 1;
 
                 Announcements::AddAnnouncement(
-                    $this->post->title,
+                    $title,
                     $price,
                     $publicationDate,
                     $userId,
@@ -136,6 +146,7 @@ class AnnouncementsController extends Controller
 
             $announcement = Announcements::SelectById($announcementId);
             $vehicle = Announcements::SelectVehicleFromAnnouncement($announcementId);
+            $announcementImages = CarImages::FindPathByAnnouncementId($announcementId);
 
             if (!$announcement) {
                 return $this->render("Views/site/index.php");
@@ -143,6 +154,7 @@ class AnnouncementsController extends Controller
 
             $GLOBALS['announcement'] = $announcement;
             $GLOBALS['vehicle'] = $vehicle;
+            $GLOBALS['images'] = $announcementImages;
 
             return $this->render();
         }
