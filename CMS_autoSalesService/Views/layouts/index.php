@@ -64,7 +64,8 @@ if (\Models\Users::IsUserLogged()) {
                     </a>
                     <ul class="dropdown-menu text-small" style="">
                         <li><a class="dropdown-item" href="/users/me">Профіль</a></li>
-                        <li><a class="dropdown-item" href="#">Про нас</a></li>
+                        <li><a class="dropdown-item" href="/announcements/my">Мої оголошення</a></li>
+                        <li><a class="dropdown-item" href="/announcements/selected">Обрані оголошення</a></li>
                         <li><a class="dropdown-item" href="#">Налаштування</a></li>
                         <li>
                             <hr class="dropdown-divider">

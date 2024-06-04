@@ -72,9 +72,9 @@ class Model
         }
     }
 
-    public static function findByCondition($conditionAssocArr)
+    public static function findByCondition($conditionAssocArr, $limit = null, $offset = 0)
     {
-        $arr = Core::get()->db->select(static::$tableName, '*', $conditionAssocArr);
+        $arr = Core::get()->db->select(static::$tableName, '*', $conditionAssocArr, $limit, $offset);
         if (count($arr) > 0)
             return $arr;
         else

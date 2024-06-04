@@ -230,4 +230,50 @@ class AnnouncementsController extends Controller
         }
     }
 
+    public function actionMy()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $currentPage = end($queryParts);
+
+        $userId = \core\Core::get()->session->get('user')['id'];
+
+        if ($currentPage === null || $currentPage === 'null') {
+            $currentPage = 1;
+        } else {
+            $currentPage = (int)$currentPage;
+        }
+        if ($currentPage < 1) {
+            $this->redirect("/announcements/my/1");
+        }
+
+        if ($currentPage !== null) {
+            $announcementsPerPage = 6;
+            $totalAnnouncements = Announcements::CountAll(); // Get the total number of announcements
+            $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
+
+            $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+            if ($currentPage > $totalPages) {
+                $this->redirect("$totalPages");
+            }
+            $offset = ($currentPage - 1) * $announcementsPerPage;
+            $announcements = Announcements::SelectByUserIdPaginated($userId, $announcementsPerPage, $offset);
+
+            foreach ($announcements as &$announcement) {
+                $statusId = $announcement['status_id'];
+                $announcement['statusText'] = $this->mapStatusToText($statusId);
+                $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
+            }
+
+            $GLOBALS['announcementsMy'] = $announcements;
+            $GLOBALS['currentPageMy'] = $currentPage;
+            $GLOBALS['totalPagesMy'] = $totalPages;
+            return $this->render();
+        }
+        return $this->render('Views/announcements/my.php');
+    }
 }
