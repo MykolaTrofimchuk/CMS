@@ -134,6 +134,11 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                     <p class="lead"><?= $announcement->description ?></p>
 
                     <div class="d-flex flex-wrap">
+                        <?php if (!is_null($vehicle->veh_condition) && strlen($vehicle->veh_condition) > 0): ?>
+                            <div class="border rounded p-3 mb-3 me-3">
+                                <span><?= htmlspecialchars($vehicle->veh_condition) ?></span>
+                            </div>
+                        <?php endif; ?>
                         <?php if (!is_null($vehicle->plate) && strlen($vehicle->plate) >= 3): ?>
                             <div class="border rounded p-3 mb-3 me-3">
                                 <span><?= htmlspecialchars($vehicle->plate) ?></span>

@@ -85,6 +85,7 @@ $this->Title = 'Список оголошень';
                     <div class="card mb-4 box-shadow <?= $inactiveClass ?>" data-status="<?= htmlspecialchars($announcement['statusText']) ?>">
                         <img class="card-img-top" alt="<?php echo($imageSrc) ?>" style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>" data-holder-rendered="true">
                         <div class="card-body">
+                            <p class="card-text fs-5 mb-1 fw-bold text-muted"><em><?= htmlspecialchars($vehicleInfo->veh_condition) ?></em></p>
                             <p class="card-text fs-5"><?= htmlspecialchars($announcement['title']) ?></p>
                             <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement['price'])) . " $"?></p>
                             <?php if ($announcement['description'] !== null): ?>

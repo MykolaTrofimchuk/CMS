@@ -20,6 +20,13 @@ class AnnouncementsController extends Controller
         if ($this->isPost) {
             $userId = \core\Core::get()->session->get('user')['id'];
 
+            if (strlen($this->post->condition) === 0){
+                $this->addErrorMessage('Стан авто не вказано!');
+            }
+            $millage = $this->post->millage;
+            if ($this->post->condition === 'Нове'){
+                $millage = 0;
+            }
             if (mb_strlen($this->post->title) > 10) {
                 $this->addErrorMessage('Заголовок вказано некоректно! Довжина має бути до 10 символів');
             }
@@ -33,7 +40,7 @@ class AnnouncementsController extends Controller
             }
             if (strlen($this->post->modelYear) === 0)
                 $this->addErrorMessage('Рік випуску не вказано!');
-            if (strlen($this->post->millage) === 0)
+            if (strlen($millage) === 0)
                 $this->addErrorMessage('Пробіг не вказано!');
             if (strlen($this->post->bodyType) === 0)
                 $this->addErrorMessage('Тип кузова не вказано!');
@@ -57,10 +64,11 @@ class AnnouncementsController extends Controller
 
             if (!$this->isErrorMessagesExists()) {
                 Vehicles::AddVehicle(
+                    $this->post->condition,
                     $this->post->brand,
                     $model,
                     $this->post->modelYear,
-                    $this->post->millage,
+                    $millage,
                     $this->post->fuelType,
                     $this->post->transmission,
                     $this->post->drive,

@@ -6,6 +6,7 @@ use core\Core;
 use core\Model;
 /**
  * @property int $id ID
+ * @property string $veh_condition Стан авто
  * @property string $brand Марка авто
  * @property string $model Модель авто
  * @property string $model_year Рік випуску авто
@@ -41,11 +42,12 @@ class Vehicles extends Model
         return self::findByCondition(['id' => $id]);
     }
 
-    public static function AddVehicle($brand, $model, $modelYear, $millage, $fuelType, $transmission, $drive, $color,
+    public static function AddVehicle($condition, $brand, $model, $modelYear, $millage, $fuelType, $transmission, $drive, $color,
                                         $engineCapacity = null, $horsePower = null, $bodyType = null, $vinCode = null,
                                         $plate = null, $region = null)
     {
         $vehicle = new Vehicles();
+        $vehicle->veh_condition = $condition;
         $vehicle->brand = $brand;
         $vehicle->model = $model;
         $vehicle->model_year = $modelYear;

@@ -1,7 +1,5 @@
 <?php
 /** @var string $error_message Повідомлення про помилку */
-
-var_dump($this->controller->post);
 ?>
 <!doctype html>
 <html lang="en">
@@ -53,6 +51,14 @@ var_dump($this->controller->post);
                 <input type="number" class="form-control rounded-3" id="price"
                        placeholder="Заголовок оголошення" name="price" value="<?= $this->controller->post->price ?>">
                 <label for="price">Ціна ($)</label>
+            </div>
+            <div class="form-floating mb-3">
+                <select class="form-control" id="condition" name="condition">
+                    <option value="">Оберіть стан автомобіля</option>
+                    <option>Нове</option>
+                    <option>З пробігом</option>
+                </select>
+                <label for="condition">Стан авто</label>
             </div>
             <br>
             <div class="form-row">
@@ -243,6 +249,20 @@ var_dump($this->controller->post);
             var selectedBrand = this.value;
             carModelInput.disabled = selectedBrand === "Оберіть марку авто";
         });
+
+        var bodyTypeSelect = document.getElementById('condition');
+        var millageInput = document.getElementById('millage');
+
+        function toggleMillageInput() {
+            if (bodyTypeSelect.value === 'Нове') {
+                millageInput.disabled = true;
+            } else {
+                millageInput.disabled = false;
+            }
+        }
+        toggleMillageInput();
+
+        bodyTypeSelect.addEventListener('change', toggleMillageInput);
 
         var previewContainer = document.getElementById('preview');
 
