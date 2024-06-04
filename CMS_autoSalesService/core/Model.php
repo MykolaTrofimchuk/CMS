@@ -20,7 +20,11 @@ class Model
 
     public function __get($name)
     {
-        return $this->fieldsArray[$name];
+        if (array_key_exists($name, $this->fieldsArray)) {
+            return $this->fieldsArray[$name];
+        }
+        return null;
+        throw new \Exception("Undefined property: $name");
     }
 
     public function save()
@@ -59,7 +63,7 @@ class Model
     public static function findById($id)
     {
         $arr = Core::get()->db->select(static::$tableName, '*', [static::$primaryKey => $id]);
-        if (count($arr) > 0){
+        if (count($arr) > 0) {
             $user = new \Models\Users();
             $user->fieldsArray = $arr[0];
             return $user;
@@ -71,7 +75,7 @@ class Model
     public static function findByCondition($conditionAssocArr)
     {
         $arr = Core::get()->db->select(static::$tableName, '*', $conditionAssocArr);
-        if(count($arr) > 0)
+        if (count($arr) > 0)
             return $arr;
         else
             return null;
@@ -80,7 +84,7 @@ class Model
     public static function findRowsByCondition($rows, $conditionAssocArr = null)
     {
         $arr = Core::get()->db->select(static::$tableName, $rows, $conditionAssocArr);
-        if(count($arr) > 0)
+        if (count($arr) > 0)
             return $arr;
         else
             return null;
@@ -89,7 +93,7 @@ class Model
     public static function findByLimitAndOffset($limit, $offset)
     {
         $arr = Core::get()->db->select(static::$tableName, '*', null, $limit, $offset);
-        if(count($arr) > 0)
+        if (count($arr) > 0)
             return $arr;
         else
             return null;
@@ -98,7 +102,7 @@ class Model
     public static function findAll()
     {
         $arr = Core::get()->db->select('announcements');;
-        if(count($arr) > 0)
+        if (count($arr) > 0)
             return $arr;
         else
             return null;

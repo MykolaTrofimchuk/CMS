@@ -13,4 +13,12 @@ use core\Model;
 class CarImages extends Model
 {
     public static $tableName = 'car_images';
+
+    public static function AddVehicleImages($announcementId, $imagePath)
+    {
+        $image = new CarImages();
+        $image->announcement_id = $announcementId;
+        $image->image_path = $imagePath;
+        $image->save();
+    }
 }

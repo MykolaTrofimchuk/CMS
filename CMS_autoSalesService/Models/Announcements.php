@@ -84,4 +84,27 @@ class Announcements extends Model
         return self::findByCondition(['id' => $id]);
     }
 
+    public static function AddAnnouncement($title, $price, $publicationDate, $userId, $statusId, $vehicleId,
+                                           $description= null, $deactivationDate = null)
+    {
+        $announcement = new Announcements();
+        $announcement->title = $title;
+        $announcement->description = $description;
+        $announcement->price = $price;
+        $announcement->publicationDate = $publicationDate;
+        $announcement->deactivationDate = $deactivationDate;
+        $announcement->user_id = $userId;
+        $announcement->status_id = $statusId;
+        $announcement->vehicle_id = $vehicleId;
+        $announcement->save();
+    }
+
+    public static function lastInsertedId()
+    {
+        $result = self::findRowsByCondition("LAST_INSERT_ID() as last_id");
+        if (!empty($result)) {
+            return $result[0]['last_id'];
+        }
+        return null;
+    }
 }
