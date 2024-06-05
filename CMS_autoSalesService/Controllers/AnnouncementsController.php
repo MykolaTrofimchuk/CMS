@@ -442,4 +442,35 @@ class AnnouncementsController extends Controller
         header('Content-Type: application/json');
         echo json_encode($models);
     }
+
+    public function actionEdit()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $announcementId = $id;
+            $userId = \core\Core::get()->session->get('user')['id'];
+
+            $announcementInfo = Announcements::findByCondition(['id' => $announcementId, 'user_id' => $userId]);
+            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId))
+                $this->redirect('/announcements/my');
+
+            $newAnnouncementData = (array)$announcementInfo;
+
+            $newAnnouncementData[0]['statusText'] = $this->mapStatusToText($announcementInfo[0]['status_id']);
+            $newAnnouncementData[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
+
+            $GLOBALS['vehicleInfo'] = Announcements::SelectVehicleFromAnnouncement($announcementId) ?? null;
+            $GLOBALS['announcementInfo'] = $newAnnouncementData ?? null;
+            $GLOBALS['userOwnerInfo'] = Users::GetUserInfo($userId) ?? null;
+
+            return $this->render();
+        }
+    }
 }

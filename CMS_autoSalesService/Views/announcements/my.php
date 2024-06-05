@@ -84,11 +84,9 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
 
                 $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement['id']);
-                // Default image path
+
                 $imageSrc = "../../../../src/resourses/no-photo.jpg";
                 $imagesPath = "./" . $announcement['pathToImages'];
-
-                // Use realpath to debug the path issue
                 $realImagesPath = realpath($imagesPath);
                 $realImagesPath = str_replace('\\', '/', $realImagesPath);
 
@@ -116,7 +114,10 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                 ?>
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow <?= $inactiveClass ?>" data-status="<?= htmlspecialchars($announcement['statusText']) ?>" data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
-                        <img class="card-img-top" alt="<?php echo($imageSrc) ?>" style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>" data-holder-rendered="true">
+                        <div class="card-img-top-container" style="position: relative;">
+                            <img class="card-img-top" alt="<?php echo($imageSrc) ?>" style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>" data-holder-rendered="true">
+                            <a href="/announcements/edit/<?= htmlspecialchars($announcement['id']) ?>" class="btn btn-primary" style="position: absolute; top: 10px; right: 10px;">Редагувати</a>
+                        </div>
                         <div class="card-body">
                             <?php if ($vehicleInfo->veh_condition === 'З пробігом' || $vehicleInfo->veh_condition === 'Нове') : ?>
                                 <p class="card-text fs-6 mb-1 fw-bold text-muted">
