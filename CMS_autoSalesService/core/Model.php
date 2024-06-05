@@ -101,7 +101,7 @@ class Model
 
     public static function findAll()
     {
-        $arr = Core::get()->db->select('announcements');;
+        $arr = Core::get()->db->select(static::$tableName);;
         if (count($arr) > 0)
             return $arr;
         else

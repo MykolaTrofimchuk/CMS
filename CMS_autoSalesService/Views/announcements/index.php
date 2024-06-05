@@ -40,11 +40,9 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
             <div class="col-md-6">
                 <div class="row">
                     <?php
-                    // Default image path
                     $imageSrc = "../../../../src/resourses/no-photo.jpg";
                     $imagesPath = "./" . $pathToImages;
-
-                    // Use realpath to debug the path issue
+                    $firstImageSrc = '../../../src/resourses/no-photo.jpg';
                     $realImagesPath = realpath($imagesPath);
                     $realImagesPath = str_replace('\\', '/', $realImagesPath);
 
@@ -52,11 +50,12 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                         $images = scandir($realImagesPath);
                         $images = array_diff($images, array('.', '..'));
                         $firstImage = !empty($images) ? reset($images) : null;
-                        $firstImageSrc = "../../../../../" . $pathToImages . "/" . $firstImage;
+                        if (!is_null($firstImage)) {
+                            $firstImageSrc = "../../../../../" . $pathToImages . "/" . $firstImage;
+                        }
                         array_shift($images);
                     } else {
                         $images = ['../../../src/resourses/no-photo.jpg'];
-                        $firstImageSrc = '../../../src/resourses/no-photo.jpg';
                     }
                     ?>
                     <div class="col-12 mb-3">
@@ -80,7 +79,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
             </div>
             <div class="col-md-6" style="margin-top: -50px;">
                 <?php if (isset($announcement)): ?>
-                    <div class="small mb-1"><?= htmlspecialchars($announcement->publicationDate) ?> <?= htmlspecialchars($announcement->id) ?></div>
+                    <div class="small mb-1"><?= htmlspecialchars($announcement->publicationDate) ?> <div class="fw-bolder d-inline"><?= htmlspecialchars($announcement->id) ?></div></div>
                     <h1 class="display-5 fw-bolder"><?= htmlspecialchars($announcement->title) ?></h1>
                     <div class="fs-3 mb-5">
                         <span>$ <?= htmlspecialchars(number_format($announcement->price, 0)) ?></span>
@@ -131,7 +130,15 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                         </div>
 
                     </div>
-                    <p class="lead"><?= $announcement->description ?></p>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="overflow-auto" style="max-height: 200px;">
+                                    <p class="lead"><?= $announcement->description ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="d-flex flex-wrap">
                         <?php if (!is_null($vehicle->veh_condition) && strlen($vehicle->veh_condition) > 0): ?>

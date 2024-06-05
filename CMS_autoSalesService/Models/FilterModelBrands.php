@@ -14,58 +14,32 @@ class FilterModelBrands extends Model
 {
     public static $tableName = 'filter_model_brands';
 
-    public static function SelectAllBrands()
+    public static function FindAllBrandUnique()
     {
-        // Шлях до CSV файлу
-        $csvFile = "./src/all-vehicles-model.csv";
-
-        // Відкриття CSV файлу для читання
-        $file = fopen($csvFile, "r");
-
-        // Масив для збереження унікальних значень brand
+        $data = self::findAll();
         $uniqueBrands = [];
 
-        // Читання файлу рядок за рядком
-        while (($data = fgetcsv($file, 1000, ";")) !== FALSE) {
-            $brand = $data[0];
-
-            // Перевірка, чи бренд ще не додано до масиву унікальних брендів
+        foreach ($data as $item){
+            $brand = $item['brand'];
             if (!in_array($brand, $uniqueBrands)) {
-                // Додавання унікального бренду до масиву
                 $uniqueBrands[] = $brand;
-
-
             }
         }
-        fclose($file);
 
+        var_dump($uniqueBrands);
         return $uniqueBrands;
     }
 
-    public static function SelectAllModelsByBrand($selectedBrand)
+    public static function FindModelsByBrand($selectedBrand)
     {
-        // Шлях до CSV файлу
-        $csvFile = "./src/all-vehicles-model.csv";
-
-        // Відкриття CSV файлу для читання
-        $file = fopen($csvFile, "r");
-
-        // Масив для збереження унікальних моделей для вказаної марки
-        $uniqueModelsByBrand = [];
-
-        // Читання файлу рядок за рядком
-        while (($data = fgetcsv($file, 1000, ";")) !== FALSE) {
-            $brand = $data[0];
-            $model = $data[1];
-
-            // Перевірка, чи поточний бренд співпадає з вибраним
-            if ($brand === $selectedBrand && !in_array($model, $uniqueModelsByBrand)) {
-                // Додавання унікальної моделі до масиву моделей для вказаної марки
-                $uniqueModelsByBrand[] = $model;
+        $models = self::findRowsByCondition(["model"], ['brand' => $selectedBrand]);
+        $uniqModels = [];
+        foreach ($models as $item){
+            $model = $item['model'];
+            if (!in_array($model, $uniqModels)) {
+                $uniqModels[] = $model;
             }
         }
-        fclose($file);
-
-        return $uniqueModelsByBrand;
+        return $uniqModels;
     }
 }

@@ -13,7 +13,7 @@
         .preview img {
             max-width: 100px;
             margin: 5px;
-            transition: filter 0.3s ease; /* Add transition effect for blurring */
+            transition: filter 0.3s ease;
         }
         .form-group {
             margin-bottom: 15px;
@@ -44,7 +44,7 @@
             </div>
             <div class="form-group">
                 <label for="description">Опис</label>
-                <textarea class="form-control rounded-3" id="description" rows="5"
+                <textarea class="form-control rounded-3" id="description" rows="5" name="description"
                           placeholder="Основний опис автомобіля..."><?= $this->controller->post->description ?></textarea>
             </div>
             <div class="form-floating mb-3">
@@ -70,7 +70,7 @@
                             <select class="form-control" id="carBrand" name="brand" onselect="<?= $this->controller->post->brand ?>">
                                 <option value="">Оберіть марку авто</option>
                                 <?php
-                                $brands = \Models\FilterModelBrands::SelectAllBrands();
+                                $brands = \Models\FilterModelBrands::FindAllBrandUnique();
                                 sort($brands);
                                 foreach ($brands as $brand) {
                                     echo "<option value='$brand'>$brand</option>";
@@ -80,7 +80,9 @@
                         </div>
                         <div class="col">
                             <label for="carModel">Модель</label>
-                            <input type="text" class="form-control" id="carModel" placeholder="модель авто" name="model" value="<?= $this->controller->post->model ?>">
+                            <select class="form-control" id="carModel" name="model" onselect="<?= $this->controller->post->model ?>">
+                                <option value="">Оберіть модель авто</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -269,6 +271,7 @@
         document.getElementById('addPhoto').addEventListener('click', function() {
             var newInput = document.createElement('input');
             newInput.type = 'file';
+            newInput.accept = 'image/jpeg, image/png, image/gif';
             newInput.classList.add('form-control', 'file-input');
             newInput.name = 'carImages[]';
             newInput.style.display = 'none';
@@ -277,6 +280,8 @@
             newInput.addEventListener('change', handleFileSelect);
             newInput.click();
         });
+
+        var imageCounter = 1;
 
         function handleFileSelect(event) {
             var files = event.target.files;
@@ -297,15 +302,49 @@
                     img.addEventListener('mouseout', function() {
                         this.style.filter = 'none';
                     });
+
+                    var extension = file.name.split('.').pop().toLowerCase();
+                    var fileName = imageCounter + '.' + extension;
+                    imageCounter++;
+                    img.setAttribute('data-filename', fileName);
+
                     previewContainer.appendChild(img);
                 };
-
                 reader.readAsDataURL(file);
             }
         }
 
         document.querySelectorAll('.file-input').forEach(input => {
             input.addEventListener('change', handleFileSelect);
+        });
+
+        document.getElementById("carBrand").addEventListener("change", function() {
+            var selectedBrand = this.value;
+            selectedBrand = selectedBrand.replace(/\s/g, '%20');
+            var carModelSelect = document.getElementById("carModel");
+            carModelSelect.innerHTML = '<option value="">Завантаження...</option>';
+            fetch('selectmodelsbybrand/' + encodeURIComponent(selectedBrand))
+                .then(response => response.text())
+                .then(data => {
+                    var endIndex = data.indexOf("]");
+                    if (endIndex !== -1) {
+                        data = data.slice(0, endIndex + 1);
+                    }
+                    var models = data.match(/"(.*?)"/g);
+                    carModelSelect.innerHTML = '<option value="">Оберіть модель авто</option>';
+                    if (models) {
+                        models.forEach(function(model) {
+                            model = model.replace(/["]/g, "").trim();
+                            carModelSelect.innerHTML += '<option value="' + model + '">' + model + '</option>';
+                        });
+                    } else {
+                        carModelSelect.innerHTML = '<option value="">Моделі не знайдено</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Помилка:', error);
+                    carModelSelect.innerHTML = '<option value="">Помилка завантаження моделей</option>';
+                });
         });
     });
 </script>

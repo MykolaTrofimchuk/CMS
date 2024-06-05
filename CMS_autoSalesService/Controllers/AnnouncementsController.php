@@ -9,6 +9,7 @@ use core\Template;
 use DateTime;
 use Models\Announcements;
 use Models\CarImages;
+use Models\FilterModelBrands;
 use Models\UserFavouritesAnnouncements;
 use Models\Users;
 use Models\Vehicles;
@@ -22,26 +23,34 @@ class AnnouncementsController extends Controller
         if ($this->isPost) {
             $userId = \core\Core::get()->session->get('user')['id'];
 
-            if (strlen($this->post->condition) === 0){
+            if (strlen($this->post->condition) === 0) {
                 $this->addErrorMessage('Стан авто не вказано!');
             }
             $millage = $this->post->millage;
-            if ($this->post->condition === 'Нове'){
+            if ($this->post->condition === 'Нове') {
                 $millage = 0;
             }
+            if ($millage > 9999999)
+                $this->addErrorMessage('Ваш автомобіль має завеликий пробіг для продажу!');
             if (mb_strlen($this->post->title) > 10) {
                 $this->addErrorMessage('Заголовок вказано некоректно! Довжина має бути до 10 символів');
             }
-            if (strlen($this->post->price) === 0)
-                $this->addErrorMessage('Ціну не вказано!');
+            if (strlen($this->post->price) === 0 || $this->post->price > 100000000)
+                $this->addErrorMessage('Ціну не вказано \ Вказано некоректно');
             if (strlen($this->post->brand) === 0) {
                 $this->addErrorMessage('Марку не вказано!');
                 $model = "";
             } else {
                 $model = $this->post->model;
             }
-            if (strlen($this->post->modelYear) === 0)
-                $this->addErrorMessage('Рік випуску не вказано!');
+            $modelYear = $this->post->modelYear;
+            $currentYear = intval(date('Y'));
+            if ($modelYear >= 1900 && $modelYear <= ($currentYear + 2)) {
+                // Рік в межах допустимого діапазону
+            } else {
+                $this->addErrorMessage("Рік випуску вказано НЕ КОРЕКТНО! $currentYear");
+            }
+
             if (strlen($millage) === 0)
                 $this->addErrorMessage('Пробіг не вказано!');
             if (strlen($this->post->bodyType) === 0)
@@ -63,13 +72,15 @@ class AnnouncementsController extends Controller
             } elseif (strlen($this->post->regionCity) !== 0) {
                 $region = "місто {$this->post->regionCity}";
             }
+            if ($this->post->horsePower > 9999)
+                $this->addErrorMessage('Перепрошуємо, такі потужні автомобілі неможливо виставити на продаж!');
 
             if (!$this->isErrorMessagesExists()) {
                 Vehicles::AddVehicle(
                     $this->post->condition,
                     $this->post->brand,
                     $model,
-                    $this->post->modelYear,
+                    $modelYear,
                     $millage,
                     $this->post->fuelType,
                     $this->post->transmission,
@@ -90,7 +101,7 @@ class AnnouncementsController extends Controller
                 $price = (int)$this->post->price;
 
                 date_default_timezone_set('Europe/Kiev');
-                $publicationDate = date('Y-m-d H:i:s'); // Assuming publication date is today
+                $publicationDate = date('Y-m-d H:i:s');
                 $statusId = 1;
 
                 Announcements::AddAnnouncement(
@@ -114,11 +125,9 @@ class AnnouncementsController extends Controller
 
                     foreach ($_FILES['carImages']['tmp_name'] as $index => $tmpName) {
                         if ($_FILES['carImages']['error'][$index] === UPLOAD_ERR_OK) {
-                            $uploadFile = $uploadDir . basename($_FILES['carImages']['name'][$index]);
+                            $uploadFile = $uploadDir . $index . '.' . pathinfo($_FILES['carImages']['name'][$index], PATHINFO_EXTENSION);
 
-                            // Перевірка, чи файл є зображенням
-                            $check = getimagesize($tmpName);
-                            if ($check !== false) {
+                            if (exif_imagetype($tmpName) !== false) {
                                 move_uploaded_file($tmpName, $uploadFile);
                             } else {
                                 $this->addErrorMessage('Файл ' . $_FILES['carImages']['name'][$index] . ' не є зображенням.');
@@ -131,7 +140,6 @@ class AnnouncementsController extends Controller
                     CarImages::AddVehicleImages($announcementId, $uploadDir);
                 }
 
-                // Переадресація на сторінку успіху або виконання інших необхідних дій
                 $this->redirect('/announcements/addsuccess');
             }
         } else {
@@ -160,6 +168,8 @@ class AnnouncementsController extends Controller
 
         if ($id !== null) {
             $announcement = Announcements::SelectById($id);
+            if (!$announcement)
+                $this->redirect("/");
             $statusId = $announcement->status_id;
 
             if ($statusId !== 1)
@@ -181,6 +191,7 @@ class AnnouncementsController extends Controller
 
             return $this->render();
         }
+        return $this->render();
     }
 
     public function actionView()
@@ -310,7 +321,7 @@ class AnnouncementsController extends Controller
             if ($existingFavorite) {
                 $successMessage = "Це оголошення вже додане в обрані!";
             } else {
-                \Models\UserFavouritesAnnouncements::AddRow($userId,  $announcementId);
+                \Models\UserFavouritesAnnouncements::AddRow($userId, $announcementId);
                 $successMessage = "Оголошення успішно додане в обрані!";
             }
             $GLOBALS['successMessage'] = isset($successMessage) ? $successMessage : null;
@@ -336,7 +347,7 @@ class AnnouncementsController extends Controller
             $existingFavorite = \Models\UserFavouritesAnnouncements::findByCondition(['user_id' => $userId, 'announcement_id' => $announcementId]);
 
             if ($existingFavorite) {
-                \Models\UserFavouritesAnnouncements::RemoveRow($userId,  $announcementId);
+                \Models\UserFavouritesAnnouncements::RemoveRow($userId, $announcementId);
                 $successMessage = "Оголошення успішно видалено з обраних!";
             } else {
                 $successMessage = "Оголошення не знаходиться в обраних!";
@@ -352,10 +363,8 @@ class AnnouncementsController extends Controller
             $this->redirect('/');
         }
 
-        // Отримуємо ID поточного користувача
         $userId = \core\Core::get()->session->get('user')['id'];
 
-        // Отримуємо поточну сторінку з параметрів запиту
         $routeParams = $this->get->route;
         $queryParts = explode('/', $routeParams);
         $currentPage = end($queryParts);
@@ -388,15 +397,12 @@ class AnnouncementsController extends Controller
         $oneDayAgo->modify('-1 day');
 
         foreach ($announcements as &$announcement) {
-            // Отримання ID оголошення та користувача
             $announcementId = $announcement['announcement_id'];
 
             if ($announcementId !== 0) {
-                // Отримання даних про оголошення та автомобіль за їх ID
                 $announcementData = Announcements::SelectById($announcementId);
                 $vehicleData = Vehicles::FindVehicleById($announcementData->vehicle_id);
 
-                // Перевірка статусу оголошення та деактивації
                 $statusId = $announcementData->status_id;
                 $deactivationDate = isset($announcementData->deactivationDate) ? new DateTime($announcementData->deactivationDate) : null;
 
@@ -407,14 +413,11 @@ class AnnouncementsController extends Controller
                     continue;
                 }
 
-                // Створення нового масиву з копією даних про оголошення
                 $newAnnouncementData = (array)$announcementData;
 
-                // Додавання тексту статусу та шляху до зображень до нового масиву
                 $newAnnouncementData['statusText'] = $this->mapStatusToText($statusId);
                 $newAnnouncementData['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
 
-                // Зберігання нового масиву даних про оголошення та автомобіль в окремих масивах
                 $selectedAnnouncements[] = $newAnnouncementData;
                 $selectedVehicles[] = $vehicleData;
             }
@@ -425,7 +428,18 @@ class AnnouncementsController extends Controller
         $GLOBALS['selectedCurrentPage'] = $currentPage;
         $GLOBALS['selectedTotalPages'] = $totalPages;
 
-        // Відображаємо представлення
         return $this->render();
+    }
+
+    public function actionSelectmodelsbybrand()
+    {
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $selectedBrand = end($queryParts);
+
+        $models = FilterModelBrands::FindModelsByBrand($selectedBrand);
+
+        header('Content-Type: application/json');
+        echo json_encode($models);
     }
 }

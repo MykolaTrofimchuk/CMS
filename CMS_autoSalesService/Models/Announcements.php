@@ -110,12 +110,10 @@ class Announcements extends Model
 
     public static function SelectByUserIdPaginated($userId, $limit, $offset)
     {
-        // Вибираємо оголошення, які належать користувачеві з обмеженням та зміщенням
         $condition = ['user_id' => $userId];
         $rows = self::findByCondition($condition, $limit, $offset);
         $validAnnouncements = [];
 
-        // Перевірка статусу оголошення та деактивації
         $oneDayAgo = new DateTime();
         $oneDayAgo->modify('-1 day');
         if (!empty($rows))

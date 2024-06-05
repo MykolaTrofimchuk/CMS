@@ -96,7 +96,10 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                     $images = scandir($realImagesPath);
                     $images = array_diff($images, array('.', '..'));
                     $firstImage = !empty($images) ? reset($images) : null;
-                    $imageSrc = "../../../../../". $announcement['pathToImages'] . "/" . $firstImage;
+                    if (!is_null($firstImage)) {
+                        $imageSrc = "../../../../../" . $announcement['pathToImages'] . "/" . $firstImage;
+                    }
+
                 }
 
                 $deactiveDate = !empty($announcement['deactivationDate']) ? $announcement['deactivationDate'] : '...';
