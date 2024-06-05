@@ -54,7 +54,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                         $firstImage = !empty($images) ? reset($images) : null;
                         $firstImageSrc = "../../../../../" . $pathToImages . "/" . $firstImage;
                         array_shift($images);
-                    }else{
+                    } else {
                         $images = ['../../../src/resourses/no-photo.jpg'];
                         $firstImageSrc = '../../../src/resourses/no-photo.jpg';
                     }
@@ -112,13 +112,13 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                                                                         fill="#1F2024"></path></svg>
                                 <?= htmlspecialchars($vehicle->transmission) ?></span>
                             <?php if (!is_null($vehicle->region) || strlen($vehicle->region) > 0 || !is_null($userInfo[0]['region']) || strlen($userInfo[0]['region']) > 0): ?>
-                            <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                       xmlns="http://www.w3.org/2000/svg" class="common-icon mr-8"><path
-                                            fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M11 7C11 8.65685 9.65685 10 8 10C6.34315 10 5 8.65685 5 7C5 5.34315 6.34315 4 8 4C9.65685 4 11 5.34315 11 7ZM9 7C9 7.55228 8.55228 8 8 8C7.44772 8 7 7.55228 7 7C7 6.44772 7.44772 6 8 6C8.55228 6 9 6.44772 9 7Z"
-                                            fill="#1F2024"></path><path fill-rule="evenodd" clip-rule="evenodd"
-                                                                        d="M15 7C15 11 8 16 8 16C8 16 1 11 1 7C1 3.13401 4.13401 0 8 0C11.866 0 15 3.13401 15 7ZM13 7C13 7.44952 12.7871 8.12714 12.2189 9.02C11.6702 9.88226 10.9049 10.7667 10.0858 11.5858C9.34429 12.3273 8.59649 12.9779 8 13.4675C7.40351 12.9779 6.65571 12.3273 5.91421 11.5858C5.09513 10.7667 4.32979 9.88226 3.78107 9.02C3.21289 8.12714 3 7.44952 3 7C3 4.23858 5.23858 2 8 2C10.7614 2 13 4.23858 13 7Z"
-                                                                        fill="#1F2024"></path></svg>
+                                <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                           xmlns="http://www.w3.org/2000/svg" class="common-icon mr-8"><path
+                                                fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M11 7C11 8.65685 9.65685 10 8 10C6.34315 10 5 8.65685 5 7C5 5.34315 6.34315 4 8 4C9.65685 4 11 5.34315 11 7ZM9 7C9 7.55228 8.55228 8 8 8C7.44772 8 7 7.55228 7 7C7 6.44772 7.44772 6 8 6C8.55228 6 9 6.44772 9 7Z"
+                                                fill="#1F2024"></path><path fill-rule="evenodd" clip-rule="evenodd"
+                                                                            d="M15 7C15 11 8 16 8 16C8 16 1 11 1 7C1 3.13401 4.13401 0 8 0C11.866 0 15 3.13401 15 7ZM13 7C13 7.44952 12.7871 8.12714 12.2189 9.02C11.6702 9.88226 10.9049 10.7667 10.0858 11.5858C9.34429 12.3273 8.59649 12.9779 8 13.4675C7.40351 12.9779 6.65571 12.3273 5.91421 11.5858C5.09513 10.7667 4.32979 9.88226 3.78107 9.02C3.21289 8.12714 3 7.44952 3 7C3 4.23858 5.23858 2 8 2C10.7614 2 13 4.23858 13 7Z"
+                                                                            fill="#1F2024"></path></svg>
                             <?php
                             if (is_null($vehicle->region) || strlen($vehicle->region) === 0) {
                                 echo $userInfo[0]['region'];
@@ -171,19 +171,27 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
-                <?php
-                $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement->id);
+                <?php if (\Models\Users::IsUserLogged()) : ?>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <?php
+                        $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement->id);
 
-                if (!$isFavorite) : ?>
-                <div class="d-flex">
-                    <a href="/announcements/addtofavorites/<?= $announcement->id ?>" class="btn btn-sm btn-outline-secondary">Додати в обрані</a>
-                </div>
-                <?php endif;?>
-                <?php if ($isFavorite) : ?>
-                    <div class="d-flex">
-                        <a href="/announcements/removefromfavorites/<?= $announcement->id ?>" class="btn btn-sm btn-outline-secondary">Видалити з обраних</a>
+                        if (!$isFavorite) : ?>
+                            <a href="/announcements/addtofavorites/<?= $announcement->id ?>"
+                               class="btn btn-sm btn-outline-secondary">Слідкувати &#9829;</a>
+                        <?php endif; ?>
+
+                        <?php if ($isFavorite) : ?>
+                            <a href="/announcements/removefromfavorites/<?= $announcement->id ?>"
+                               class="btn btn-sm btn-outline-secondary bg-secondary text-white">Вподобане &#9829;</a>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
+
+                <div class="mt-4">
+                    <a href="#" class="btn btn-outline-secondary"><?= $userInfo[0]['phone_number'] ?></a>
+                </div>
+
             </div>
         </div>
     </div>

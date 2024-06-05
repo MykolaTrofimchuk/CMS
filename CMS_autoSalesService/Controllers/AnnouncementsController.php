@@ -159,6 +159,12 @@ class AnnouncementsController extends Controller
         $id = end($queryParts);
 
         if ($id !== null) {
+            $announcement = Announcements::SelectById($id);
+            $statusId = $announcement->status_id;
+
+            if ($statusId !== 1)
+                $this->redirect('/');
+
             $announcementId = $id;
 
             $announcement = Announcements::SelectById($announcementId);
@@ -290,6 +296,12 @@ class AnnouncementsController extends Controller
         $id = end($queryParts);
 
         if ($id !== null) {
+            $announcement = Announcements::SelectById($id);
+            $statusId = $announcement->status_id;
+
+            if ($statusId !== 1)
+                $this->redirect('/');
+
             $announcementId = $id;
             $userId = \core\Core::get()->session->get('user')['id'];
 
