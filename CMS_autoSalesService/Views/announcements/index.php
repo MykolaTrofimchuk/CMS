@@ -55,7 +55,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                         }
                         array_shift($images);
                     } else {
-                        $images = ['../../../src/resourses/no-photo.jpg'];
+                        $images = [];
                     }
                     ?>
                     <div class="col-12 mb-3">

@@ -1,7 +1,12 @@
 <?php
 $this->Title = 'Список оголошень';
 
-$userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['id']);
+$user = \core\Core::get()->session->get('user');
+
+if ($user !== null && isset($user['id'])) {
+    $userId = $user['id'];
+    $userInfo = \Models\Users::GetUserInfo($userId);
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -114,7 +119,9 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                 }
                 ?>
                 <div class="col-md-4">
-                    <div class="card mb-4 box-shadow <?= $inactiveClass ?>" data-status="<?= htmlspecialchars($announcement['statusText']) ?>" data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
+                    <div class="card mb-4 box-shadow <?= $inactiveClass ?>"
+                         data-status="<?= htmlspecialchars($announcement['statusText']) ?>"
+                         data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
                         <img class="card-img-top" alt="<?php echo($imageSrc) ?>"
                              style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>"
                              data-holder-rendered="true">
@@ -128,7 +135,8 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                     <em>З пробігом</em>
                                 </p>
                             <?php endif; ?>
-                            <p class="card-text fs-5" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <p class="card-text fs-5"
+                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 <?= htmlspecialchars($announcement['title']) ?>
                             </p>
                             <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement['price'])) . " $" ?></p>
@@ -180,13 +188,14 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                         $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement['id']);
 
                                         if (!$isFavorite) : ?>
-                                            <a href="/announcements/addtofavorites/<?= $announcement['id']?>"
+                                            <a href="/announcements/addtofavorites/<?= $announcement['id'] ?>"
                                                class="btn btn-sm btn-outline-secondary">Слідкувати &#9829;</a>
                                         <?php endif; ?>
 
                                         <?php if ($isFavorite) : ?>
                                             <a href="/announcements/removefromfavorites/<?= $announcement['id'] ?>"
-                                               class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується &#9829;</a>
+                                               class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується
+                                                &#9829;</a>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
