@@ -7,9 +7,8 @@
     <list default="true" id="476e006c-1597-466a-a042-f9c2ea25e4cf" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Announcements.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Announcements.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Vehicles.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Vehicles.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/Model.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Model.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/announcements/my.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/my.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/site/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/site/index.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +91,7 @@
       <workItem from="1717439540101" duration="10589000" />
       <workItem from="1717485885053" duration="43917000" />
       <workItem from="1717596236233" duration="20985000" />
-      <workItem from="1717672074155" duration="13924000" />
+      <workItem from="1717672074155" duration="16035000" />
     </task>
     <servers />
   </component>

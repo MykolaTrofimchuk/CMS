@@ -584,15 +584,81 @@ class AnnouncementsController extends Controller
                 }
             }
 
-            $newAnnouncementData = (array) $announcementInfo;
+            $newAnnouncementData = (array)$announcementInfo;
             $newAnnouncementData[0]['statusText'] = $this->mapStatusToText($announcementInfo[0]['status_id']);
             $newAnnouncementData[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
 
-            $GLOBALS['vehicleInfo'] = (array) $vehicleInfo ?? null;
+            $GLOBALS['vehicleInfo'] = (array)$vehicleInfo ?? null;
             $GLOBALS['announcementInfo'] = $newAnnouncementData ?? null;
             $GLOBALS['userOwnerInfo'] = Users::GetUserInfo($userId) ?? null;
 
             return $this->render();
+        }
+    }
+
+    public function actionSold()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $announcementId = $id;
+            $userId = \core\Core::get()->session->get('user')['id'];
+
+            $announcementInfo = Announcements::findByCondition(['id' => $announcementId, 'user_id' => $userId]);
+            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId)) {
+                $this->redirect('/announcements/my');
+            }
+
+            $deactivationDate = date('Y-m-d H:i:s');
+
+            $announcementDataToUpdate = [
+                'status_id' => 2,
+                'deactivationDate' => $deactivationDate
+            ];
+
+            $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
+
+            if ($resUpdateAnn)
+                $this->redirect('/announcements/my/1');
+        }
+    }
+
+    public function actionDelete()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $announcementId = $id;
+            $userId = \core\Core::get()->session->get('user')['id'];
+
+            $announcementInfo = Announcements::findByCondition(['id' => $announcementId, 'user_id' => $userId]);
+            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId)) {
+                $this->redirect('/announcements/my');
+            }
+
+            $deactivationDate = date('Y-m-d H:i:s');
+
+            $announcementDataToUpdate = [
+                'status_id' => 3,
+                'deactivationDate' => $deactivationDate
+            ];
+
+            $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
+
+            if ($resUpdateAnn)
+                $this->redirect('/announcements/my/1');
         }
     }
 }

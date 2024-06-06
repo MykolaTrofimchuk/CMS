@@ -76,6 +76,11 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
 </head>
 <body>
 <div class="album py-5 bg-light">
+    <?php if (!empty($error_message)) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?= $error_message ?>
+        </div>
+    <?php endif; ?>
     <div class="container">
         <div class="row">
             <?php foreach ($GLOBALS['announcementsMy'] as $announcement): ?>
@@ -187,6 +192,12 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                     <?php endif; ?>
                                 </div>
                                 <small class="text-muted"><?= htmlspecialchars($announcement['publicationDate']) ?></small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center w-100 mt-3">
+                                <a href="/announcements/sold/<?= $announcement['id']?>"
+                                   class="btn btn-sm btn-outline-success w-50 m-0 text-center">Продано &#36;</a>
+                                <a href="/announcements/delete/<?= $announcement['id']?>"
+                                   class="btn btn-sm btn-outline-danger w-50 m-0 text-center">Видалити &#215;</a>
                             </div>
                         </div>
                     </div>
