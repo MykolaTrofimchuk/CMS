@@ -529,58 +529,58 @@ class AnnouncementsController extends Controller
                     $resUpdateVeh = Vehicles::EditVehicleInfo($vehicleInfo->id, $vehicleDataToUpdate);
                     $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
 
-                    if ($resUpdateVeh && $resUpdateAnn)
-                        $this->redirect("/announcements/index/{$announcementId}");
-                }
+                    if (!empty($_FILES['carImages'])) {
+                        $uploadDir = "src/database/announcements/announcement" . $announcementId . "/";
+                        if (!file_exists($uploadDir)) {
+                            mkdir($uploadDir, 0777, true);
+                        }
 
-                if (!empty($_FILES['carImages'])) {
-                    $uploadDir = "src/database/announcements/announcement" . $announcementId . "/";
-                    if (!file_exists($uploadDir)) {
-                        mkdir($uploadDir, 0777, true);
-                    }
+                        $existingImages = scandir($uploadDir);
+                        $existingImages = array_diff($existingImages, array('.', '..'));
 
-                    $existingImages = scandir($uploadDir);
-                    $existingImages = array_diff($existingImages, array('.', '..'));
+                        foreach ($_FILES['carImages']['tmp_name'] as $index => $tmpName) {
+                            if ($_FILES['carImages']['error'][$index] === UPLOAD_ERR_OK) {
+                                $extension = strtolower(pathinfo($_FILES['carImages']['name'][$index], PATHINFO_EXTENSION));
+                                $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');
 
-                    foreach ($_FILES['carImages']['tmp_name'] as $index => $tmpName) {
-                        if ($_FILES['carImages']['error'][$index] === UPLOAD_ERR_OK) {
-                            $extension = strtolower(pathinfo($_FILES['carImages']['name'][$index], PATHINFO_EXTENSION));
-                            $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');
+                                if (in_array($extension, $allowedExtensions)) {
+                                    // Перевірка наявності файлу з таким ім'ям
+                                    $i = 0;
+                                    $newFileName = ($index + count($existingImages)) . '.' . $extension;
+                                    while (in_array($newFileName, $existingImages)) {
+                                        $i++;
+                                        $newFileName = ($index + count($existingImages) + $i) . '.' . $extension;
+                                    }
 
-                            if (in_array($extension, $allowedExtensions)) {
-                                // Перевірка наявності файлу з таким ім'ям
-                                $i = 0;
-                                $newFileName = ($index + count($existingImages)) . '.' . $extension;
-                                while (in_array($newFileName, $existingImages)) {
-                                    $i++;
-                                    $newFileName = ($index + count($existingImages) + $i) . '.' . $extension;
-                                }
+                                    $uploadFile = $uploadDir . $newFileName;
 
-                                $uploadFile = $uploadDir . $newFileName;
-
-                                if (exif_imagetype($tmpName) !== false) {
-                                    move_uploaded_file($tmpName, $uploadFile);
+                                    if (exif_imagetype($tmpName) !== false) {
+                                        move_uploaded_file($tmpName, $uploadFile);
+                                    } else {
+                                        $this->addErrorMessage('Файл ' . $_FILES['carImages']['name'][$index] . ' не є зображенням.');
+                                    }
                                 } else {
-                                    $this->addErrorMessage('Файл ' . $_FILES['carImages']['name'][$index] . ' не є зображенням.');
+                                    $this->addErrorMessage('Файл ' . $_FILES['carImages']['name'][$index] . ' має неприпустиме розширення.');
                                 }
                             } else {
-                                $this->addErrorMessage('Файл ' . $_FILES['carImages']['name'][$index] . ' має неприпустиме розширення.');
+                                $this->addErrorMessage('Не вдалося завантажити файл: ' . $_FILES['carImages']['name'][$index]);
                             }
-                        } else {
-                            $this->addErrorMessage('Не вдалося завантажити файл: ' . $_FILES['carImages']['name'][$index]);
                         }
                     }
-                }
 
-                if (strlen($this->post->deletedImages) !== 0) {
-                    $deletedImagesArray = explode(', ', $this->post->deletedImages);
+                    if (strlen($this->post->deletedImages) !== 0) {
+                        $deletedImagesArray = is_array($this->post->deletedImages) ? $this->post->deletedImages : explode(', ', $this->post->deletedImages);
 
-                    foreach ($deletedImagesArray as $deletedImage) {
-                        $imagePath = "src/database/announcements/announcement" . $announcementId . "/" . $deletedImage;
-                        if (file_exists($imagePath)) {
-                            unlink($imagePath);
+                        foreach ($deletedImagesArray as $deletedImage) {
+                            $imagePath = "src/database/announcements/announcement" . $announcementId . "/" . $deletedImage;
+                            if (file_exists($imagePath)) {
+                                unlink($imagePath);
+                            }
                         }
                     }
+
+                    if ($resUpdateVeh && $resUpdateAnn)
+                        $this->redirect("/announcements/index/{$announcementId}");
                 }
             }
 

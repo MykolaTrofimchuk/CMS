@@ -77,7 +77,7 @@ class Vehicles extends Model
 
     public static function EditVehicleInfo($vehId, $dataToUpdate)
     {
-        $vehicle = Vehicles::selectSmthById($vehId, 'Models\Vehicles');
+        $vehicle = Vehicles::selectRowById($vehId, 'Models\Vehicles');
 
         if ($vehicle) {
             foreach ($dataToUpdate as $field => $value) {

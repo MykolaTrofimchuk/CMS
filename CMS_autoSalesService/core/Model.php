@@ -74,7 +74,7 @@ class Model
         }
     }
 
-    public static function selectSmthById($id, $className)
+    public static function selectRowById($id, $className)
     {
         $arr = Core::get()->db->select(static::$tableName, '*', [static::$primaryKey => $id]);
         if (count($arr) > 0) {

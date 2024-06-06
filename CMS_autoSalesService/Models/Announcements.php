@@ -133,7 +133,7 @@ class Announcements extends Model
 
     public static function EditAnnouncementInfo($announcementId, $dataToUpdate)
     {
-        $announcement = Announcements::selectSmthById($announcementId, 'Models\Announcements');
+        $announcement = Announcements::selectRowById($announcementId, 'Models\Announcements');
 
         if ($announcement) {
             foreach ($dataToUpdate as $field => $value) {
