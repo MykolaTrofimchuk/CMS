@@ -40,8 +40,12 @@ class Controller
         ];
     }
 
-    public function redirect($path): void
+    public function redirect($path, $params = null): void
     {
+        if ($params) {
+            // Збереження параметрів у сесії
+            $_SESSION['redirect_params'] = $params;
+        }
         header("Location: {$path}");
         die;
     }

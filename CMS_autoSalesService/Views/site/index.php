@@ -17,16 +17,16 @@
         <div class="col-md-6">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-body p-5">
-                    <form >
+                    <form action="" method="post">
                         <div class="row">
                             <div class="col">
                                 <div class="btn-group d-flex" role="group" aria-label="Basic radio toggle button group">
-                                    <input type="radio" class="btn-check" name="options" id="optionAll" autocomplete="off" checked>
+                                    <input type="radio" class="btn-check" name="options" id="optionAll" autocomplete="off" value="" checked>
                                     <label class="btn btn-light flex-fill" for="optionAll"><span class="text-light">&#10003;</span> Усі</label>
-                                    <input type="radio" class="btn-check" name="options" id="optionOld" autocomplete="off">
-                                    <label class="btn btn-light flex-fill" for="optionOld"><span class="text-light">&#10003;</span> Вживані</label>
-                                    <input type="radio" class="btn-check" name="options" id="optionNew" autocomplete="off">
-                                    <label class="btn btn-light flex-fill" for="optionNew"><span class="text-light">&#10003;</span> Нові</label>
+                                    <input type="radio" class="btn-check" name="options" id="optionOld" autocomplete="off" value="З пробігом">
+                                    <label class="btn btn-light flex-fill" for="optionOld"><span class="text-light">&#10003;</span>Вживані</label>
+                                    <input type="radio" class="btn-check" name="options" id="optionNew" autocomplete="off" value="Нове">
+                                    <label class="btn btn-light flex-fill" for="optionNew"><span class="text-light">&#10003;</span>Нові</label>
                                 </div>
                             </div>
                             <div class="col">
@@ -53,7 +53,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col">
-                                <select class="form-control" id="bodyType" name="bodyType">
+                                <select class="form-control" id="bodyType" name="body_type">
                                     <option value="">Тип кузова</option>
                                     <option>Седан</option>
                                     <option>Універсал</option>
@@ -94,7 +94,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col">
-                                <select class="form-control" id="regionObl" name="regionObl">
+                                <select class="form-control" id="regionObl" name="region">
                                     <option value="">Регіон (область):</option>
                                     <option value="Київська">Київська</option>
                                     <option value="Вінницька">Вінницька</option>
@@ -125,10 +125,10 @@
                             <div class="col">
                                 <div class="row">
                                     <div class="col">
-                                        <input type="number" class="form-control" placeholder="Ціна $, Від:" min="0">
+                                        <input type="number" class="form-control" placeholder="Ціна $, Від:" min="0" name="priceFrom">
                                     </div>
                                     <div class="col">
-                                        <input type="number" class="form-control" placeholder="Ціна $, До:" min="0">
+                                        <input type="number" class="form-control" placeholder="Ціна $, До:" min="0" name="priceTo">
                                     </div>
                                 </div>
                             </div>
@@ -147,15 +147,15 @@
                                 <label>Пробіг</label>
                             </div>
                             <div class="col d-flex justify-content-between">
-                                <input type="number" class="form-control" placeholder="Від: " min="0">
-                                <input type="number" class="form-control" placeholder="До:" min="0">
+                                <input type="number" class="form-control" placeholder="Від: " min="0" name="millageFrom">
+                                <input type="number" class="form-control" placeholder="До:" min="0" name="millageTo">
                             </div>
                             <div class="col mt-3 d-flex justify-content-between">
                                 <label>Тип палива: </label>
                                 <label>Коробка передач: </label>
                             </div>
                             <div class="col d-flex justify-content-between">
-                                <select class="form-control" id="fuelType" name="fuelType">
+                                <select class="form-control" id="fuelType" name="fuel_type">
                                     <option value="">Паливо</option>
                                     <option value="Бензин"> Бензин</option>
                                     <option value="Газ"> Газ</option>
@@ -180,15 +180,15 @@
                                 <label>Об'єм двигуна</label>
                             </div>
                             <div class="col d-flex justify-content-between">
-                                <input type="number" class="form-control" placeholder="Від: " min="0">
-                                <input type="number" class="form-control" placeholder="До:" min="0">
+                                <input type="number" class="form-control" placeholder="Від: " min="0" name="engineCapacityFrom">
+                                <input type="number" class="form-control" placeholder="До:" min="0" name="engineCapacityTo">
                             </div>
                             <div class="col mt-3 d-flex justify-content-between">
                                 <label>Потужність (к.с.)</label>
                             </div>
                             <div class="col d-flex justify-content-between">
-                                <input type="number" class="form-control" placeholder="Від: " min="0">
-                                <input type="number" class="form-control" placeholder="До:" min="0">
+                                <input type="number" class="form-control" placeholder="Від: " min="0" name="horsePowerFrom">
+                                <input type="number" class="form-control" placeholder="До:" min="0" name="horsePowerTo">
                             </div>
                             <div class="col mt-3 d-flex justify-content-between">
                                 <label>Привід:</label>
@@ -222,11 +222,11 @@
                             </div>
                             <div class="col mt-3 d-flex justify-content-between">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="isPlate">
+                                    <input class="form-check-input" type="checkbox" id="isPlate" name="plate">
                                     <label class="form-check-label" for="isPlate">Наявний держ.номер</label>
                                 </div>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="isVinCode">
+                                    <input class="form-check-input" type="checkbox" id="isVinCode" name="vin_code">
                                     <label class="form-check-label" for="isVinCode">Наявний VIN-код</label>
                                 </div>
                             </div>

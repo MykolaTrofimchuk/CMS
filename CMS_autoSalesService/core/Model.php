@@ -106,9 +106,9 @@ class Model
             return null;
     }
 
-    public static function findByLimitAndOffset($limit, $offset)
+    public static function findByLimitAndOffset($limit, $offset, $where = null)
     {
-        $arr = Core::get()->db->select(static::$tableName, '*', null, $limit, $offset);
+        $arr = Core::get()->db->select(static::$tableName, '*', $where, $limit, $offset);
         if (count($arr) > 0)
             return $arr;
         else

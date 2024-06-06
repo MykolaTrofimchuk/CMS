@@ -23,16 +23,19 @@ class DB
             $where_fields = array_keys($where);
             $parts = [];
             foreach ($where_fields as $field) {
-                $parts[] = "{$field} = :{$field}";
-
+                // Розділити ключ на поле і умову порівняння
+                $split = explode(' ', $field, 2);
+                $field = $split[0];
+                $operator = isset($split[1]) ? $split[1] : '=';
+                // Додати умову порівняння замість =
+                $parts[] = "{$field} {$operator} :{$field}_unique";
             }
             $where_string .= implode(' AND ', $parts);
-        } else
-            if (is_string($where))
-                $where_string = $where;
-            else
-                $where_string = '';
-
+        } elseif (is_string($where)) {
+            $where_string = "WHERE {$where}";
+        } else {
+            $where_string = '';
+        }
         return $where_string;
     }
 
@@ -59,10 +62,15 @@ class DB
         }
 
         $sql = "SELECT {$fields_string} FROM {$table} {$where_string} {$limit_string} {$offset_string}";
+
         $sth = $this->pdo->prepare($sql);
+
         if ($where !== null) {
             foreach ($where as $key => $value) {
-                $sth->bindValue(":{$key}", $value);
+                $split = explode(' ', $key, 2);
+                $field = $split[0];
+                $unique_key = "{$field}_unique";
+                $sth->bindValue(":{$unique_key}", $value);
             }
         }
         $sth->execute();

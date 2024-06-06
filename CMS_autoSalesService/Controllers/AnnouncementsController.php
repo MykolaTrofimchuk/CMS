@@ -213,8 +213,35 @@ class AnnouncementsController extends Controller
         }
 
         if ($currentPage !== null) {
+            $filter = \core\Core::get()->session->get('redirect_params');
+            $filterArray = $filter['additionalData'];
+            $filterAssocArray = [];
+            foreach ($filterArray as $key => $value) {
+                if ($key === 'priceFrom') {
+                    $key = 'price >=';
+                }
+                if ($key === 'priceTo') {
+                    $key = 'price <=';
+                }
+                if ($key === 'modelYearFrom' && strlen($value) !== 0) {
+                    $key = 'model_year >=';
+                    $value = date('Y-m-d', strtotime("$value-01-01"));
+                }
+                if ($key === 'modelYearTo' && strlen($value) !== 0) {
+                    $key = 'model_year <=';
+                    $value = date('Y-m-d', strtotime("$value-12-31"));
+                }
+                if (strlen($value) !== 0) {
+                    $filterAssocArray[$key] = $value;
+                }
+            }
+
+            if (empty($filterAssocArray)) {
+                $filterAssocArray = null;
+            }
+
             $announcementsPerPage = 6;
-            $totalAnnouncements = Announcements::CountAll(); // Get the total number of announcements
+            $totalAnnouncements = Announcements::CountAll($filterAssocArray); // Pass filters to count
             $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
 
             $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
@@ -222,7 +249,7 @@ class AnnouncementsController extends Controller
                 $this->redirect("$totalPages");
             }
             $offset = ($currentPage - 1) * $announcementsPerPage;
-            $announcements = Announcements::SelectPaginated($announcementsPerPage, $offset);
+            $announcements = Announcements::SelectPaginated($announcementsPerPage, $offset, $filterAssocArray);
 
             foreach ($announcements as &$announcement) {
                 $statusId = $announcement['status_id'];

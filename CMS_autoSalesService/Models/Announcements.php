@@ -21,13 +21,26 @@ class Announcements extends Model
 {
     public static $tableName = 'announcements';
 
-    public static function SelectPaginated($limit, $offset)
+    public static function SelectPaginated($limit, $offset, $where = null)
     {
         $rows = self::findByLimitAndOffset($limit, $offset);
         $validAnnouncements = [];
 
         $oneDayAgo = new DateTime();
         $oneDayAgo->modify('-1 day');
+
+        $whereVehArray = [];
+        if ($where !== null) {
+            foreach ($where as $key => $value) {
+                if (strlen($value) !== 0) {
+                    $whereVehArray[$key] = $value;
+                }
+            }
+        }
+        if (empty($whereVehArray)) {
+            $whereVehArray = null;
+        }
+
         foreach ($rows as $announcement) {
             $statusId = $announcement['status_id'];
             $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
@@ -36,7 +49,22 @@ class Announcements extends Model
                 continue;
             }
 
-            $validAnnouncements[] = $announcement;
+            $vehicleData = Vehicles::selectRowById($announcement['vehicle_id'], 'Models\Vehicles');
+
+            $filterVehicles = Vehicles::findRowsByCondition('*', $whereVehArray);
+            $isValidVehicle = false;
+
+            if (!empty($filterVehicles))
+                foreach ($filterVehicles as $vehicle) {
+                    if ($vehicle['id'] === $announcement['vehicle_id']) {
+                        $isValidVehicle = true;
+                        break;
+                    }
+                }
+
+            if ($isValidVehicle) {
+                $validAnnouncements[] = $announcement;
+            }
         }
 
         return $validAnnouncements;
