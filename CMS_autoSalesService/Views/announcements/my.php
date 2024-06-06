@@ -118,10 +118,16 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                 }
                 ?>
                 <div class="col-md-4">
-                    <div class="card mb-4 box-shadow <?= $inactiveClass ?>" data-status="<?= htmlspecialchars($announcement['statusText']) ?>" data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
+                    <div class="card mb-4 box-shadow <?= $inactiveClass ?>"
+                         data-status="<?= htmlspecialchars($announcement['statusText']) ?>"
+                         data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
                         <div class="card-img-top-container" style="position: relative;">
-                            <img class="card-img-top" alt="<?php echo($imageSrc) ?>" style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>" data-holder-rendered="true">
-                            <a href="/announcements/edit/<?= htmlspecialchars($announcement['id']) ?>" class="btn btn-primary" style="position: absolute; top: 10px; right: 10px;">Редагувати</a>
+                            <img class="card-img-top" alt="<?php echo($imageSrc) ?>"
+                                 style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>"
+                                 data-holder-rendered="true">
+                            <a href="/announcements/edit/<?= htmlspecialchars($announcement['id']) ?>"
+                               class="btn btn-primary"
+                               style="position: absolute; top: 10px; right: 10px;">Редагувати</a>
                         </div>
                         <div class="card-body">
                             <?php if ($vehicleInfo->veh_condition === 'З пробігом' || $vehicleInfo->veh_condition === 'Нове') : ?>
@@ -133,10 +139,11 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                     <em>З пробігом</em>
                                 </p>
                             <?php endif; ?>
-                            <p class="card-text fs-5" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <p class="card-text fs-5"
+                               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 <?= htmlspecialchars($announcement['title']) ?>
                             </p>
-                            <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement['price'])) . " $"?></p>
+                            <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement['price'])) . " $" ?></p>
                             <?php if ($announcement['description'] !== null): ?>
                                 <p class="card-text"><?= substr($announcement['description'], 0, 64) . '...' ?></p>
                             <?php else: ?>
@@ -154,7 +161,8 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                     }
                                     ?>
                                 </p>
-                            </div><hr>
+                            </div>
+                            <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group" style="display: flex; justify-content: space-between;">
                                     <p class="card-text"><?php
@@ -166,37 +174,41 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                         ?></p>
                                 </div>
                                 <p class="card-text"><?= htmlspecialchars($vehicleInfo->fuel_type) ?></p>
-                            </div><hr>
+                            </div>
+                            <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group" style="display: flex; justify-content: space-between;">
                                     <p class="card-text"><?= htmlspecialchars($vehicleInfo->transmission) ?></p>
                                 </div>
                                 <p class="card-text"><?= htmlspecialchars($vehicleInfo->color) ?></p>
-                            </div><hr>
+                            </div>
+                            <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <a href="/announcements/index/<?= $announcement['id'] ?>" class="btn btn-sm btn-outline-secondary">Переглянути</a>
+                                    <a href="/announcements/index/<?= $announcement['id'] ?>"
+                                       class="btn btn-sm btn-outline-secondary">Переглянути</a>
                                     <?php if (\Models\Users::IsUserLogged()) : ?>
                                         <?php
                                         $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement['id']);
 
                                         if (!$isFavorite) : ?>
-                                            <a href="/announcements/addtofavorites/<?= $announcement['id']?>"
+                                            <a href="/announcements/addtofavorites/<?= $announcement['id'] ?>"
                                                class="btn btn-sm btn-outline-secondary">Слідкувати &#9829;</a>
                                         <?php endif; ?>
 
                                         <?php if ($isFavorite) : ?>
                                             <a href="/announcements/removefromfavorites/<?= $announcement['id'] ?>"
-                                               class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується &#9829;</a>
+                                               class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується
+                                                &#9829;</a>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
                                 <small class="text-muted"><?= htmlspecialchars($announcement['publicationDate']) ?></small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center w-100 mt-3">
-                                <a href="/announcements/sold/<?= $announcement['id']?>"
+                                <a href="/announcements/sold/<?= $announcement['id'] ?>"
                                    class="btn btn-sm btn-outline-success w-50 m-0 text-center">Продано &#36;</a>
-                                <a href="/announcements/delete/<?= $announcement['id']?>"
+                                <a href="/announcements/delete/<?= $announcement['id'] ?>"
                                    class="btn btn-sm btn-outline-danger w-50 m-0 text-center">Видалити &#215;</a>
                             </div>
                         </div>
@@ -205,13 +217,14 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
             <?php endforeach; ?>
         </div>
         <?php if (!empty($GLOBALS['totalPagesMy'])) : ?>
-        <div class="pagination">
-            <?php for ($i = 1; $i <= $GLOBALS['totalPagesMy']; $i++): ?>
-                <a href="/announcements/my/<?= $i ?>" class="<?= $i == $GLOBALS['currentPageMy'] ? 'active' : '' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-        </div>
+            <div class="pagination">
+                <?php for ($i = 1; $i <= $GLOBALS['totalPagesMy']; $i++): ?>
+                    <a href="/announcements/my/<?= $i ?>"
+                       class="<?= $i == $GLOBALS['currentPageMy'] ? 'active' : '' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php endfor; ?>
+            </div>
         <?php endif; ?>
     </div>
 </div>

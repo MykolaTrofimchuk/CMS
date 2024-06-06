@@ -615,17 +615,20 @@ class AnnouncementsController extends Controller
                 $this->redirect('/announcements/my');
             }
 
-            $deactivationDate = date('Y-m-d H:i:s');
+            if ($announcementInfo[0]['status_id'] === 1) {
+                $deactivationDate = date('Y-m-d H:i:s');
 
-            $announcementDataToUpdate = [
-                'status_id' => 2,
-                'deactivationDate' => $deactivationDate
-            ];
+                $announcementDataToUpdate = [
+                    'status_id' => 2,
+                    'deactivationDate' => $deactivationDate
+                ];
 
-            $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
+                $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
 
-            if ($resUpdateAnn)
-                $this->redirect('/announcements/my/1');
+                if ($resUpdateAnn)
+                    $this->redirect('/announcements/my/1');
+            }
+            $this->redirect('/');
         }
     }
 
