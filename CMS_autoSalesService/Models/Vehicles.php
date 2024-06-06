@@ -28,7 +28,8 @@ class Vehicles extends Model
 
     public static function FindVehicleById($vehId)
     {
-        return self::findById($vehId);
+        $result = self::findByCondition(['id' => $vehId]);
+        return !empty($result) ? (object)$result[0] : null;
     }
 
     public static function LogVehicle($veh)
@@ -72,5 +73,23 @@ class Vehicles extends Model
             return $result[0]['last_id'];
         }
         return null;
+    }
+
+    public static function EditVehicleInfo($vehId, $dataToUpdate)
+    {
+        $vehicle = Vehicles::selectSmthById($vehId, 'Models\Vehicles');
+
+        if ($vehicle) {
+            foreach ($dataToUpdate as $field => $value) {
+                if (isset($value) && !empty($value)) {
+                    // Встановлюємо інші поля, якщо вони не порожні
+                    $vehicle->{$field} = $value;
+                }
+            }
+            $vehicle->save(); // Зберігаємо зміни в базі даних
+            return true;
+        } else {
+            return false;
+        }
     }
 }

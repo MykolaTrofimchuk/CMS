@@ -2,6 +2,8 @@
 
 namespace core;
 
+use Models\Vehicles;
+
 class Model
 {
     protected $fieldsArray;
@@ -67,6 +69,20 @@ class Model
             $user = new \Models\Users();
             $user->fieldsArray = $arr[0];
             return $user;
+        } else {
+            return null;
+        }
+    }
+
+    public static function selectSmthById($id, $className)
+    {
+        $arr = Core::get()->db->select(static::$tableName, '*', [static::$primaryKey => $id]);
+        if (count($arr) > 0) {
+            $obj = new $className();
+            foreach ($arr[0] as $key => $value) {
+                $obj->{$key} = $value;
+            }
+            return $obj;
         } else {
             return null;
         }

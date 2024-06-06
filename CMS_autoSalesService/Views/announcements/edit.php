@@ -6,8 +6,6 @@ $this->Title = 'Редагування оголошення';
 $vehicleInfo = $GLOBALS['vehicleInfo'];
 $announcementInfo = $GLOBALS['announcementInfo'];
 $ownerInfo = $GLOBALS['userOwnerInfo'];
-
-var_dump($announcementInfo[0]['pathToImages']);
 ?>
 <!doctype html>
 <html lang="en">
@@ -83,8 +81,8 @@ var_dump($announcementInfo[0]['pathToImages']);
             <div class="form-floating mb-3">
                 <select class="form-control" id="condition" name="condition">
                     <option value="">Оберіть стан автомобіля</option>
-                    <option <?php echo ($vehicleInfo->veh_condition === 'Нове') ? 'selected' : ''; ?>>Нове</option>
-                    <option <?php echo ($vehicleInfo->veh_condition === 'З пробігом') ? 'selected' : ''; ?>>З пробігом</option>
+                    <option <?php echo ($vehicleInfo['veh_condition'] === 'Нове') ? 'selected' : ''; ?>>Нове</option>
+                    <option <?php echo ($vehicleInfo['veh_condition'] === 'З пробігом') ? 'selected' : ''; ?>>З пробігом</option>
                 </select>
                 <label for="condition">Стан авто</label>
             </div>
@@ -101,7 +99,7 @@ var_dump($announcementInfo[0]['pathToImages']);
                                 $brands = \Models\FilterModelBrands::FindAllBrandUnique();
                                 sort($brands);
                                 foreach ($brands as $brand) {
-                                    $selected = ($brand === $vehicleInfo->brand) ? 'selected' : '';
+                                    $selected = ($brand === $vehicleInfo['brand']) ? 'selected' : '';
                                     echo "<option value='$brand' $selected>$brand</option>";
                                 }
                                 ?>
@@ -112,7 +110,7 @@ var_dump($announcementInfo[0]['pathToImages']);
                             <select class="form-control" id="carModel" name="model">
                                 <option value="">Оберіть модель авто</option>
                                 <?php
-                                $models = \Models\FilterModelBrands::FindModelsByBrand($this->controller->post->brand);
+                                $models = \Models\FilterModelBrands::FindModelsByBrand($vehicleInfo['brand']);
                                 foreach ($models as $model) {
                                     $selected = ($model === $this->controller->post->model) ? 'selected' : '';
                                     echo "<option value='$model' $selected>$model</option>";
@@ -128,11 +126,11 @@ var_dump($announcementInfo[0]['pathToImages']);
                     <div class="row">
                         <div class="col">
                             <label for="modelYear">Рік випуску</label>
-                            <input type="date" class="form-control" id="modelYear" placeholder="Рік випуску" name="modelYear" value="<?= $vehicleInfo->model_year ?>">
+                            <input type="date" class="form-control" id="modelYear" placeholder="Рік випуску" name="modelYear" value="<?= $vehicleInfo['model_year'] ?>">
                         </div>
                         <div class="col">
                             <label for="millage">Пробіг (км)</label>
-                            <input type="number" class="form-control" id="millage" placeholder="пробіг авто (у км)" name="millage" value="<?= $vehicleInfo->millage ?>">
+                            <input type="number" class="form-control" id="millage" placeholder="пробіг авто (у км)" name="millage" value="<?= $vehicleInfo['millage'] ?>">
                         </div>
                         <div class="col">
                             <label for="bodyType">Тип кузова</label>
@@ -148,7 +146,7 @@ var_dump($announcementInfo[0]['pathToImages']);
                                 ];
 
                                 foreach ($bodyTypes as $bodyType) {
-                                    $selected = ($bodyType === $vehicleInfo->body_type) ? 'selected' : '';
+                                    $selected = ($bodyType === $vehicleInfo['body_type']) ? 'selected' : '';
                                     echo "<option $selected>$bodyType</option>";
                                 }
                                 ?>
@@ -186,7 +184,7 @@ var_dump($announcementInfo[0]['pathToImages']);
                                 ];
 
                                 foreach ($transmissions as $transmission) {
-                                    $selected = ($transmission === $vehicleInfo->transmission) ? 'selected' : '';
+                                    $selected = ($transmission === $vehicleInfo['transmission']) ? 'selected' : '';
                                     echo "<option value='$transmission' $selected>$transmission</option>";
                                 }
                                 ?>
@@ -203,7 +201,7 @@ var_dump($announcementInfo[0]['pathToImages']);
                                 ];
 
                                 foreach ($fuelTypes as $fuelType) {
-                                    $selected = ($fuelType === $vehicleInfo->fuel_type) ? 'selected' : '';
+                                    $selected = ($fuelType === $vehicleInfo['fuel_type']) ? 'selected' : '';
                                     echo "<option value='$fuelType' $selected>$fuelType</option>";
                                 }
                                 ?>
@@ -218,13 +216,13 @@ var_dump($announcementInfo[0]['pathToImages']);
                         <div class="col">
                             <label for="engineCapacity">Об’єм двигуна (л)</label>
                             <input type="text" class="form-control" id="engineCapacity"
-                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity" value="<?= $vehicleInfo->engine_capacity ?>">
+                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity" value="<?= $vehicleInfo['engine_capacity'] ?>">
                         </div>
 
                         <div class="col">
                             <label for="horsePowers">Потужність двигуна (к.с.)</label>
                             <input type="number" class="form-control" id="horsePowers"
-                                   placeholder="Потужність (кінських сил)" name="horsePower" value="<?= $vehicleInfo->horse_power ?>">
+                                   placeholder="Потужність (кінських сил)" name="horsePower" value="<?= $vehicleInfo['horse_power'] ?>">
                         </div>
                     </div>
                 </div>
@@ -239,7 +237,7 @@ var_dump($announcementInfo[0]['pathToImages']);
                                 <?php
                                 $drives = ['Повний', 'Передній', 'Задній'];
                                 foreach ($drives as $drive) {
-                                    $selected = ($drive === $vehicleInfo->drive) ? 'selected' : '';
+                                    $selected = ($drive === $vehicleInfo['drive']) ? 'selected' : '';
                                     echo "<option value='$drive' $selected>$drive</option>";
                                 }
                                 ?>
@@ -252,7 +250,7 @@ var_dump($announcementInfo[0]['pathToImages']);
                                 <?php
                                 $colors = ['Чорний', 'Коричневий', 'Білий', 'Сірий', 'Бежевий', 'Зелений', 'Жовтий', 'Синій', 'Фіолетовий', 'Помаранчевий', 'Червоний'];
                                 foreach ($colors as $color) {
-                                    $selected = ($color === $vehicleInfo->color) ? 'selected' : '';
+                                    $selected = ($color === $vehicleInfo['color']) ? 'selected' : '';
                                     echo "<option value='$color' $selected>$color</option>";
                                 }
                                 ?>
@@ -269,12 +267,12 @@ var_dump($announcementInfo[0]['pathToImages']);
                         <div class="col">
                             <label for="plate">Номерний знак</label>
                             <input type="text" class="form-control" id="plate"
-                                   placeholder="Номерний знак (АА0000АА)" name="plate" value="<?= $vehicleInfo->plate ?>">
+                                   placeholder="Номерний знак (АА0000АА)" name="plate" value="<?= $vehicleInfo['plate'] ?>">
                         </div>
                         <div class="col">
                             <label for="vinCode">VIN-код</label>
                             <input type="text" class="form-control" id="vinCode"
-                                   placeholder="VIN-код (XXXXYYYYYXXXYXYXYXX)" name="vinCode" value="<?= $vehicleInfo->vinCode ?>">
+                                   placeholder="VIN-код (XXXXYYYYYXXXYXYXYXX)" name="vinCode" value="<?= $vehicleInfo['vin_code'] ?>">
                         </div>
                     </div>
                 </div>

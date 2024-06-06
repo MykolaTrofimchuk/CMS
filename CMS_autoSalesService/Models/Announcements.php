@@ -130,4 +130,22 @@ class Announcements extends Model
 
         return $validAnnouncements;
     }
+
+    public static function EditAnnouncementInfo($announcementId, $dataToUpdate)
+    {
+        $announcement = Announcements::selectSmthById($announcementId, 'Models\Announcements');
+
+        if ($announcement) {
+            foreach ($dataToUpdate as $field => $value) {
+                if (isset($value) && !empty($value)) {
+                    // Встановлюємо інші поля, якщо вони не порожні
+                    $announcement->{$field} = $value;
+                }
+            }
+            $announcement->save(); // Зберігаємо зміни в базі даних
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

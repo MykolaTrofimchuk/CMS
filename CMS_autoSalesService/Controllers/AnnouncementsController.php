@@ -18,25 +18,44 @@ class AnnouncementsController extends Controller
 {
     public $announcements;
 
+    private function validate()
+    {
+        if (strlen($this->post->condition) === 0) {
+            $this->addErrorMessage('Стан авто не вказано!');
+        }
+        if (mb_strlen($this->post->title) > 10) {
+            $this->addErrorMessage('Заголовок вказано некоректно! Довжина має бути до 10 символів');
+        }
+        if (strlen($this->post->price) === 0 || $this->post->price > 100000000)
+            $this->addErrorMessage('Ціну не вказано \ Вказано некоректно');
+        if (strlen($this->post->bodyType) === 0)
+            $this->addErrorMessage('Тип кузова не вказано!');
+        if (strlen($this->post->transmission) === 0)
+            $this->addErrorMessage('Тип коробки передач не вказано!');
+        if (strlen($this->post->fuelType) === 0)
+            $this->addErrorMessage('Тип палива двигуна не вказано!');
+        if (!preg_match('/^\d{1}\.\d+$/', $this->post->engineCapacity)) {
+            $this->addErrorMessage('Об\'єм двигуна повинен однозначним числом з однією цифрою після крапки!');
+        }
+        if (strlen($this->post->color) === 0)
+            $this->addErrorMessage('Колір кузова не вказано!');
+        if ($this->post->horsePower > 9999)
+            $this->addErrorMessage('Перепрошуємо, такі потужні автомобілі неможливо виставити на продаж!');
+    }
+
     public function actionAdd()
     {
         if ($this->isPost) {
             $userId = \core\Core::get()->session->get('user')['id'];
 
-            if (strlen($this->post->condition) === 0) {
-                $this->addErrorMessage('Стан авто не вказано!');
-            }
+            $this->validate();
+
             $millage = $this->post->millage;
             if ($this->post->condition === 'Нове') {
                 $millage = 0;
             }
             if ($millage > 9999999)
                 $this->addErrorMessage('Ваш автомобіль має завеликий пробіг для продажу!');
-            if (mb_strlen($this->post->title) > 10) {
-                $this->addErrorMessage('Заголовок вказано некоректно! Довжина має бути до 10 символів');
-            }
-            if (strlen($this->post->price) === 0 || $this->post->price > 100000000)
-                $this->addErrorMessage('Ціну не вказано \ Вказано некоректно');
             if (strlen($this->post->brand) === 0) {
                 $this->addErrorMessage('Марку не вказано!');
                 $model = "";
@@ -45,35 +64,19 @@ class AnnouncementsController extends Controller
             }
             $modelYear = $this->post->modelYear;
             $currentYear = intval(date('Y'));
-            if ($modelYear >= 1900 && $modelYear <= ($currentYear + 2)) {
-                // Рік в межах допустимого діапазону
-            } else {
-                $this->addErrorMessage("Рік випуску вказано НЕ КОРЕКТНО! $currentYear");
+            if ($modelYear < 1900 || $modelYear >= ($currentYear + 2) || $modelYear === null) {
+                $this->addErrorMessage("Рік випуску вказано НЕ КОРЕКТНО!");
             }
-
             if (strlen($millage) === 0)
                 $this->addErrorMessage('Пробіг не вказано!');
-            if (strlen($this->post->bodyType) === 0)
-                $this->addErrorMessage('Тип кузова не вказано!');
-            if (strlen($this->post->transmission) === 0)
-                $this->addErrorMessage('Тип коробки передач не вказано!');
-            if (strlen($this->post->fuelType) === 0)
-                $this->addErrorMessage('Тип палива двигуна не вказано!');
-            if (!preg_match('/^\d{1}\.\d+$/', $this->post->engineCapacity)) {
-                $this->addErrorMessage('Об\'єм двигуна повинен однозначним числом з однією цифрою після крапки!');
-            }
-            if (strlen($this->post->color) === 0)
-                $this->addErrorMessage('Колір кузова не вказано!');
             $region = "";
             if (strlen($this->post->regionObl) !== 0 && strlen($this->post->regionCity) !== 0) {
                 $region = "{$this->post->regionObl} область, місто {$this->post->regionCity}";
-            } elseif (strlen($this->post->regionObl) !== 0) {
-                $region = "{$this->post->regionObl} область";
+            } elseif (strlen($this->post->regionObl) !== 0 && strlen($this->post->regionCity) === 0) {
+                $this->addErrorMessage("Слід вказати конкретне місто!");
             } elseif (strlen($this->post->regionCity) !== 0) {
                 $region = "місто {$this->post->regionCity}";
             }
-            if ($this->post->horsePower > 9999)
-                $this->addErrorMessage('Перепрошуємо, такі потужні автомобілі неможливо виставити на продаж!');
 
             if (!$this->isErrorMessagesExists()) {
                 Vehicles::AddVehicle(
@@ -461,8 +464,75 @@ class AnnouncementsController extends Controller
             if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId)) {
                 $this->redirect('/announcements/my');
             }
+            $vehicleInfo = Announcements::SelectVehicleFromAnnouncement($announcementId);
 
             if ($this->isPost) {
+                $this->validate();
+
+                $millage = $this->post->millage;
+                if ($this->post->condition === 'Нове') {
+                    $millage = 0;
+                }
+                if ($millage > 9999999)
+                    $this->addErrorMessage('Ваш автомобіль має завеликий пробіг для продажу!');
+                if (strlen($this->post->brand) === 0) {
+                    $this->addErrorMessage('Марку не вказано!');
+                    $model = "";
+                } else {
+                    $model = $this->post->model;
+                }
+                $modelYear = $this->post->modelYear;
+                $currentYear = intval(date('Y'));
+                if ($modelYear < 1900 || $modelYear >= ($currentYear + 2) || $modelYear === null) {
+                    $this->addErrorMessage("Рік випуску вказано НЕ КОРЕКТНО!");
+                }
+                if (strlen($millage) === 0)
+                    $this->addErrorMessage('Пробіг не вказано!');
+                $region = "";
+                if (strlen($this->post->regionObl) !== 0 && strlen($this->post->regionCity) !== 0) {
+                    $region = "{$this->post->regionObl} область, місто {$this->post->regionCity}";
+                } elseif (strlen($this->post->regionObl) !== 0 && strlen($this->post->regionCity) === 0) {
+                    $this->addErrorMessage("Слід вказати конкретне місто!");
+                } elseif (strlen($this->post->regionCity) !== 0) {
+                    $region = "місто {$this->post->regionCity}";
+                }
+
+                if (!$this->isErrorMessagesExists()) {
+                    $vehicleDataToUpdate = [
+                        'brand' => $this->post->brand,
+                        'model' => $model,
+                        'veh_condition' => $this->post->condition,
+                        'model_year' => $modelYear,
+                        'millage' => $millage,
+                        'engine_capacity' => $this->post->engineCapacity,
+                        'fuel_type' => $this->post->fuelType,
+                        'horse_power' => $this->post->horsePower,
+                        'body_type' => $this->post->bodyType,
+                        'transmission' => $this->post->transmission,
+                        'drive' => $this->post->drive,
+                        'color' => $this->post->color,
+                        'vin_code' => $this->post->vinCode,
+                        'plate' => $this->post->plate,
+                        'region' => $region
+                    ];
+
+                    $modelYear = substr($this->post->modelYear, 0, 4);
+                    $title = $this->post->title . " " . $this->post->brand . " " . $this->post->model . " " . $modelYear;
+                    $price = (int)$this->post->price;
+
+                    $announcementDataToUpdate = [
+                        'title' => $title,
+                        'description' => $this->post->description,
+                        'price' => $price
+                    ];
+
+                    $resUpdateVeh = Vehicles::EditVehicleInfo($vehicleInfo->id, $vehicleDataToUpdate);
+                    $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
+
+                    if ($resUpdateVeh && $resUpdateAnn)
+                        $this->redirect("/announcements/index/{$announcementId}");
+                }
+
                 if (!empty($_FILES['carImages'])) {
                     $uploadDir = "src/database/announcements/announcement" . $announcementId . "/";
                     if (!file_exists($uploadDir)) {
@@ -502,16 +572,12 @@ class AnnouncementsController extends Controller
                     }
                 }
 
-                var_dump($this->post->deletedImages);
                 if (strlen($this->post->deletedImages) !== 0) {
                     $deletedImagesArray = explode(', ', $this->post->deletedImages);
-                    var_dump($deletedImagesArray);
 
                     foreach ($deletedImagesArray as $deletedImage) {
                         $imagePath = "src/database/announcements/announcement" . $announcementId . "/" . $deletedImage;
-                        var_dump($imagePath);
                         if (file_exists($imagePath)) {
-                            var_dump($imagePath);
                             unlink($imagePath);
                         }
                     }
@@ -522,7 +588,7 @@ class AnnouncementsController extends Controller
             $newAnnouncementData[0]['statusText'] = $this->mapStatusToText($announcementInfo[0]['status_id']);
             $newAnnouncementData[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
 
-            $GLOBALS['vehicleInfo'] = Announcements::SelectVehicleFromAnnouncement($announcementId) ?? null;
+            $GLOBALS['vehicleInfo'] = (array) $vehicleInfo ?? null;
             $GLOBALS['announcementInfo'] = $newAnnouncementData ?? null;
             $GLOBALS['userOwnerInfo'] = Users::GetUserInfo($userId) ?? null;
 
