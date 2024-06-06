@@ -458,11 +458,67 @@ class AnnouncementsController extends Controller
             $userId = \core\Core::get()->session->get('user')['id'];
 
             $announcementInfo = Announcements::findByCondition(['id' => $announcementId, 'user_id' => $userId]);
-            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId))
+            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId)) {
                 $this->redirect('/announcements/my');
+            }
 
-            $newAnnouncementData = (array)$announcementInfo;
+            if ($this->isPost) {
+                if (!empty($_FILES['carImages'])) {
+                    $uploadDir = "src/database/announcements/announcement" . $announcementId . "/";
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
 
+                    $existingImages = scandir($uploadDir);
+                    $existingImages = array_diff($existingImages, array('.', '..'));
+
+                    foreach ($_FILES['carImages']['tmp_name'] as $index => $tmpName) {
+                        if ($_FILES['carImages']['error'][$index] === UPLOAD_ERR_OK) {
+                            $extension = strtolower(pathinfo($_FILES['carImages']['name'][$index], PATHINFO_EXTENSION));
+                            $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');
+
+                            if (in_array($extension, $allowedExtensions)) {
+                                // Перевірка наявності файлу з таким ім'ям
+                                $i = 0;
+                                $newFileName = ($index + count($existingImages)) . '.' . $extension;
+                                while (in_array($newFileName, $existingImages)) {
+                                    $i++;
+                                    $newFileName = ($index + count($existingImages) + $i) . '.' . $extension;
+                                }
+
+                                $uploadFile = $uploadDir . $newFileName;
+
+                                if (exif_imagetype($tmpName) !== false) {
+                                    move_uploaded_file($tmpName, $uploadFile);
+                                } else {
+                                    $this->addErrorMessage('Файл ' . $_FILES['carImages']['name'][$index] . ' не є зображенням.');
+                                }
+                            } else {
+                                $this->addErrorMessage('Файл ' . $_FILES['carImages']['name'][$index] . ' має неприпустиме розширення.');
+                            }
+                        } else {
+                            $this->addErrorMessage('Не вдалося завантажити файл: ' . $_FILES['carImages']['name'][$index]);
+                        }
+                    }
+                }
+
+                var_dump($this->post->deletedImages);
+                if (strlen($this->post->deletedImages) !== 0) {
+                    $deletedImagesArray = explode(', ', $this->post->deletedImages);
+                    var_dump($deletedImagesArray);
+
+                    foreach ($deletedImagesArray as $deletedImage) {
+                        $imagePath = "src/database/announcements/announcement" . $announcementId . "/" . $deletedImage;
+                        var_dump($imagePath);
+                        if (file_exists($imagePath)) {
+                            var_dump($imagePath);
+                            unlink($imagePath);
+                        }
+                    }
+                }
+            }
+
+            $newAnnouncementData = (array) $announcementInfo;
             $newAnnouncementData[0]['statusText'] = $this->mapStatusToText($announcementInfo[0]['status_id']);
             $newAnnouncementData[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
 

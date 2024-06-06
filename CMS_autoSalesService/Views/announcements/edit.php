@@ -7,7 +7,7 @@ $vehicleInfo = $GLOBALS['vehicleInfo'];
 $announcementInfo = $GLOBALS['announcementInfo'];
 $ownerInfo = $GLOBALS['userOwnerInfo'];
 
-var_dump($vehicleInfo->veh_condition);
+var_dump($announcementInfo[0]['pathToImages']);
 ?>
 <!doctype html>
 <html lang="en">
@@ -42,8 +42,28 @@ var_dump($vehicleInfo->veh_condition);
                 <div class="form-group col">
                     <button type="button" id="addPhoto" class="btn btn-secondary mt-2">Додати фото</button>
                 </div>
-                <div id="preview" class="preview"></div>
+                <div id="preview" class="preview">
+                    <?php
+                    $imageSrc = "../../../../src/resourses/no-photo.jpg";
+                    $imagesPath = "./" . $announcementInfo[0]['pathToImages'];
+                    $firstImageSrc = '../../../src/resourses/no-photo.jpg';
+                    $realImagesPath = realpath($imagesPath);
+                    $realImagesPath = str_replace('\\', '/', $realImagesPath);
+
+                    if (!is_null($announcementInfo[0]['pathToImages']) && is_dir($realImagesPath)) {
+                        $images = scandir($realImagesPath);
+                        $images = array_diff($images, array('.', '..'));
+
+                        foreach ($images as $image) {
+                            $imageSrc = "../../../../../" . $announcementInfo[0]['pathToImages'] . "/" . $image;
+                            echo "<img src='$imageSrc' alt='$image' data-filename='$image'>";
+                        }
+                    }
+                    ?>
+                </div>
             </div>
+            <p class="text-muted" style="font-style: italic;">(Порядок фотографій відповідає їх відображенню в оголошенні. Для видалення - клікніть по картинці)</p>
+            <input type="hidden" name="deletedImages" id="deletedImages" value="">
             <br><br><br>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" id="titleAnnouncement"
@@ -279,11 +299,7 @@ var_dump($vehicleInfo->veh_condition);
         var millageInput = document.getElementById('millage');
 
         function toggleMillageInput() {
-            if (bodyTypeSelect.value === 'Нове') {
-                millageInput.disabled = true;
-            } else {
-                millageInput.disabled = false;
-            }
+            millageInput.disabled = bodyTypeSelect.value === 'Нове';
         }
         toggleMillageInput();
 
@@ -294,7 +310,7 @@ var_dump($vehicleInfo->veh_condition);
         document.getElementById('addPhoto').addEventListener('click', function() {
             var newInput = document.createElement('input');
             newInput.type = 'file';
-            newInput.accept = 'image/jpeg, image/png, image/gif';
+            newInput.accept = 'image/jpeg, image/png, image/gif, image/jpg';
             newInput.classList.add('form-control', 'file-input');
             newInput.name = 'carImages[]';
             newInput.style.display = 'none';
@@ -337,8 +353,20 @@ var_dump($vehicleInfo->veh_condition);
             }
         }
 
-        document.querySelectorAll('.file-input').forEach(input => {
-            input.addEventListener('change', handleFileSelect);
+        document.querySelectorAll('.preview img').forEach(img => {
+            img.addEventListener('click', function() {
+                var confirmed = confirm('Ви впевнені, що хочете видалити цю фотографію?');
+                if (confirmed) {
+                    var deletedImagesInput = document.getElementById('deletedImages');
+                    var filename = this.getAttribute('data-filename');
+                    this.remove();
+                    if (deletedImagesInput.value === '') {
+                        deletedImagesInput.value = filename;
+                    } else {
+                        deletedImagesInput.value += ', ' + filename;
+                    }
+                }
+            });
         });
 
         document.getElementById("carBrand").addEventListener("change", function() {
@@ -346,7 +374,7 @@ var_dump($vehicleInfo->veh_condition);
             selectedBrand = selectedBrand.replace(/\s/g, '%20');
             var carModelSelect = document.getElementById("carModel");
             carModelSelect.innerHTML = '<option value="">Завантаження...</option>';
-            fetch('selectmodelsbybrand/' + encodeURIComponent(selectedBrand))
+            fetch('/announcements/selectmodelsbybrand/' + encodeURIComponent(selectedBrand))
                 .then(response => response.text())
                 .then(data => {
                     var endIndex = data.indexOf("]");

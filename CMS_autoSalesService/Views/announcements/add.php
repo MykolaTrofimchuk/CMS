@@ -35,6 +35,7 @@
                     <button type="button" id="addPhoto" class="btn btn-secondary mt-2">Додати фото</button>
                 </div>
                 <div id="preview" class="preview"></div>
+                <p class="text-muted" style="font-style: italic;">(Порядок фотографій відповідає їх відображенню в оголошенні. Для видалення - клікніть по картинці)</p>
             </div>
             <br><br><br>
             <div class="form-floating mb-3">

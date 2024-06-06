@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="476e006c-1597-466a-a042-f9c2ea25e4cf" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/announcements/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/announcements/view.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/view.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/announcements/edit.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/edit.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database/announcements/announcement32/among-us.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database/announcements/announcement32/e34.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database/announcements/announcement48/0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database/announcements/announcement48/6.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +94,7 @@
       <workItem from="1717439540101" duration="10589000" />
       <workItem from="1717485885053" duration="43917000" />
       <workItem from="1717596236233" duration="20985000" />
-      <workItem from="1717672074155" duration="419000" />
+      <workItem from="1717672074155" duration="5831000" />
     </task>
     <servers />
   </component>
