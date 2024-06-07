@@ -85,28 +85,28 @@ if ($user !== null && isset($user['id'])) {
         <div class="row">
             <?php foreach ($GLOBALS['announcements'] as $announcement): ?>
                 <?php
-                $isInactive = in_array($announcement['statusText'], ['Продано', 'Видалено']);
+                $isInactive = in_array($announcement[0]['statusText'], ['Продано', 'Видалено']);
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
 
-                $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement['id']);
+                $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement[0]['id']);
                 // Default image path
                 $imageSrc = "../../../../src/resourses/no-photo.jpg";
-                $imagesPath = "./" . $announcement['pathToImages'];
+                $imagesPath = "./" . $announcement[0]['pathToImages'];
 
                 // Use realpath to debug the path issue
                 $realImagesPath = realpath($imagesPath);
                 $realImagesPath = str_replace('\\', '/', $realImagesPath);
 
-                if (!is_null($announcement['pathToImages']) && is_dir($realImagesPath)) {
+                if (!is_null($announcement[0]['pathToImages']) && is_dir($realImagesPath)) {
                     $images = scandir($realImagesPath);
                     $images = array_diff($images, array('.', '..'));
                     $firstImage = !empty($images) ? reset($images) : null;
                     if (!is_null($firstImage)) {
-                        $imageSrc = "../../../../../" . $announcement['pathToImages'] . "/" . $firstImage;
+                        $imageSrc = "../../../../../" . $announcement[0]['pathToImages'] . "/" . $firstImage;
                     }
                 }
 
-                $deactiveDate = !empty($announcement['deactivationDate']) ? $announcement['deactivationDate'] : '...';
+                $deactiveDate = !empty($announcement[0]['deactivationDate']) ? $announcement[0]['deactivationDate'] : '...';
                 if ($deactiveDate !== null) {
                     $currentTime = new DateTime();
                     $deactivationDateTime = new DateTime($deactiveDate);
@@ -120,7 +120,7 @@ if ($user !== null && isset($user['id'])) {
                 ?>
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow <?= $inactiveClass ?>"
-                         data-status="<?= htmlspecialchars($announcement['statusText']) ?>"
+                         data-status="<?= htmlspecialchars($announcement[0]['statusText']) ?>"
                          data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
                         <img class="card-img-top" alt="<?php echo($imageSrc) ?>"
                              style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>"
@@ -137,11 +137,11 @@ if ($user !== null && isset($user['id'])) {
                             <?php endif; ?>
                             <p class="card-text fs-5"
                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <?= htmlspecialchars($announcement['title']) ?>
+                                <?= htmlspecialchars($announcement[0]['title']) ?>
                             </p>
-                            <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement['price'])) . " $" ?></p>
-                            <?php if ($announcement['description'] !== null): ?>
-                                <p class="card-text"><?= substr($announcement['description'], 0, 64) . '...' ?></p>
+                            <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement[0]['price'])) . " $" ?></p>
+                            <?php if ($announcement[0]['description'] !== null): ?>
+                                <p class="card-text"><?= substr($announcement[0]['description'], 0, 64) . '...' ?></p>
                             <?php else: ?>
                                 <p class="card-text">Опис відсутній</p>
                             <?php endif; ?>
@@ -181,25 +181,25 @@ if ($user !== null && isset($user['id'])) {
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <a href="/announcements/index/<?= $announcement['id'] ?>"
+                                    <a href="/announcements/index/<?= $announcement[0]['id'] ?>"
                                        class="btn btn-sm btn-outline-secondary">Переглянути</a>
                                     <?php if (\Models\Users::IsUserLogged()) : ?>
                                         <?php
-                                        $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement['id']);
+                                        $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement[0]['id']);
 
                                         if (!$isFavorite) : ?>
-                                            <a href="/announcements/addtofavorites/<?= $announcement['id'] ?>"
+                                            <a href="/announcements/addtofavorites/<?= $announcement[0]['id'] ?>"
                                                class="btn btn-sm btn-outline-secondary">Слідкувати &#9829;</a>
                                         <?php endif; ?>
 
                                         <?php if ($isFavorite) : ?>
-                                            <a href="/announcements/removefromfavorites/<?= $announcement['id'] ?>"
+                                            <a href="/announcements/removefromfavorites/<?= $announcement[0]['id'] ?>"
                                                class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується
                                                 &#9829;</a>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
-                                <small class="text-muted"><?= htmlspecialchars($announcement['publicationDate']) ?></small>
+                                <small class="text-muted"><?= htmlspecialchars($announcement[0]['publicationDate']) ?></small>
                             </div>
                         </div>
                     </div>

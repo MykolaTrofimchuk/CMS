@@ -97,9 +97,11 @@ class Model
             return null;
     }
 
-    public static function findRowsByCondition($rows, $conditionAssocArr = null)
+    public static function findRowsByCondition($rows, $conditionAssocArr = null, $tableParam = '')
     {
-        $arr = Core::get()->db->select(static::$tableName, $rows, $conditionAssocArr);
+        if (empty($conditionAssocArr))
+            $conditionAssocArr = null;
+        $arr = Core::get()->db->select(static::$tableName . " ". $tableParam, $rows, $conditionAssocArr);
         if (count($arr) > 0)
             return $arr;
         else

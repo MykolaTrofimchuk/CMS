@@ -21,11 +21,11 @@
                         <div class="row">
                             <div class="col">
                                 <div class="btn-group d-flex" role="group" aria-label="Basic radio toggle button group">
-                                    <input type="radio" class="btn-check" name="options" id="optionAll" autocomplete="off" value="" checked>
+                                    <input type="radio" class="btn-check" name="veh_condition" id="optionAll" autocomplete="off" value="" checked>
                                     <label class="btn btn-light flex-fill" for="optionAll"><span class="text-light">&#10003;</span> Усі</label>
-                                    <input type="radio" class="btn-check" name="options" id="optionOld" autocomplete="off" value="З пробігом">
+                                    <input type="radio" class="btn-check" name="veh_condition" id="optionOld" autocomplete="off" value="З пробігом">
                                     <label class="btn btn-light flex-fill" for="optionOld"><span class="text-light">&#10003;</span>Вживані</label>
-                                    <input type="radio" class="btn-check" name="options" id="optionNew" autocomplete="off" value="Нове">
+                                    <input type="radio" class="btn-check" name="veh_condition" id="optionNew" autocomplete="off" value="Нове">
                                     <label class="btn btn-light flex-fill" for="optionNew"><span class="text-light">&#10003;</span>Нові</label>
                                 </div>
                             </div>
@@ -74,7 +74,8 @@
                             <div class="col">
                                 <div class="row">
                                     <div class="col">
-                                        <select class="form-control" id="modelYearFrom" name="modelYearFrom">
+<!--                                        <input class="form-control" type="date" name="model_yearFrom">-->
+                                        <select class="form-control" id="modelYearFrom" name="model_yearFrom">
                                             <option value="">Рік від:</option>
                                             <?php for ($i = date('Y') + 1; $i >= 1900; $i--): ?>
                                                 <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
@@ -82,7 +83,8 @@
                                         </select>
                                     </div>
                                     <div class="col">
-                                        <select class="form-control" id="modelYearTo" name="modelYearTo">
+<!--                                        <input class="form-control" type="date" name="model_yearTo">-->
+                                        <select class="form-control" id="modelYearTo" name="model_yearTo">
                                             <option value="">Рік до:</option>
                                             <?php for ($i = date('Y') + 1; $i >= 1900; $i--): ?>
                                                 <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
@@ -180,15 +182,15 @@
                                 <label>Об'єм двигуна</label>
                             </div>
                             <div class="col d-flex justify-content-between">
-                                <input type="number" class="form-control" placeholder="Від: " min="0" name="engineCapacityFrom">
-                                <input type="number" class="form-control" placeholder="До:" min="0" name="engineCapacityTo">
+                                <input type="number" class="form-control" placeholder="Від: " min="0" name="engine_capacityFrom">
+                                <input type="number" class="form-control" placeholder="До:" min="0" name="engine_capacityTo">
                             </div>
                             <div class="col mt-3 d-flex justify-content-between">
                                 <label>Потужність (к.с.)</label>
                             </div>
                             <div class="col d-flex justify-content-between">
-                                <input type="number" class="form-control" placeholder="Від: " min="0" name="horsePowerFrom">
-                                <input type="number" class="form-control" placeholder="До:" min="0" name="horsePowerTo">
+                                <input type="number" class="form-control" placeholder="Від: " min="0" name="horse_powerFrom">
+                                <input type="number" class="form-control" placeholder="До:" min="0" name="horse_powerTo">
                             </div>
                             <div class="col mt-3 d-flex justify-content-between">
                                 <label>Привід:</label>

@@ -82,14 +82,19 @@ class Vehicles extends Model
         if ($vehicle) {
             foreach ($dataToUpdate as $field => $value) {
                 if (isset($value) && !empty($value)) {
-                    // Встановлюємо інші поля, якщо вони не порожні
                     $vehicle->{$field} = $value;
                 }
             }
-            $vehicle->save(); // Зберігаємо зміни в базі даних
+            $vehicle->save();
             return true;
         } else {
             return false;
         }
+    }
+
+    public static function CountAll($where = null, $tableParams = '')
+    {
+        $result = self::findRowsByCondition("COUNT(*) as count", $where, $tableParams);
+        return isset($result[0]['count']) ? (int)$result[0]['count'] : 0;
     }
 }

@@ -23,56 +23,16 @@ class Announcements extends Model
 
     public static function SelectPaginated($limit, $offset, $where = null)
     {
-        $rows = self::findByLimitAndOffset($limit, $offset);
-        $validAnnouncements = [];
-
-        $oneDayAgo = new DateTime();
-        $oneDayAgo->modify('-1 day');
-
-        $whereVehArray = [];
-        if ($where !== null) {
-            foreach ($where as $key => $value) {
-                if (strlen($value) !== 0) {
-                    $whereVehArray[$key] = $value;
-                }
-            }
-        }
-        if (empty($whereVehArray)) {
-            $whereVehArray = null;
-        }
-
-        foreach ($rows as $announcement) {
-            $statusId = $announcement['status_id'];
-            $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
-
-            if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
-                continue;
-            }
-
-            $vehicleData = Vehicles::selectRowById($announcement['vehicle_id'], 'Models\Vehicles');
-
-            $filterVehicles = Vehicles::findRowsByCondition('*', $whereVehArray);
-            $isValidVehicle = false;
-
-            if (!empty($filterVehicles))
-                foreach ($filterVehicles as $vehicle) {
-                    if ($vehicle['id'] === $announcement['vehicle_id']) {
-                        $isValidVehicle = true;
-                        break;
-                    }
-                }
-
-            if ($isValidVehicle) {
-                $validAnnouncements[] = $announcement;
-            }
-        }
-
-        return $validAnnouncements;
+        if (empty($where))
+            $where = null;
+        $rows = Core::get()->db->select('vehicles v INNER JOIN announcements a ON v.id = a.vehicle_id', 'v.*', $where, $limit, $offset, );
+        return $rows;
     }
 
-    public static function CountAll()
+    public static function CountAll($where = null)
     {
-        return self::findRowsByCondition('COUNT(*) as count');
+        $result = self::findRowsByCondition('COUNT(*) as count', $where);
+        return isset($result[0]['count']) ? (int)$result[0]['count'] : 0;
     }
 
     public static function SelectById($announcementId)

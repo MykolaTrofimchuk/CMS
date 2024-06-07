@@ -203,7 +203,7 @@ class AnnouncementsController extends Controller
         $queryParts = explode('/', $routeParams);
         $currentPage = end($queryParts);
 
-        if ($currentPage === null || $currentPage === 'null') {
+        if ($currentPage === null || $currentPage === 'null' || strlen($currentPage) === 0) {
             $currentPage = 1;
         } else {
             $currentPage = (int)$currentPage;
@@ -212,49 +212,119 @@ class AnnouncementsController extends Controller
             $this->redirect("1");
         }
 
-        if ($currentPage !== null) {
-            $filter = \core\Core::get()->session->get('redirect_params');
-            $filterArray = $filter['additionalData'];
-            $filterAssocArray = [];
-            foreach ($filterArray as $key => $value) {
-                if ($key === 'priceFrom') {
-                    $key = 'price >=';
+        if ($currentPage !== null || strlen($currentPage) !== 0) {
+            if (!empty(\core\Core::get()->session->get('redirect_params'))) {
+                $filter = \core\Core::get()->session->get('redirect_params');
+                $filterArray = $filter['additionalData'];
+                $filterAssocArray = [];
+                foreach ($filterArray as $key => $value) {
+                    if (strlen($value) !== 0) {
+                        if ($key === 'plate') {
+                            $key = 'plate IS NOT';
+                            $value = null;
+                        }
+                        if ($key === 'vin_code') {
+                            $key = 'vin_code IS NOT';
+                            $value = null;
+                        }
+                        if (strpos($key, 'From') !== false) {
+                            $newKey = str_replace('From', '', $key);
+                            if ($key === 'model_yearFrom') {
+                                $year = intval($value);
+                                $filterAssocArray["$newKey >="] = "{$year}-01-01";
+                            } else {
+                                $filterAssocArray["$newKey >="] = $value;
+                            }
+                        } elseif (strpos($key, 'To') !== false) {
+                            $newKey = str_replace('To', '', $key);
+                            if ($key === 'model_yearTo') {
+                                $year = intval($value);
+                                $filterAssocArray["$newKey <="] = "{$year}-12-31";
+                            } else {
+                                $filterAssocArray["$newKey <="] = $value;
+                            }
+                        } else {
+                            $filterAssocArray[$key] = $value;
+                        }
+                    }
                 }
-                if ($key === 'priceTo') {
-                    $key = 'price <=';
-                }
-                if ($key === 'modelYearFrom' && strlen($value) !== 0) {
-                    $key = 'model_year >=';
-                    $value = date('Y-m-d', strtotime("$value-01-01"));
-                }
-                if ($key === 'modelYearTo' && strlen($value) !== 0) {
-                    $key = 'model_year <=';
-                    $value = date('Y-m-d', strtotime("$value-12-31"));
-                }
-                if (strlen($value) !== 0) {
-                    $filterAssocArray[$key] = $value;
-                }
-            }
 
-            if (empty($filterAssocArray)) {
-                $filterAssocArray = null;
-            }
+                $filterAssocArrayWithPrice = $filterAssocArray;
 
+                if (!empty($filterAssocArray)) {
+                    if (isset($filterAssocArray['price <='])) {
+                        $filterAssocArrayWithPrice['price <='] = $filterAssocArray['price <='];
+                        unset($filterAssocArray['price <=']);
+                    }
+                    if (isset($filterAssocArray['price >='])) {
+                        $filterAssocArrayWithPrice['price >='] = $filterAssocArray['price >='];
+                        unset($filterAssocArray['price >=']);
+                    }
+                }
+
+                if (empty($filterAssocArray)) {
+                    $filterAssocArray = null;
+                }
+
+                $announcementsPerPage = 6;
+                $totalAnnouncements = Vehicles::CountAll($filterAssocArrayWithPrice, "INNER JOIN announcements a ON vehicles.id = a.vehicle_id"); // Pass filters to count
+                $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
+
+                $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+
+                if ($totalAnnouncementsCount === 0) {
+                    $GLOBALS['announcements'] = [];
+                    $GLOBALS['currentPage'] = 1;
+                    $GLOBALS['totalPages'] = 1;
+                    return $this->render();
+                }
+                if ($currentPage > $totalPages) {
+                    $this->redirect("$totalPages");
+                }
+                $offset = ($currentPage - 1) * $announcementsPerPage;
+                $vehicles = Announcements::SelectPaginated($announcementsPerPage, $offset, $filterAssocArrayWithPrice);
+
+                if (!empty($vehicles)) {
+                    foreach ($vehicles as &$vehicle) {
+                        $announcement = Announcements::findRowsByCondition('*', ['vehicle_id' => $vehicle['id']]);
+                        $statusId = $announcement[0]['status_id'];
+                        $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
+                        $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
+                        $announcements [] = $announcement;
+                    }
+                }
+
+                $GLOBALS['announcements'] = $announcements;
+                $GLOBALS['currentPage'] = $currentPage;
+                $GLOBALS['totalPages'] = $totalPages;
+                return $this->render();
+            }
             $announcementsPerPage = 6;
-            $totalAnnouncements = Announcements::CountAll($filterAssocArray); // Pass filters to count
-            $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
+            $totalAnnouncements = Vehicles::CountAll();
+            $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
 
             $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+
+            if ($totalAnnouncementsCount === 0) {
+                $GLOBALS['announcements'] = [];
+                $GLOBALS['currentPage'] = 1;
+                $GLOBALS['totalPages'] = 1;
+                return $this->render();
+            }
             if ($currentPage > $totalPages) {
                 $this->redirect("$totalPages");
             }
             $offset = ($currentPage - 1) * $announcementsPerPage;
-            $announcements = Announcements::SelectPaginated($announcementsPerPage, $offset, $filterAssocArray);
+            $vehicles = Announcements::SelectPaginated($announcementsPerPage, $offset);
 
-            foreach ($announcements as &$announcement) {
-                $statusId = $announcement['status_id'];
-                $announcement['statusText'] = $this->mapStatusToText($statusId);
-                $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
+            if (!empty($vehicles)) {
+                foreach ($vehicles as &$vehicle) {
+                    $announcement = Announcements::findRowsByCondition('*', ['vehicle_id' => $vehicle['id']]);
+                    $statusId = $announcement[0]['status_id'];
+                    $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
+                    $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
+                    $announcements [] = $announcement;
+                }
             }
 
             $GLOBALS['announcements'] = $announcements;
@@ -303,7 +373,7 @@ class AnnouncementsController extends Controller
         if ($currentPage !== null) {
             $announcementsPerPage = 6;
             $totalAnnouncements = Announcements::CountAll(); // Get the total number of announcements
-            $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
+            $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
 
             $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
             if ($currentPage > $totalPages) {

@@ -9,8 +9,9 @@
       <change beforePath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/SiteController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/SiteController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/Announcements.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Announcements.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/Vehicles.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Vehicles.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/announcements/view.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/view.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Views/site/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/site/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Controller.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/DB.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/DB.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/Model.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/Model.php" afterDir="false" />
     </list>
@@ -95,7 +96,8 @@
       <workItem from="1717439540101" duration="10589000" />
       <workItem from="1717485885053" duration="43917000" />
       <workItem from="1717596236233" duration="20985000" />
-      <workItem from="1717672074155" duration="33073000" />
+      <workItem from="1717672074155" duration="34033000" />
+      <workItem from="1717776723948" duration="16680000" />
     </task>
     <servers />
   </component>

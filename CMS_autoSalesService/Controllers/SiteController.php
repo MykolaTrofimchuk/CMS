@@ -9,6 +9,7 @@ class SiteController extends Controller
 {
     public function actionIndex()
     {
+        \core\Core::get()->session->remove('redirect_params');
         // Перевіряємо, чи дані були надіслані методом POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $validData = $this->validate($_POST);
