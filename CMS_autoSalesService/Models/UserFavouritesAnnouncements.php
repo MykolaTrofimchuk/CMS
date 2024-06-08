@@ -62,4 +62,9 @@ class UserFavouritesAnnouncements extends Model
     {
         return self::findRowsByCondition('COUNT(*) as count');
     }
+
+    public static function CountByAnnouncementId($announcementId)
+    {
+        return self::findRowsByCondition('COUNT(*) as count', ['announcement_id' => $announcementId]);
+    }
 }

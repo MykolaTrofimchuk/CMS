@@ -183,6 +183,7 @@ class AnnouncementsController extends Controller
             $announcement = Announcements::SelectById($announcementId);
             $vehicle = Announcements::SelectVehicleFromAnnouncement($announcementId);
             $announcementImages = CarImages::FindPathByAnnouncementId($announcementId);
+            $countFavorites = UserFavouritesAnnouncements::CountByAnnouncementId($announcementId);
 
             if (!$announcement || $announcement->status_id !== 1) {
                 return $this->render("Views/site/index.php");
@@ -191,6 +192,7 @@ class AnnouncementsController extends Controller
             $GLOBALS['announcement'] = $announcement;
             $GLOBALS['vehicle'] = $vehicle;
             $GLOBALS['images'] = $announcementImages;
+            $GLOBALS['countFavorite'] = $countFavorites;
 
             return $this->render();
         }
@@ -290,6 +292,7 @@ class AnnouncementsController extends Controller
                         $statusId = $announcement[0]['status_id'];
                         $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
                         $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
+                        $announcement[0]['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement[0]['id']);
                         $announcements [] = $announcement;
                     }
                 }
@@ -323,6 +326,7 @@ class AnnouncementsController extends Controller
                     $statusId = $announcement[0]['status_id'];
                     $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
                     $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
+                    $announcement[0]['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement[0]['id']);
                     $announcements [] = $announcement;
                 }
             }
@@ -386,6 +390,7 @@ class AnnouncementsController extends Controller
                 $statusId = $announcement['status_id'];
                 $announcement['statusText'] = $this->mapStatusToText($statusId);
                 $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
+                $announcement['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement['id']);
             }
 
             $GLOBALS['announcementsMy'] = $announcements;
@@ -517,9 +522,9 @@ class AnnouncementsController extends Controller
 
                 $newAnnouncementData['statusText'] = $this->mapStatusToText($statusId);
                 $newAnnouncementData['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
+                $newAnnouncementData['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcementId);
 
                 $selectedAnnouncements[] = $newAnnouncementData;
-                $selectedVehicles[] = $vehicleData;
             }
         }
 

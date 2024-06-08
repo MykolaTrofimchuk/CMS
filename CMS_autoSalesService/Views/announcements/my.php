@@ -130,15 +130,18 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                style="position: absolute; top: 10px; right: 10px;">Редагувати</a>
                         </div>
                         <div class="card-body">
-                            <?php if ($vehicleInfo->veh_condition === 'З пробігом' || $vehicleInfo->veh_condition === 'Нове') : ?>
-                                <p class="card-text fs-6 mb-1 fw-bold text-muted">
-                                    <em><?= htmlspecialchars($vehicleInfo->veh_condition) ?></em>
-                                </p>
-                            <?php else: ?>
-                                <p class="card-text fs-6 mb-1 fw-bold text-muted">
-                                    <em>З пробігом</em>
-                                </p>
-                            <?php endif; ?>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <?php if ($vehicleInfo->veh_condition === 'З пробігом' || $vehicleInfo->veh_condition === 'Нове') : ?>
+                                    <p class="card-text fs-6 mb-1 fw-bold text-muted">
+                                        <em><?= htmlspecialchars($vehicleInfo->veh_condition) ?></em>
+                                    </p>
+                                <?php else: ?>
+                                    <p class="card-text fs-6 mb-1 fw-bold text-muted">
+                                        <em>З пробігом</em>
+                                    </p>
+                                <?php endif; ?>
+                                <p class="card-text fs-6 mb-1 fw-bold text-muted">&#9829; <?= htmlspecialchars($announcement['countFavorite'][0]['count'])?></p>
+                            </div>
                             <p class="card-text fs-5"
                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 <?= htmlspecialchars($announcement['title']) ?>

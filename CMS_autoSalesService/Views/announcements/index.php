@@ -4,6 +4,7 @@ $this->Title = '';
 $announcement = $GLOBALS['announcement'];
 $vehicle = $GLOBALS['vehicle'];
 $pathToImages = $GLOBALS['images'];
+$countFavorite = $GLOBALS['countFavorite'];
 
 $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
 ?>
@@ -79,10 +80,16 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
             </div>
             <div class="col-md-6" style="margin-top: -50px;">
                 <?php if (isset($announcement)): ?>
-                    <div class="small mb-1"><?= htmlspecialchars($announcement->publicationDate) ?> <div class="fw-bolder d-inline"><?= htmlspecialchars($announcement->id) ?></div></div>
+                    <div class="small mb-1">
+                        <div class="fw-bolder d-inline"><?= htmlspecialchars($announcement->id) ?> || </div>
+                        <?= htmlspecialchars($announcement->publicationDate) ?>
+                        <div class="float-end">
+                            <div class="fw-bolder d-inline text-danger">&#9829; <?= htmlspecialchars($countFavorite[0]['count']) ?></div>
+                        </div>
+                    </div>
                     <h1 class="display-5 fw-bolder"><?= htmlspecialchars($announcement->title) ?></h1>
-                    <div class="fs-3 mb-5">
-                        <span>$ <?= htmlspecialchars(number_format($announcement->price, 0)) ?></span>
+                    <div class="fs-3 mb-5" style="display: flex; justify-content: space-between;">
+                        <span style="text-align: left;">$ <?= htmlspecialchars(number_format($announcement->price, 0)) ?></span>
                     </div>
                     <div class="d-flex flex-wrap fs-5 mb-5">
                         <div class="d-flex w-100 justify-content-between">
