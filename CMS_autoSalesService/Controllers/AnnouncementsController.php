@@ -245,7 +245,11 @@ class AnnouncementsController extends Controller
                             } else {
                                 $filterAssocArray["$newKey <="] = $value;
                             }
-                        } else {
+                        } elseif (strpos($key, 'Like') !== false){
+                            $newKey = str_replace('Like', '', $key);
+                            $filterAssocArray["$newKey LIKE"] = "%$value%";
+                        }
+                        else {
                             $filterAssocArray[$key] = $value;
                         }
                     }

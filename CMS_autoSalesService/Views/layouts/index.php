@@ -52,7 +52,7 @@ if (\Models\Users::IsUserLogged()) {
             <?php endif; ?>
 
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="post" action="">
-                <input type="search" class="form-control" name="title" placeholder="Пошук..." aria-label="Search">
+                <input type="search" class="form-control" name="titleLike" placeholder="Пошук..." aria-label="Search">
             </form>
             <?php if (!\Models\Users::IsUserLogged()): ?>
                 <div class="col-md-3 text-end">
