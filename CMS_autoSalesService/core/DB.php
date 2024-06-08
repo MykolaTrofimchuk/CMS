@@ -120,10 +120,19 @@ class DB
         $set_string = implode(", ", $set_array);
         $sql = "UPDATE {$table} SET {$set_string} {$where_string}";
         $sth = $this->pdo->prepare($sql);
-        foreach ($where as $key => $value)
+
+        // Bind values for SET clause
+        foreach ($row_to_update as $key => $value) {
             $sth->bindValue(":{$key}", $value);
-        foreach ($row_to_update as $key => $value)
-            $sth->bindValue(":{$key}", $value);
+        }
+
+        // Bind values for WHERE clause with _unique suffix
+        foreach ($where as $key => $value) {
+            if (is_array($value)) {
+                $value = $value[0]; // Assuming you only have one value per field
+            }
+            $sth->bindValue(":{$key}_unique", $value);
+        }
         $sth->execute();
         return $sth->rowCount();
     }

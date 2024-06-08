@@ -65,7 +65,7 @@ class AnnouncementsController extends Controller
             $modelYear = $this->post->modelYear;
             $currentYear = intval(date('Y'));
             if ($modelYear < 1900 || $modelYear >= ($currentYear + 2) || $modelYear === null) {
-                $this->addErrorMessage("Рік випуску вказано НЕ КОРЕКТНО!");
+                $this->addErrorMessage("Рік випуску вказано некоректно!");
             }
             if (strlen($millage) === 0)
                 $this->addErrorMessage('Пробіг не вказано!');
@@ -300,7 +300,7 @@ class AnnouncementsController extends Controller
                 return $this->render();
             }
             $announcementsPerPage = 6;
-            $totalAnnouncements = Vehicles::CountAll();
+            $totalAnnouncements = Vehicles::CountAll(null, "INNER JOIN announcements a ON vehicles.id = a.vehicle_id");
             $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
 
             $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
@@ -663,6 +663,8 @@ class AnnouncementsController extends Controller
                                 $this->addErrorMessage('Не вдалося завантажити файл: ' . $_FILES['carImages']['name'][$index]);
                             }
                         }
+                        if (is_null(CarImages::FindPathByAnnouncementId($announcementId)))
+                            CarImages::AddVehicleImages($announcementId, $uploadDir);
                     }
 
                     if (strlen($this->post->deletedImages) !== 0) {

@@ -48,7 +48,7 @@ class Users extends Model
         return !empty(Core::get()->session->get('user'));
     }
 
-    public static function RegisterUser($login, $password, $firstName, $lastName, $email = null)
+    public static function RegisterUser($login, $password, $firstName, $lastName, $email = null, $phoneNumber = null, $region = null)
     {
         $user = new Users();
         $user->login = $login;
@@ -56,6 +56,8 @@ class Users extends Model
         $user->first_name = $firstName;
         $user->last_name = $lastName;
         $user->email = $email;
+        $user->phone_number = $phoneNumber;
+        $user->region = $region;
         $user->save();
     }
 
@@ -88,6 +90,7 @@ class Users extends Model
                     $user->{$field} = $value;
                 }
             }
+            var_dump($user);
             $user->save(); // Зберігаємо зміни в базі даних
             return true;
         } else {

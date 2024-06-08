@@ -33,9 +33,12 @@ class UsersController extends Controller
             if ($this->post->password != $this->post->password2) {
                 $this->addErrorMessage('Паролі не збігаються!');
             }
+            if (!preg_match("/^\+380\d{9}$/", $this->post->phone_number)) {
+                $this->addErrorMessage('Номер телефону має бути у форматі +380991234567');
+            }
             if (!$this->isErrorMessagesExists()) {
                 Users::RegisterUser($this->post->login, $this->post->password, $this->post->firstName,
-                    $this->post->lastName, $this->post->email);
+                    $this->post->lastName, $this->post->email, $this->post->phone_number, $this->post->region);
                 $this->redirect("/users/registersuccess");
             }
         }
@@ -115,7 +118,7 @@ class UsersController extends Controller
                     if (strlen($this->post->region) > 0) {
                         $userData->region = $this->post->region;
                     }
-
+                    var_dump($userData);
                     if (Users::EditUserInfo($userId, $userData)) {
                         $this->redirect("/users/me");
                     } else {
