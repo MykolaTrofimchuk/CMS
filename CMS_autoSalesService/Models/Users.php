@@ -97,4 +97,16 @@ class Users extends Model
             return false;
         }
     }
+
+    public static function IsAdmin($userId)
+    {
+        if (self::IsUserLogged()) {
+            $rows = self::findRowsByCondition('role', ['id' => $userId, 'role' => 'admin']);
+            if (!empty($rows) && $rows[0]['role'] === 'admin')
+                return true;
+            else
+                return false;
+        }
+        return false;
+    }
 }

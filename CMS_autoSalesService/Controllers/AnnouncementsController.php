@@ -245,11 +245,10 @@ class AnnouncementsController extends Controller
                             } else {
                                 $filterAssocArray["$newKey <="] = $value;
                             }
-                        } elseif (strpos($key, 'Like') !== false){
+                        } elseif (strpos($key, 'Like') !== false) {
                             $newKey = str_replace('Like', '', $key);
                             $filterAssocArray["$newKey LIKE"] = "%$value%";
-                        }
-                        else {
+                        } else {
                             $filterAssocArray[$key] = $value;
                         }
                     }
@@ -504,6 +503,7 @@ class AnnouncementsController extends Controller
 
         $oneDayAgo = new DateTime();
         $oneDayAgo->modify('-1 day');
+        $selectedAnnouncements = [];
 
         foreach ($announcements as &$announcement) {
             $announcementId = $announcement['announcement_id'];
@@ -566,8 +566,8 @@ class AnnouncementsController extends Controller
             $announcementId = $id;
             $userId = \core\Core::get()->session->get('user')['id'];
 
-            $announcementInfo = Announcements::findByCondition(['id' => $announcementId, 'user_id' => $userId]);
-            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId)) {
+            $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
+            if (empty($announcementInfo) || ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId))) {
                 $this->redirect('/announcements/my');
             }
             $vehicleInfo = Announcements::SelectVehicleFromAnnouncement($announcementId);
@@ -718,8 +718,8 @@ class AnnouncementsController extends Controller
             $announcementId = $id;
             $userId = \core\Core::get()->session->get('user')['id'];
 
-            $announcementInfo = Announcements::findByCondition(['id' => $announcementId, 'user_id' => $userId]);
-            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId)) {
+            $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
+            if (empty($announcementInfo) || ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) || $announcementInfo[0]['status_id'] !== 1) {
                 $this->redirect('/announcements/my');
             }
 
@@ -754,8 +754,8 @@ class AnnouncementsController extends Controller
             $announcementId = $id;
             $userId = \core\Core::get()->session->get('user')['id'];
 
-            $announcementInfo = Announcements::findByCondition(['id' => $announcementId, 'user_id' => $userId]);
-            if (empty($announcementInfo) || $announcementInfo[0]['user_id'] !== $userId || $announcementInfo[0]['id'] !== intval($announcementId)) {
+            $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
+            if (empty($announcementInfo) || ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) || $announcementInfo[0]['status_id'] !== 1) {
                 $this->redirect('/announcements/my');
             }
 
@@ -770,6 +770,37 @@ class AnnouncementsController extends Controller
 
             if ($resUpdateAnn)
                 $this->redirect('/announcements/my/1');
+        }
+    }
+
+    public function actionRestore()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $announcementId = $id;
+            $userId = \core\Core::get()->session->get('user')['id'];
+
+            $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
+            if (empty($announcementInfo) || ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) || $announcementInfo[0]['status_id'] === 1) {
+                $this->redirect('/announcements/my');
+            }
+
+            $announcementDataToUpdate = [
+                'status_id' => 1,
+                'deactivationDate' => null
+            ];
+
+            $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
+
+            if ($resUpdateAnn)
+                $this->redirect('/');
         }
     }
 }

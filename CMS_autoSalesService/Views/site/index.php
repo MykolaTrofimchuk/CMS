@@ -96,7 +96,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col">
-                                <select class="form-control" id="regionObl" name="region">
+                                <select class="form-control" id="regionObl" name="regionLike">
                                     <option value="">Регіон (область):</option>
                                     <option value="Київська">Київська</option>
                                     <option value="Вінницька">Вінницька</option>

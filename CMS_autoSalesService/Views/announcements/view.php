@@ -18,8 +18,10 @@ if ($user !== null && isset($user['id'])) {
     <style>
         .inactive-announcement {
             position: relative;
+            <?php if (!\Models\Users::IsAdmin($userId)): ?>
             opacity: 0.35;
             pointer-events: none;
+            <?php endif; ?>
         }
 
         .inactive-announcement::before {
@@ -125,6 +127,22 @@ if ($user !== null && isset($user['id'])) {
                         <img class="card-img-top" alt="<?php echo($imageSrc) ?>"
                              style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>"
                              data-holder-rendered="true">
+                        <?php if (\Models\Users::IsAdmin($userId)): ?>
+                            <a href="/announcements/edit/<?= htmlspecialchars($announcement[0]['id']) ?>"
+                               class="btn btn-info"
+                               style="position: absolute; top: 10px; right: 10px;">Редагувати</a>
+                            <div class="d-flex justify-content-between align-items-center w-100 mt-3">
+                                <a href="/announcements/sold/<?= $announcement[0]['id'] ?>"
+                                   class="btn btn-sm btn-outline-success w-50 m-0 text-center">Продано &#36;</a>
+                                <a href="/announcements/delete/<?= $announcement[0]['id'] ?>"
+                                   class="btn btn-sm btn-outline-danger w-50 m-0 text-center">Видалити &#215;</a>
+                            </div>
+                            <?php if ($isInactive): ?>
+                                <a href="/announcements/restore/<?= $announcement[0]['id'] ?>"
+                                   class="btn btn-success"
+                                   style="position: absolute; top: 60px; right: 10px;">Відновити</a>
+                            <?php endif; ?>
+                        <?php endif; ?>
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <?php if ($vehicleInfo->veh_condition === 'З пробігом' || $vehicleInfo->veh_condition === 'Нове') : ?>
@@ -136,7 +154,8 @@ if ($user !== null && isset($user['id'])) {
                                         <em>З пробігом</em>
                                     </p>
                                 <?php endif; ?>
-                                <p class="card-text fs-6 mb-1 fw-bold text-muted">&#9829; <?= htmlspecialchars($announcement[0]['countFavorite'][0]['count'])?></p>
+                                <p class="card-text fs-6 mb-1 fw-bold text-muted">
+                                    &#9829; <?= htmlspecialchars($announcement[0]['countFavorite'][0]['count']) ?></p>
                             </div>
                             <p class="card-text fs-5"
                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
