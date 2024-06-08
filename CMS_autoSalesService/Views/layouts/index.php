@@ -51,8 +51,8 @@ if (\Models\Users::IsUserLogged()) {
                 <a href="/announcements/add" class="btn btn-outline-secondary me-2">&#9658;Продати авто</a></li>
             <?php endif; ?>
 
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                <input type="search" class="form-control" placeholder="Пошук..." aria-label="Search">
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="post" action="">
+                <input type="search" class="form-control" name="title" placeholder="Пошук..." aria-label="Search">
             </form>
             <?php if (!\Models\Users::IsUserLogged()): ?>
                 <div class="col-md-3 text-end">
@@ -112,5 +112,15 @@ if (\Models\Users::IsUserLogged()) {
                                                                          class="bi" width="24" height="24"></a></li>
     </ul>
 </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('input[name="search_query"]').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.closest('form').submit();
+            }
+        });
+    });
+</script>
 </body>
 </html>
