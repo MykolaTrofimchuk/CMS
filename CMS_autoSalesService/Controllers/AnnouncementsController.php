@@ -46,10 +46,11 @@ class AnnouncementsController extends Controller
     public function actionAdd()
     {
         if ($this->isPost) {
-            $userId = \core\Core::get()->session->get('user')['id'];
-
+            if (strlen($this->post->userId) === 0)
+                $userId = \core\Core::get()->session->get('user')['id'];
+            else
+                $userId = $this->post->userId;
             $this->validate();
-
             $millage = $this->post->millage;
             if ($this->post->condition === 'Нове') {
                 $millage = 0;

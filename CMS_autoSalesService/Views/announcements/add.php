@@ -1,5 +1,7 @@
 <?php
 /** @var string $error_message Повідомлення про помилку */
+
+$loggedUserId = \core\Core::get()->session->get('user')['id'];
 ?>
 <!doctype html>
 <html lang="en">
@@ -15,6 +17,7 @@
             margin: 5px;
             transition: filter 0.3s ease;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
@@ -35,7 +38,8 @@
                     <button type="button" id="addPhoto" class="btn btn-secondary mt-2">Додати фото</button>
                 </div>
                 <div id="preview" class="preview"></div>
-                <p class="text-muted" style="font-style: italic;">(Порядок фотографій відповідає їх відображенню в оголошенні. Для видалення - клікніть по картинці)</p>
+                <p class="text-muted" style="font-style: italic;">(Порядок фотографій відповідає їх відображенню в
+                    оголошенні. Для видалення - клікніть по картинці)</p>
             </div>
             <br><br><br>
             <div class="form-floating mb-3">
@@ -61,6 +65,22 @@
                 </select>
                 <label for="condition">Стан авто</label>
             </div>
+            <?php if (\Models\Users::IsAdmin($loggedUserId)): ?>
+                <div class="form-floating mb-3">
+                    <select class="form-control bg-light" id="user" name="userId">
+                        <option value="">Оберіть власника оголошення</option>
+                        <?php
+                        $users = \Models\Users::findAll();
+                        usort($users, function ($a, $b) {
+                            return strcmp($a['id'], $b['id']);
+                        });
+                        foreach ($users as $user) : ?>
+                            <option value='<?= $user['id'] ?>'><?= $user['id'] ?>: <?= $user['login'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label for="user">Користувач - власник (за замовчуванням - Ви)</label>
+                </div>
+            <?php endif; ?>
             <br>
             <div class="form-row">
                 <h3>Основна інформація про автомобіль: </h3>
@@ -68,7 +88,8 @@
                     <div class="row">
                         <div class="col">
                             <label for="carBrand">Марка</label>
-                            <select class="form-control" id="carBrand" name="brand" onselect="<?= $this->controller->post->brand ?>">
+                            <select class="form-control" id="carBrand" name="brand"
+                                    onselect="<?= $this->controller->post->brand ?>">
                                 <option value="">Оберіть марку авто</option>
                                 <?php
                                 $brands = \Models\FilterModelBrands::FindAllBrandUnique();
@@ -81,7 +102,8 @@
                         </div>
                         <div class="col">
                             <label for="carModel">Модель</label>
-                            <select class="form-control" id="carModel" name="model" onselect="<?= $this->controller->post->model ?>">
+                            <select class="form-control" id="carModel" name="model"
+                                    onselect="<?= $this->controller->post->model ?>">
                                 <option value="">Оберіть модель авто</option>
                             </select>
                         </div>
@@ -93,11 +115,13 @@
                     <div class="row">
                         <div class="col">
                             <label for="modelYear">Рік випуску</label>
-                            <input type="date" class="form-control" id="modelYear" placeholder="Рік випуску" name="modelYear" value="<?= $this->controller->post->modelYear ?>">
+                            <input type="date" class="form-control" id="modelYear" placeholder="Рік випуску"
+                                   name="modelYear" value="<?= $this->controller->post->modelYear ?>">
                         </div>
                         <div class="col">
                             <label for="millage">Пробіг (км)</label>
-                            <input type="number" class="form-control" id="millage" placeholder="пробіг авто (у км)" name="millage" value="<?= $this->controller->post->millage ?>">
+                            <input type="number" class="form-control" id="millage" placeholder="пробіг авто (у км)"
+                                   name="millage" value="<?= $this->controller->post->millage ?>">
                         </div>
                         <div class="col">
                             <label for="bodyType">Тип кузова</label>
@@ -127,11 +151,14 @@
                     <div class="row">
                         <div class="col">
                             <label for="regionObl">Область</label>
-                            <input type="text" class="form-control" id="regionObl" placeholder="Область перебування" name="regionObl" value="<?= $this->controller->post->regionObl ?>">
+                            <input type="text" class="form-control" id="regionObl" placeholder="Область перебування"
+                                   name="regionObl" value="<?= $this->controller->post->regionObl ?>">
                         </div>
                         <div class="col">
                             <label for="regionCity">Місто</label>
-                            <input type="text" class="form-control" id="regionCity" placeholder="Місто у якому перебуваєте" name="regionCity" value="<?= $this->controller->post->regionCity ?>">
+                            <input type="text" class="form-control" id="regionCity"
+                                   placeholder="Місто у якому перебуваєте" name="regionCity"
+                                   value="<?= $this->controller->post->regionCity ?>">
                         </div>
                     </div>
                 </div>
@@ -176,13 +203,15 @@
                         <div class="col">
                             <label for="engineCapacity">Об’єм двигуна (л)</label>
                             <input type="text" class="form-control" id="engineCapacity"
-                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity" value="<?= $this->controller->post->engineCapacity ?>">
+                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity"
+                                   value="<?= $this->controller->post->engineCapacity ?>">
                         </div>
 
                         <div class="col">
                             <label for="horsePowers">Потужність двигуна (к.с.)</label>
                             <input type="number" class="form-control" id="horsePowers"
-                                   placeholder="Потужність (кінських сил)" name="horsePower" value="<?= $this->controller->post->horsePower ?>">
+                                   placeholder="Потужність (кінських сил)" name="horsePower"
+                                   value="<?= $this->controller->post->horsePower ?>">
                         </div>
                     </div>
                 </div>
@@ -227,12 +256,14 @@
                         <div class="col">
                             <label for="plate">Номерний знак</label>
                             <input type="text" class="form-control" id="plate"
-                                   placeholder="Номерний знак (АА0000АА)" name="plate" value="<?= $this->controller->post->plate ?>">
+                                   placeholder="Номерний знак (АА0000АА)" name="plate"
+                                   value="<?= $this->controller->post->plate ?>">
                         </div>
                         <div class="col">
                             <label for="vinCode">VIN-код</label>
                             <input type="text" class="form-control" id="vinCode"
-                                   placeholder="VIN-код (XXXXYYYYYXXXYXYXYXX)" name="vinCode" value="<?= $this->controller->post->vinCode ?>">
+                                   placeholder="VIN-код (XXXXYYYYYXXXYXYXYXX)" name="vinCode"
+                                   value="<?= $this->controller->post->vinCode ?>">
                         </div>
                     </div>
                 </div>
@@ -244,11 +275,11 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var carModelInput = document.getElementById('carModel');
         carModelInput.disabled = true;
 
-        document.getElementById('carBrand').addEventListener('change', function() {
+        document.getElementById('carBrand').addEventListener('change', function () {
             var selectedBrand = this.value;
             carModelInput.disabled = selectedBrand === "Оберіть марку авто";
         });
@@ -263,13 +294,14 @@
                 millageInput.disabled = false;
             }
         }
+
         toggleMillageInput();
 
         bodyTypeSelect.addEventListener('change', toggleMillageInput);
 
         var previewContainer = document.getElementById('preview');
 
-        document.getElementById('addPhoto').addEventListener('click', function() {
+        document.getElementById('addPhoto').addEventListener('click', function () {
             var newInput = document.createElement('input');
             newInput.type = 'file';
             newInput.accept = 'image/jpeg, image/png, image/gif';
@@ -291,16 +323,16 @@
                 var file = files[i];
                 var reader = new FileReader();
 
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     var img = document.createElement('img');
                     img.src = e.target.result;
-                    img.addEventListener('click', function() {
+                    img.addEventListener('click', function () {
                         this.remove();
                     });
-                    img.addEventListener('mouseover', function() {
+                    img.addEventListener('mouseover', function () {
                         this.style.filter = 'blur(3px)';
                     });
-                    img.addEventListener('mouseout', function() {
+                    img.addEventListener('mouseout', function () {
                         this.style.filter = 'none';
                     });
 
@@ -319,7 +351,7 @@
             input.addEventListener('change', handleFileSelect);
         });
 
-        document.getElementById("carBrand").addEventListener("change", function() {
+        document.getElementById("carBrand").addEventListener("change", function () {
             var selectedBrand = this.value;
             selectedBrand = selectedBrand.replace(/\s/g, '%20');
             var carModelSelect = document.getElementById("carModel");
@@ -334,7 +366,7 @@
                     var models = data.match(/"(.*?)"/g);
                     carModelSelect.innerHTML = '<option value="">Оберіть модель авто</option>';
                     if (models) {
-                        models.forEach(function(model) {
+                        models.forEach(function (model) {
                             model = model.replace(/["]/g, "").trim();
                             carModelSelect.innerHTML += '<option value="' + model + '">' + model + '</option>';
                         });

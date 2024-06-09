@@ -6,19 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="476e006c-1597-466a-a042-f9c2ea25e4cf" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/AdminpanelController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AdminpanelController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AnnouncementsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/UsersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/UsersController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Announcements.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Announcements.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/CarImages.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/CarImages.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/UserFavouritesAnnouncements.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/UserFavouritesAnnouncements.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Users.php" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Users.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/adminpanel/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/adminpanel/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/announcements/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/announcements/selected.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/selected.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/layouts/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/layouts/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/users/edit.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/users/edit.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/users/me.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/users/me.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/announcements/add.php" beforeDir="false" afterPath="$PROJECT_DIR$/Views/announcements/add.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +93,7 @@
       <workItem from="1717672074155" duration="34033000" />
       <workItem from="1717776723948" duration="16858000" />
       <workItem from="1717860191880" duration="15893000" />
-      <workItem from="1717924322175" duration="29803000" />
+      <workItem from="1717924322175" duration="31277000" />
     </task>
     <servers />
   </component>
