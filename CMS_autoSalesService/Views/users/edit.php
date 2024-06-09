@@ -27,7 +27,7 @@ $userToUpdateData = $GLOBALS['userToEdit'];
             <?php endif; ?>
             <?php if (\Models\Users::IsAdmin($userInfo[0]['id'])): ?>
             <div class="form-floating mb-3">
-                <select class="form-control" id="role" name="role" onselect="<?= $this->controller->post->role ?>">
+                <select class="form-control bg-light" id="role" name="role" onselect="<?= $this->controller->post->role ?>">
                     <option value="">Оберіть роль користувача</option>
                     <option value="user" <?php echo ($userToUpdateData->role === 'user') ? 'selected' : ''; ?>>user</option>
                     <option value="admin" <?php echo ($userToUpdateData->role === 'admin') ? 'selected' : ''; ?>>admin</option>

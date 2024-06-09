@@ -31,8 +31,38 @@ class AdminpanelController extends Controller
         if (!Users::IsAdmin($userId))
             $this->redirect('/');
 
-        $users = Users::findAll();
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $currentPage = end($queryParts);
+
+        if ($currentPage === null || $currentPage === 'null') {
+            $currentPage = 1;
+        } else {
+            $currentPage = (int)$currentPage;
+        }
+
+        if ($currentPage < 1) {
+            $this->redirect("/adminpanel/users/1");
+        }
+
+        $usersPerPage = 8;
+
+        $totalUsers = Users::countAllUsers();
+        $totalUsersCount = isset($totalUsers) ? (int)$totalUsers : 0;
+        $totalPages = ceil($totalUsersCount / $usersPerPage);
+
+        if ($currentPage > $totalPages) {
+            $this->redirect("/adminpanel/users/$totalPages");
+        }
+
+        $offset = ($currentPage - 1) * $usersPerPage;
+
+        $users = Users::getPaginatedUsers($usersPerPage, $offset);
+
         $GLOBALS['admPanelUsers'] = $users;
+        $GLOBALS['currentPage'] = $currentPage;
+        $GLOBALS['totalPages'] = $totalPages;
+
         return $this->render();
     }
 
@@ -169,5 +199,23 @@ class AdminpanelController extends Controller
                 $this->redirect('/adminpanel/index');
             $this->redirect('/adminpanel/users');
         }
+    }
+
+    public function actionAnnouncementadd()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $userId = \core\Core::get()->session->get('user')['id'];
+        if (!Users::IsAdmin($userId))
+            $this->redirect('/');
+
+        $this->redirect('/announcements/add');
+    }
+
+    public function actionUseradd()
+    {
+        $this->redirect('/users/register');
     }
 }

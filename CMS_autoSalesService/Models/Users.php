@@ -123,4 +123,17 @@ class Users extends Model
             $where = null;
         return Core::get()->db->delete(self::$tableName, $where);
     }
+
+    public static function getPaginatedUsers($limit, $offset, $where = null)
+    {
+        if (empty($where))
+            $where = null;
+        $rows = Core::get()->db->select(self::$tableName, '*', $where, $limit, $offset, );
+        return $rows;
+    }
+
+    public static function countAllUsers()
+    {
+        return self::CountAll();
+    }
 }

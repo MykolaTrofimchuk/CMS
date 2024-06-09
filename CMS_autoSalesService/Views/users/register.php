@@ -2,6 +2,8 @@
 /** @var string $error_message Повідомлення про помилку */
 
 $this->Title = 'Реєстрація користувача';
+if (\Models\Users::IsUserLogged())
+    $loggedUserId = \core\Core::get()->session->get('user')['id'];
 ?>
 <!doctype html>
 <html lang="en">
@@ -62,6 +64,16 @@ $this->Title = 'Реєстрація користувача';
                        id="region" name="region" value="<?= $this->controller->post->region ?>">
                 <label for="region">Регіон проживання</label>
             </div>
+            <?php if (\Models\Users::IsUserLogged() && \Models\Users::IsAdmin($loggedUserId)): ?>
+                <div class="form-floating mb-3">
+                    <select class="form-control bg-light" id="role" name="role"
+                            onselect="<?= $this->controller->post->role ?>">
+                        <option value="">Оберіть роль користувача</option>
+                        <option value="user">user</option>
+                        <option value="admin">admin</option>
+                    </select>
+                </div>
+            <?php endif; ?>
             <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Реєстрація</button>
             <small class="text-body-secondary">Натискаючи «Зареєструватися», ви погоджуєтеся з умовами
                 використання.</small>

@@ -16,9 +16,19 @@ class UsersController extends Controller
 
     public function actionRegister()
     {
+        $loggedUserId = null;
+        if (Users::IsUserLogged())
+            $loggedUserId = \core\Core::get()->session->get('user')['id'];
+        if (!Users::IsAdmin($loggedUserId) && Users::IsUserLogged())
+            $this->redirect('/');
+
         if ($this->isPost) {
             $user = Users::FindByLogin($this->post->login);
 
+            if (strlen($this->post->role) === 0)
+                $userRole = 'user';
+            else
+                $userRole = $this->post->role;
             if (strlen($this->post->login) === 0)
                 $this->addErrorMessage('Логін не вказаний!');
             if (strlen($this->post->password) <= 8)
@@ -38,7 +48,7 @@ class UsersController extends Controller
             }
             if (!$this->isErrorMessagesExists()) {
                 Users::RegisterUser($this->post->login, $this->post->password, $this->post->firstName,
-                    $this->post->lastName, $this->post->email, $this->post->phone_number, $this->post->region);
+                    $this->post->lastName, $this->post->email, $this->post->phone_number, $this->post->region, $userRole);
                 $this->redirect("/users/registersuccess");
             }
         }

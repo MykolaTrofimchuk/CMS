@@ -34,13 +34,13 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                     </a>
                 </li>
                 <li>
-                    <a href="/adminpanel/announcements" class="nav-link link-dark">
+                    <a href="/adminpanel/announcements/1" class="nav-link link-dark">
                         <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
                         Оголошення
                     </a>
                 </li>
                 <li>
-                    <a href="/adminpanel/users" class="nav-link link-dark">
+                    <a href="/adminpanel/users/1" class="nav-link link-dark">
                         <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
                         Користувачі
                     </a>
