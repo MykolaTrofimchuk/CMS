@@ -78,7 +78,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                     </div>
                 </div>
             </div>
-            <div class="col-md-6" style="margin-top: -50px;">
+            <div class="col-md-6" style="">
                 <?php if (isset($announcement)): ?>
                     <div class="small mb-1">
                         <div class="fw-bolder d-inline"><?= htmlspecialchars($announcement->id) ?> || </div>

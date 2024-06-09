@@ -10,8 +10,6 @@ class ErrorController extends Controller
     {
         $this->template->setParam('errorCode', $errorCode);
         $this->template->setTemplateFilePath('Views/error/error.php');
-        return [
-            'Content' => $this->template->getHTML()
-        ];
+        return $this->render();
     }
 }

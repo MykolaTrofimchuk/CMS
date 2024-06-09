@@ -711,22 +711,22 @@ class AnnouncementsController extends Controller
         }
 
         if ($statusId === 1 && $announcementInfo[0]['status_id'] === 1) {
-            return false; // Can't restore announcement with status other than 1
+            return false;
         }
 
         if ($statusId !== 1 && $announcementInfo[0]['status_id'] !== 1) {
-            return false; // Can't delete or mark as sold an already active announcement
+            return false;
         }
 
         if ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) {
-            return false; // User is not the owner and not an admin
+            return false;
         }
 
         $deactivationDate = date('Y-m-d H:i:s');
 
         $announcementDataToUpdate = [
             'status_id' => $statusId,
-            'deactivationDate' => $statusId === 1 ? null : $deactivationDate // Set deactivation date only if status is not 1
+            'deactivationDate' => $statusId === 1 ? null : $deactivationDate
         ];
 
         return Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);

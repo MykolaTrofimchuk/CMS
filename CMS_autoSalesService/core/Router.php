@@ -35,9 +35,9 @@ class Router
                 return $controllerObj->$method($parts);
             }
             else
-                $this->error(404);
+                return $this->error(404);
         } else
-            $this->error(404);
+            return $this->error(404);
     }
 
     public function finish()

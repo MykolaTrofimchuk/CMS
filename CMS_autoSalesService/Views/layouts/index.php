@@ -95,9 +95,9 @@ if (\Models\Users::IsUserLogged()) {
 </header>
 
 <div>
-    <div class="modal-header p-5 pb-4 border-bottom-0">
-        <h1 class="fw-bold mb-0 fs-2"><?= $Title ?></h1>
-    </div>
+<!--    <div class="modal-header p-5 pb-4 border-bottom-0">-->
+<!--        <h1 class="fw-bold mb-0 fs-2">--><?php //= $Title ?><!--</h1>-->
+<!--    </div>-->
     <?= $Content ?>
 </div>
 
