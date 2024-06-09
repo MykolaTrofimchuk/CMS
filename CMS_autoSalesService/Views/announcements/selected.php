@@ -118,7 +118,7 @@ $this->Title = 'Обрані оголошення';
                             <div class="d-flex justify-content-between align-items-center">
                                 <?php if ($vehicleInfo->veh_condition === 'З пробігом' || $vehicleInfo->veh_condition === 'Нове') : ?>
                                     <p class="card-text fs-6 mb-1 fw-bold text-muted">
-                                        <em><?= htmlspecialchars($vehicleInfo->veh_condition) ?></em>
+                                        <em><?= htmlspecialchars($vehicleInfo->veh_condition) ?? '' ?></em>
                                     </p>
                                 <?php else: ?>
                                     <p class="card-text fs-6 mb-1 fw-bold text-muted">

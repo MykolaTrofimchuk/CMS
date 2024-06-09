@@ -136,4 +136,23 @@ class Announcements extends Model
             return false;
         }
     }
+
+    public static function getPaginatedAnnouncements($limit, $offset, $where = null)
+    {
+        if (empty($where))
+            $where = null;
+        $rows = Core::get()->db->select('announcements a INNER JOIN vehicles v ON a.vehicle_id = v.id', 'a.*', $where, $limit, $offset, );
+        return $rows;
+    }
+
+    public static function countAllAnnouncements()
+    {
+        return self::CountAll();
+    }
+
+    public static function DeleteRow($where){
+        if (empty($where))
+            $where = null;
+        return Core::get()->db->delete(self::$tableName, $where);
+    }
 }

@@ -84,51 +84,62 @@ class UsersController extends Controller
         if (!Users::IsUserLogged()) {
             $this->redirect('/');
         }
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
 
-        if ($this->isPost) {
-            $userId = \core\Core::get()->session->get('user')['id'];
-            $userData = Users::findById($userId);
+        if ($id !== null) {
+            $loggedUserId = \core\Core::get()->session->get('user')['id'];
+            $userToEdit = $id;
+            $userData = Users::findById($userToEdit);
+            if (!Users::IsAdmin($loggedUserId) && $loggedUserId !== $userData->id)
+                $this->redirect('/');
+            if ($this->isPost) {
+                if (!$userData) {
+                    $this->addErrorMessage('Користувача не знайдено!');
+                } else {
+                    if ($userData->login !== $this->post->login) {
+                        $existingUser = Users::FindByLogin($this->post->login);
+                        if (!empty($existingUser)) {
+                            $this->addErrorMessage('Користувач із таким логіном вже існує!');
+                        }
+                    }
 
-            if (!$userData) {
-                $this->addErrorMessage('Користувача не знайдено!');
-            } else {
-                if ($userData->login !== $this->post->login) {
-                    $existingUser = Users::FindByLogin($this->post->login);
-                    if (!empty($existingUser)) {
-                        $this->addErrorMessage('Користувач із таким логіном вже існує!');
-                    }
-                }
-
-                if (!$this->isErrorMessagesExists()) {
-                    if (strlen($this->post->login) > 0) {
-                        $userData->login = $this->post->login;
-                    }
-                    if (strlen($this->post->firstName) > 0) {
-                        $userData->first_name = $this->post->firstName;
-                    }
-                    if (strlen($this->post->lastName) > 0) {
-                        $userData->last_name = $this->post->lastName;
-                    }
-                    if (strlen($this->post->email) > 0) {
-                        $userData->email = $this->post->email;
-                    }
-                    if (strlen($this->post->phone_number) > 0) {
-                        $userData->phone_number = $this->post->phone_number;
-                    }
-                    if (strlen($this->post->region) > 0) {
-                        $userData->region = $this->post->region;
-                    }
-                    var_dump($userData);
-                    if (Users::EditUserInfo($userId, $userData)) {
-                        $this->redirect("/users/me");
-                    } else {
-                        $this->addErrorMessage('Помилка при зміні даних користувача!');
+                    if (!$this->isErrorMessagesExists()) {
+                        if (strlen($this->post->role ?? '') === 0)
+                            $userData->role = 'user';
+                        else
+                            $userData->role = $this->post->role;
+                        if (strlen($this->post->login) > 0) {
+                            $userData->login = $this->post->login;
+                        }
+                        if (strlen($this->post->firstName) > 0) {
+                            $userData->first_name = $this->post->firstName;
+                        }
+                        if (strlen($this->post->lastName) > 0) {
+                            $userData->last_name = $this->post->lastName;
+                        }
+                        if (strlen($this->post->email) > 0) {
+                            $userData->email = $this->post->email;
+                        }
+                        if (strlen($this->post->phone_number) > 0) {
+                            $userData->phone_number = $this->post->phone_number;
+                        }
+                        if (strlen($this->post->region) > 0) {
+                            $userData->region = $this->post->region;
+                        }
+                        if (Users::EditUserInfo($userToEdit, $userData)) {
+                            $this->redirect("/users/me");
+                        } else {
+                            $this->addErrorMessage('Помилка при зміні даних користувача!');
+                        }
                     }
                 }
             }
+            $GLOBALS['userToEdit'] = $userData;
+            return $this->render();
         }
-
-        return $this->render();
+        $this->redirect('/');
     }
 
     public function actionEditpassword()

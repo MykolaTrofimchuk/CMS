@@ -6,7 +6,8 @@ $vehicle = $GLOBALS['vehicle'];
 $pathToImages = $GLOBALS['images'];
 $countFavorite = $GLOBALS['countFavorite'];
 
-$userInfo = \Models\Users::GetUserInfo($announcement->user_id);
+$userOwnerInfo = \Models\Users::GetUserInfo($announcement->user_id);
+$loggedUserId = isset(\core\Core::get()->session->get('user')['id']) ?? null;
 ?>
 <!doctype html>
 <html lang="en">
@@ -117,7 +118,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                                                                         d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z"
                                                                         fill="#1F2024"></path></svg>
                                 <?= htmlspecialchars($vehicle->transmission) ?></span>
-                            <?php if (!is_null($vehicle->region) || strlen($vehicle->region) > 0 || !is_null($userInfo[0]['region']) || strlen($userInfo[0]['region']) > 0): ?>
+                            <?php if (!is_null($vehicle->region) || strlen($vehicle->region) > 0 || !is_null($userOwnerInfo[0]['region']) || strlen($userOwnerInfo[0]['region']) > 0): ?>
                                 <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                            xmlns="http://www.w3.org/2000/svg" class="common-icon mr-8"><path
                                                 fill-rule="evenodd" clip-rule="evenodd"
@@ -127,7 +128,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                                                                             fill="#1F2024"></path></svg>
                             <?php
                             if (is_null($vehicle->region) || strlen($vehicle->region) === 0) {
-                                echo $userInfo[0]['region'];
+                                echo $userOwnerInfo[0]['region'] ?? 'Не вказано';
                             } else {
                                 echo htmlspecialchars($vehicle->region);
                             }
@@ -188,7 +189,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                 <?php if (\Models\Users::IsUserLogged()) : ?>
                     <div class="d-flex justify-content-between align-items-center">
                         <?php
-                        $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement->id);
+                        $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($loggedUserId, $announcement->id);
 
                         if (!$isFavorite) : ?>
                             <a href="/announcements/addtofavorites/<?= $announcement->id ?>"
@@ -203,7 +204,7 @@ $userInfo = \Models\Users::GetUserInfo($announcement->user_id);
                 <?php endif; ?>
 
                 <div class="mt-4">
-                    <a href="#" class="btn btn-outline-secondary"><?= $userInfo[0]['phone_number'] ?></a>
+                    <a href="#" class="btn btn-outline-secondary"><?= $userOwnerInfo[0]['phone_number'] ?? '' ?></a>
                 </div>
 
             </div>

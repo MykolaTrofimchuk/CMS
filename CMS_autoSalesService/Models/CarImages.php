@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use core\Core;
 use core\Model;
 
 /**
@@ -29,5 +30,11 @@ class CarImages extends Model
             return implode(',', $rows[0]);
         else
             return null;
+    }
+
+    public static function DeleteRow($where){
+        if (empty($where))
+            $where = null;
+        return Core::get()->db->delete(self::$tableName, $where);
     }
 }

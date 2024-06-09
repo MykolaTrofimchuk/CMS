@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use core\Core;
 use core\Model;
 use DateTime;
 
@@ -66,5 +67,11 @@ class UserFavouritesAnnouncements extends Model
     public static function CountByAnnouncementId($announcementId)
     {
         return self::findRowsByCondition('COUNT(*) as count', ['announcement_id' => $announcementId]);
+    }
+
+    public static function DeleteRow($where){
+        if (empty($where))
+            $where = null;
+        return Core::get()->db->delete(self::$tableName, $where);
     }
 }

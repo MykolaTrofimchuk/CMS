@@ -158,7 +158,7 @@ if (empty($userImage)) {
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
-                                <a class="btn btn-info" target="__blank" href="/users/edit">Змінити дані</a>
+                                <a class="btn btn-info" target="__blank" href="/users/edit/<?= $userInfo[0]['id']?>">Змінити дані</a>
                             </div>
                             <div class="col-sm-3">
                                 <a class="btn btn-info" target="__blank" href="/users/editpassword">Змінити пароль</a>

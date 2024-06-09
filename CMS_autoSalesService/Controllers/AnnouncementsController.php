@@ -504,28 +504,30 @@ class AnnouncementsController extends Controller
 
         foreach ($announcements as &$announcement) {
             $announcementId = $announcement['announcement_id'];
-
-            if ($announcementId !== 0) {
+            if ($announcementId !== null && $announcementId !== 0) {
                 $announcementData = Announcements::SelectById($announcementId);
-                $vehicleData = Vehicles::FindVehicleById($announcementData->vehicle_id);
 
-                $statusId = $announcementData->status_id;
-                $deactivationDate = isset($announcementData->deactivationDate) ? new DateTime($announcementData->deactivationDate) : null;
+                // Перевірка чи існує запис в таблиці Announcements для даного announcement_id
+                if ($announcementData !== null && $announcementId === $announcementData->id) {
+                    $statusId = $announcementData->status_id ?? null;
+                    $deactivationDate = isset($announcementData->deactivationDate) ? new DateTime($announcementData->deactivationDate) : null;
 
-                $oneDayAgo = new DateTime();
-                $oneDayAgo->modify('-1 day');
+                    $oneDayAgo = new DateTime();
+                    $oneDayAgo->modify('-1 day');
 
-                if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
-                    continue;
+                    if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
+                        continue;
+                    }
+
+                    if ($announcementData->id === $announcementId)
+                        $newAnnouncementData = (array)$announcementData;
+
+                    $newAnnouncementData['statusText'] = $this->mapStatusToText($statusId);
+                    $newAnnouncementData['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
+                    $newAnnouncementData['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcementId);
+
+                    $selectedAnnouncements[] = $newAnnouncementData;
                 }
-
-                $newAnnouncementData = (array)$announcementData;
-
-                $newAnnouncementData['statusText'] = $this->mapStatusToText($statusId);
-                $newAnnouncementData['pathToImages'] = CarImages::FindPathByAnnouncementId($announcementId);
-                $newAnnouncementData['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcementId);
-
-                $selectedAnnouncements[] = $newAnnouncementData;
             }
         }
 

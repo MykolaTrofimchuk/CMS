@@ -4,6 +4,7 @@
 $this->Title = 'Змінити дані користувача';
 
 $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['id']);
+$userToUpdateData = $GLOBALS['userToEdit'];
 ?>
 <!doctype html>
 <html lang="en">
@@ -24,34 +25,43 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                     <?= $error_message ?>
                 </div>
             <?php endif; ?>
+            <?php if (\Models\Users::IsAdmin($userInfo[0]['id'])): ?>
+            <div class="form-floating mb-3">
+                <select class="form-control" id="role" name="role" onselect="<?= $this->controller->post->role ?>">
+                    <option value="">Оберіть роль користувача</option>
+                    <option value="user" <?php echo ($userToUpdateData->role === 'user') ? 'selected' : ''; ?>>user</option>
+                    <option value="admin" <?php echo ($userToUpdateData->role === 'admin') ? 'selected' : ''; ?>>admin</option>
+                </select>
+            </div>
+            <?php endif; ?>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" placeholder="Логін"
-                       id="login" name="login" value="<?= $userInfo[0]['login'] ?>">
+                       id="login" name="login" value="<?= $userToUpdateData->login ?>">
                 <label for="login">Новий логін*</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" placeholder="Прізвище"
-                       id="lastName" name="lastName" value="<?= $userInfo[0]['last_name'] ?>">
+                       id="lastName" name="lastName" value="<?= $userToUpdateData->last_name ?>">
                 <label for="lastName">Змінити прізвище*</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" placeholder="Ім'я"
-                       id="firstName" name="firstName" value="<?= $userInfo[0]['first_name'] ?>">
+                       id="firstName" name="firstName" value="<?= $userToUpdateData->first_name ?>">
                 <label for="firstName">Змінити ім'я*</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="email" class="form-control rounded-3" placeholder="name@mail.com"
-                       id="email" name="email" value="<?= $userInfo[0]['email'] ?>">
+                       id="email" name="email" value="<?= $userToUpdateData->email ?>">
                 <label for="email">Змінити e-mail</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" placeholder="+380(XXX)YYYEEAA"
-                       id="phone_number" name="phone_number" value="<?= $userInfo[0]['phone_number'] ?>">
+                       id="phone_number" name="phone_number" value="<?= $userToUpdateData->phone_number ?>">
                 <label for="phone_number">Змінити номер телефону</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" placeholder="Область, місто"
-                       id="region" name="region" value="<?= $userInfo[0]['region'] ?>">
+                       id="region" name="region" value="<?= $userToUpdateData->region ?>">
                 <label for="region">Змінити адресу</label>
             </div>
             <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Зберегти</button>

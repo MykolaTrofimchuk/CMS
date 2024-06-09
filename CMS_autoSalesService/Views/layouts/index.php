@@ -58,7 +58,10 @@ if (\Models\Users::IsUserLogged()) {
                 <li><a href="/" class="nav-link px-2 link-secondary">Новини</a></li>
             </ul>
             <?php if (\Models\Users::IsUserLogged()): ?>
-                <a href="/announcements/add" class="btn btn-outline-secondary me-2">&#9658;Продати авто</a></li>
+                <a href="/announcements/add" class="btn btn-outline-secondary me-2">&#10010; Продати авто</a></li>
+            <?php endif; ?>
+            <?php if (\Models\Users::IsUserLogged() && \Models\Users::IsAdmin($userInfo[0]['id'])): ?>
+                <a href="/adminpanel/index" class="btn btn-outline-warning me-2">&#9658;Admin panel</a></li>
             <?php endif; ?>
 
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="post" action="">

@@ -11,6 +11,7 @@ use core\Model;
  * @property string $password Пароль
  * @property string $first_name Ім'я
  * @property string $last_name Прізвище
+ * @property string $role Роль
  * @property string $email Ел.пошта
  * @property string $phone_number Номер телефону користувача
  * @property string $region Місце (регіон) проживання користувача
@@ -48,7 +49,7 @@ class Users extends Model
         return !empty(Core::get()->session->get('user'));
     }
 
-    public static function RegisterUser($login, $password, $firstName, $lastName, $email = null, $phoneNumber = null, $region = null)
+    public static function RegisterUser($login, $password, $firstName, $lastName, $email = null, $phoneNumber = null, $region = null, $role = 'user')
     {
         $user = new Users();
         $user->login = $login;
@@ -58,6 +59,7 @@ class Users extends Model
         $user->email = $email;
         $user->phone_number = $phoneNumber;
         $user->region = $region;
+        $user->role = $role;
         $user->save();
     }
 
@@ -108,5 +110,17 @@ class Users extends Model
                 return false;
         }
         return false;
+    }
+
+    public static function CountAll($where = null)
+    {
+        $result = self::findRowsByCondition('COUNT(*) as count', $where);
+        return isset($result[0]['count']) ? (int)$result[0]['count'] : 0;
+    }
+
+    public static function DeleteRow($where){
+        if (empty($where))
+            $where = null;
+        return Core::get()->db->delete(self::$tableName, $where);
     }
 }
