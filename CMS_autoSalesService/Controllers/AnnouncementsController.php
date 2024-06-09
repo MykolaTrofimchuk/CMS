@@ -701,6 +701,37 @@ class AnnouncementsController extends Controller
         }
     }
 
+    private function changeStatus($announcementId, $statusId)
+    {
+        $userId = \core\Core::get()->session->get('user')['id'];
+        $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
+
+        if (empty($announcementInfo)) {
+            return false;
+        }
+
+        if ($statusId === 1 && $announcementInfo[0]['status_id'] === 1) {
+            return false; // Can't restore announcement with status other than 1
+        }
+
+        if ($statusId !== 1 && $announcementInfo[0]['status_id'] !== 1) {
+            return false; // Can't delete or mark as sold an already active announcement
+        }
+
+        if ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) {
+            return false; // User is not the owner and not an admin
+        }
+
+        $deactivationDate = date('Y-m-d H:i:s');
+
+        $announcementDataToUpdate = [
+            'status_id' => $statusId,
+            'deactivationDate' => $statusId === 1 ? null : $deactivationDate // Set deactivation date only if status is not 1
+        ];
+
+        return Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
+    }
+
     public function actionSold()
     {
         if (!Users::IsUserLogged()) {
@@ -713,28 +744,14 @@ class AnnouncementsController extends Controller
 
         if ($id !== null) {
             $announcementId = $id;
-            $userId = \core\Core::get()->session->get('user')['id'];
+            $statusId = 2; // Set status for sold announcement
+            $resUpdateAnn = $this->changeStatus($announcementId, $statusId);
 
-            $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
-            if (empty($announcementInfo) || ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) || $announcementInfo[0]['status_id'] !== 1) {
-                $this->redirect('/announcements/my');
+            if ($resUpdateAnn) {
+                $this->redirect('/announcements/my/1');
             }
-
-            if ($announcementInfo[0]['status_id'] === 1) {
-                $deactivationDate = date('Y-m-d H:i:s');
-
-                $announcementDataToUpdate = [
-                    'status_id' => 2,
-                    'deactivationDate' => $deactivationDate
-                ];
-
-                $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
-
-                if ($resUpdateAnn)
-                    $this->redirect('/announcements/my/1');
-            }
-            $this->redirect('/');
         }
+        $this->redirect('/');
     }
 
     public function actionDelete()
@@ -749,25 +766,14 @@ class AnnouncementsController extends Controller
 
         if ($id !== null) {
             $announcementId = $id;
-            $userId = \core\Core::get()->session->get('user')['id'];
+            $statusId = 3; // Set status for deleted announcement
+            $resUpdateAnn = $this->changeStatus($announcementId, $statusId);
 
-            $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
-            if (empty($announcementInfo) || ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) || $announcementInfo[0]['status_id'] !== 1) {
-                $this->redirect('/announcements/my');
-            }
-
-            $deactivationDate = date('Y-m-d H:i:s');
-
-            $announcementDataToUpdate = [
-                'status_id' => 3,
-                'deactivationDate' => $deactivationDate
-            ];
-
-            $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
-
-            if ($resUpdateAnn)
+            if ($resUpdateAnn) {
                 $this->redirect('/announcements/my/1');
+            }
         }
+        $this->redirect('/');
     }
 
     public function actionRestore()
@@ -782,22 +788,13 @@ class AnnouncementsController extends Controller
 
         if ($id !== null) {
             $announcementId = $id;
-            $userId = \core\Core::get()->session->get('user')['id'];
+            $statusId = 1; // Set status for restored announcement
+            $resUpdateAnn = $this->changeStatus($announcementId, $statusId);
 
-            $announcementInfo = Announcements::findByCondition(['id' => $announcementId]);
-            if (empty($announcementInfo) || ($userId !== $announcementInfo[0]['user_id'] && !Users::IsAdmin($userId)) || $announcementInfo[0]['status_id'] === 1) {
-                $this->redirect('/announcements/my');
-            }
-
-            $announcementDataToUpdate = [
-                'status_id' => 1,
-                'deactivationDate' => null
-            ];
-
-            $resUpdateAnn = Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);
-
-            if ($resUpdateAnn)
+            if ($resUpdateAnn) {
                 $this->redirect('/');
+            }
         }
+        $this->redirect('/error/error');
     }
 }

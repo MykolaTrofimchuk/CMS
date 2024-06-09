@@ -186,18 +186,26 @@ class UsersController extends Controller
             if (!$userData) {
                 $this->addErrorMessage('Користувача не знайдено!');
             } else {
-                // Перевірка чи був вибраний файл
                 if (isset($_FILES['file-upload']) && $_FILES['file-upload']['error'] === UPLOAD_ERR_OK) {
-                    // Переміщення завантаженого файлу у відповідну папку
-                    $uploadDir = "src/database/users/user" . $userId . "/";
-                    $uploadFile = $uploadDir . basename($_FILES['file-upload']['name']);
+                    $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
+                    $detectedType = exif_imagetype($_FILES['file-upload']['tmp_name']);
+                    if (!in_array($detectedType, $allowedTypes)) {
+                        $this->addErrorMessage('Дозволені тільки файли з розширеннями PNG, JPEG або GIF!');
+                        return $this->render();
+                    }
 
+                    $uploadDir = "src/database/users/user" . $userId . "/";
                     if (!file_exists($uploadDir)) {
                         mkdir($uploadDir, 0777, true);
                     }
 
+                    $files = glob($uploadDir . "*");
+                    $count = count($files);
+
+                    $filename = $count . '.' . pathinfo($_FILES['file-upload']['name'], PATHINFO_EXTENSION);
+                    $uploadFile = $uploadDir . $filename;
+
                     if (move_uploaded_file($_FILES['file-upload']['tmp_name'], $uploadFile)) {
-                        // Оновлення шляху зображення в базі даних
                         $userData->image_path = $uploadFile;
                         if (Users::EditUserInfo($userId, $userData)) {
                             $this->redirect("/users/me");
@@ -212,8 +220,6 @@ class UsersController extends Controller
                 }
             }
         }
-
         return $this->render();
     }
-
 }

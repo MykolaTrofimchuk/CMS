@@ -8,7 +8,17 @@ if (empty($Content))
     $Content = '';
 if (\Models\Users::IsUserLogged()) {
     $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['id']);
-    $userPhoto = isset($userInfo[0]['image_path']) ? $userInfo[0]['image_path'] : '../../../src/resourses/user-default.png';
+    $userPhoto = '';
+    if (isset($userInfo[0]['image_path']) && !empty($userInfo[0]['image_path'])) {
+        $imagePath = $userInfo[0]['image_path'];
+        if (file_exists($imagePath)) {
+            $userPhoto = '../../../../../'. $imagePath;
+        }
+    }
+
+    if (empty($userPhoto)) {
+        $userPhoto = '../../../../../src/resourses/user-default.png';
+    }
 }
 ?>
 
