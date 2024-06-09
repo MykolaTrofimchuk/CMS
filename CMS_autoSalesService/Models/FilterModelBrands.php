@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use core\Core;
 use core\Model;
 
 /**
@@ -41,5 +42,55 @@ class FilterModelBrands extends Model
             }
         }
         return $uniqModels;
+    }
+
+    public static function AddRow($brand, $model)
+    {
+        $row = new FilterModelBrands();
+        $row->brand = $brand;
+        $row->model = $model;
+        $row->save();
+    }
+
+    public static function EditRowInfo($rowId, $dataToUpdate)
+    {
+        $row = FilterModelBrands::selectRowById($rowId, 'Models\FilterModelBrands');
+
+        if ($row) {
+            foreach ($dataToUpdate as $field => $value) {
+                if (isset($value) && !empty($value)) {
+                    $row->{$field} = $value;
+                }
+            }
+            $row->save();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function DeleteRow($where){
+        if (empty($where))
+            $where = null;
+        return Core::get()->db->delete(self::$tableName, $where);
+    }
+
+    public static function CountAll($where = null)
+    {
+        $result = self::findRowsByCondition('COUNT(*) as count', $where);
+        return isset($result[0]['count']) ? (int)$result[0]['count'] : 0;
+    }
+
+    public static function getPaginatedRows($limit, $offset, $where = null)
+    {
+        if (empty($where))
+            $where = null;
+        $rows = Core::get()->db->select(self::$tableName, '*', $where, $limit, $offset, );
+        return $rows;
+    }
+
+    public static function countAllRows()
+    {
+        return self::CountAll();
     }
 }

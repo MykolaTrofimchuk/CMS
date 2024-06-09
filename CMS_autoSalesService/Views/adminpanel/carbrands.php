@@ -1,7 +1,15 @@
 <?php
-$users = $GLOBALS['admPanelUsers'];
+$rows = $GLOBALS['admPanelCarBrands'];
 $currentPage = $GLOBALS['currentPage'];
 $totalPages = $GLOBALS['totalPages'];
+
+function createPaginationLinks($currentPage, $totalPages, $delta = 2) {
+    $range = range(max(1, $currentPage - $delta), min($totalPages, $currentPage + $delta));
+    if ($range[0] > 1) array_unshift($range, 1, '...');
+    if (end($range) < $totalPages) array_push($range, '...', $totalPages);
+    return $range;
+}
+$paginationLinks = createPaginationLinks($currentPage, $totalPages);
 ?>
 <!doctype html>
 <html lang="en">
@@ -10,7 +18,7 @@ $totalPages = $GLOBALS['totalPages'];
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Адмін панель - Користувачі</title>
+    <title>Адмін панель - Бренди автомобілів</title>
     <style>
         .table-wrapper {
             width: 100%;
@@ -34,6 +42,29 @@ $totalPages = $GLOBALS['totalPages'];
         .btn-link {
             text-decoration: none !important;
             color: inherit !important;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+        }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
         }
     </style>
 </head>
@@ -85,13 +116,13 @@ $totalPages = $GLOBALS['totalPages'];
         <!-- Контент -->
         <div class="col-md-9 p-4">
             <div class="alert alert-secondary" role="alert">
-                Всього зареєстрованих користувачів у системі: <strong><?= \Models\Users::CountAll() ?></strong>
+                Всього зареєстрованих брендів та моделей у системі: <strong><?= \Models\FilterModelBrands::CountAll() ?></strong>
             </div>
             <div class="table-wrapper">
                 <table class="table table-bordered w-100">
                     <thead>
                     <tr>
-                        <?php $keys = array_keys(current($users)); ?>
+                        <?php $keys = array_keys(current($rows)); ?>
                         <?php foreach ($keys as $key): ?>
                             <?php if ($key === "password") continue; ?>
                             <th><?php echo ucfirst($key); ?></th>
@@ -101,19 +132,19 @@ $totalPages = $GLOBALS['totalPages'];
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($users as $user): ?>
+                    <?php foreach ($rows as $row): ?>
                         <tr>
-                            <?php foreach ($user as $key => $value): ?>
+                            <?php foreach ($row as $key => $value): ?>
                                 <?php if ($key === "password") continue; ?>
                                 <td><?php echo $value; ?></td>
                             <?php endforeach; ?>
-                            <td class="text-center"><a href="useredit/<?= $user['id']?>" class="btn btn-link">&#9998;</a></td>
-                            <td class="text-center"><a href="userdelete/<?= $user['id']?>" class="btn btn-link">&#10008;</a></td>
+                            <td class="text-center"><a href="/adminpanel/carbrand/<?= $row['id']?>" class="btn btn-link">&#9998;</a></td>
+                            <td class="text-center"><a href="/adminpanel/carbrandsdelete/<?= $row['id']?>" class="btn btn-link">&#10008;</a></td>
                         </tr>
                     <?php endforeach; ?>
                     <tr>
-                        <td colspan="<?= count($keys)+1 ?>" class="text-center bg-secondary text-light">
-                            <a href="useradd" class="btn btn-link">&#10010; Додати нового користувача</a>
+                        <td colspan="<?= count($keys)+2 ?>" class="text-center bg-secondary text-light">
+                            <a href="/adminpanel/carbrand/add" class="btn btn-link">&#10010; Додати новий запис</a>
                         </td>
                     </tr>
                     </tbody>
@@ -124,17 +155,21 @@ $totalPages = $GLOBALS['totalPages'];
                 <ul class="pagination justify-content-center">
                     <?php if ($currentPage > 1): ?>
                         <li class="page-item">
-                            <a class="page-link" href="/adminpanel/users/<?= $currentPage - 1; ?>">&laquo; Попередня</a>
+                            <a class="page-link" href="/adminpanel/carbrands/<?= $currentPage - 1; ?>">&laquo; Попередня</a>
                         </li>
                     <?php endif; ?>
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <li class="page-item <?= ($i == $currentPage) ? 'active' : ''; ?>">
-                            <a class="page-link" href="/adminpanel/users/<?= $i; ?>"><?= $i; ?></a>
-                        </li>
-                    <?php endfor; ?>
+                    <?php foreach ($paginationLinks as $link): ?>
+                        <?php if ($link === '...'): ?>
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <?php else: ?>
+                            <li class="page-item <?= ($link == $currentPage) ? 'active' : ''; ?>">
+                                <a class="page-link" href="/adminpanel/carbrands/<?= $link; ?>"><?= $link; ?></a>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                     <?php if ($currentPage < $totalPages): ?>
                         <li class="page-item">
-                            <a class="page-link" href="/adminpanel/users/<?= $currentPage + 1; ?>">Наступна &raquo;</a>
+                            <a class="page-link" href="/adminpanel/carbrands/<?= $currentPage + 1; ?>">Наступна &raquo;</a>
                         </li>
                     <?php endif; ?>
                 </ul>

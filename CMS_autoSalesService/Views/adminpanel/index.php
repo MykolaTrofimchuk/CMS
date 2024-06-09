@@ -45,6 +45,13 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                         Користувачі
                     </a>
                 </li>
+                <hr>
+                <li>
+                    <a href="/adminpanel/carbrands/1" class="nav-link link-dark">
+                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                        Марки - моделі авто
+                    </a>
+                </li>
             </ul>
             <hr>
         </div>
