@@ -2,11 +2,13 @@
 $this->Title = 'Список оголошень';
 
 $user = \core\Core::get()->session->get('user');
-
+$userId = null;
 if ($user !== null && isset($user['id'])) {
     $userId = $user['id'];
     $userInfo = \Models\Users::GetUserInfo($userId);
 }
+
+$isAdmin = $userId !== null && \Models\Users::IsAdmin($userId);
 ?>
 <!doctype html>
 <html lang="en">
@@ -18,7 +20,7 @@ if ($user !== null && isset($user['id'])) {
     <style>
         .inactive-announcement {
             position: relative;
-            <?php if (!\Models\Users::IsAdmin($userId)): ?>
+            <?php if (!$isAdmin): ?>
             opacity: 0.35;
             pointer-events: none;
             <?php endif; ?>
@@ -91,11 +93,8 @@ if ($user !== null && isset($user['id'])) {
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
 
                 $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement[0]['id']);
-                // Default image path
                 $imageSrc = "../../../../src/resourses/no-photo.jpg";
                 $imagesPath = "./" . $announcement[0]['pathToImages'];
-
-                // Use realpath to debug the path issue
                 $realImagesPath = realpath($imagesPath);
                 $realImagesPath = str_replace('\\', '/', $realImagesPath);
 
@@ -109,25 +108,22 @@ if ($user !== null && isset($user['id'])) {
                 }
 
                 $deactiveDate = !empty($announcement[0]['deactivationDate']) ? $announcement[0]['deactivationDate'] : '...';
-                if ($deactiveDate !== null) {
+                if ($deactiveDate !== '...') {
                     $currentTime = new DateTime();
                     $deactivationDateTime = new DateTime($deactiveDate);
                     $interval = $currentTime->diff($deactivationDateTime);
                     $hoursAgo = $interval->h;
-
                     $deactiveDate = "годин тому: $hoursAgo";
-                } else {
-                    $deactiveDate = "...";
                 }
                 ?>
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow <?= $inactiveClass ?>"
                          data-status="<?= htmlspecialchars($announcement[0]['statusText']) ?>"
                          data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
-                        <img class="card-img-top" alt="<?php echo($imageSrc) ?>"
-                             style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>"
+                        <img class="card-img-top" alt="<?= htmlspecialchars($imageSrc) ?>"
+                             style="height: 225px; width: 100%; display: block;" src="<?= htmlspecialchars($imageSrc) ?>"
                              data-holder-rendered="true">
-                        <?php if (\Models\Users::IsAdmin($userId)): ?>
+                        <?php if ($isAdmin): ?>
                             <a href="/announcements/edit/<?= htmlspecialchars($announcement[0]['id']) ?>"
                                class="btn btn-info"
                                style="position: absolute; top: 10px; right: 10px;">Редагувати</a>
@@ -145,15 +141,9 @@ if ($user !== null && isset($user['id'])) {
                         <?php endif; ?>
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
-                                <?php if ($vehicleInfo->veh_condition === 'З пробігом' || $vehicleInfo->veh_condition === 'Нове') : ?>
-                                    <p class="card-text fs-6 mb-1 fw-bold text-muted">
-                                        <em><?= htmlspecialchars($vehicleInfo->veh_condition) ?></em>
-                                    </p>
-                                <?php else: ?>
-                                    <p class="card-text fs-6 mb-1 fw-bold text-muted">
-                                        <em>З пробігом</em>
-                                    </p>
-                                <?php endif; ?>
+                                <p class="card-text fs-6 mb-1 fw-bold text-muted">
+                                    <em><?= htmlspecialchars($vehicleInfo->veh_condition ?? 'З пробігом') ?></em>
+                                </p>
                                 <p class="card-text fs-6 mb-1 fw-bold text-muted">
                                     &#9829; <?= htmlspecialchars($announcement[0]['countFavorite'][0]['count']) ?></p>
                             </div>
@@ -162,43 +152,26 @@ if ($user !== null && isset($user['id'])) {
                                 <?= htmlspecialchars($announcement[0]['title']) ?>
                             </p>
                             <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement[0]['price'])) . " $" ?></p>
-                            <?php if ($announcement[0]['description'] !== null): ?>
-                                <p class="card-text"><?= substr($announcement[0]['description'], 0, 64) . '...' ?></p>
-                            <?php else: ?>
-                                <p class="card-text">Опис відсутній</p>
-                            <?php endif; ?>
+                            <p class="card-text"><?= htmlspecialchars(substr($announcement[0]['description'] ?? 'Опис відсутній', 0, 64)) . '...' ?></p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group" style="display: flex; justify-content: space-between;">
-                                    <p class="card-text"><?= htmlspecialchars(substr($vehicleInfo->model_year, 0, 4)) ?></p>
+                                <div class="btn-group">
+                                    <p class="card-text"><?= htmlspecialchars($vehicleInfo->model_year ?? 'Не вказано') ?></p>
                                 </div>
-                                <p class="card-text"><?php
-                                    if (is_null($vehicleInfo->body_type)) {
-                                        echo "Не вказано";
-                                    } else {
-                                        echo htmlspecialchars($vehicleInfo->body_type);
-                                    }
-                                    ?>
-                                </p>
+                                <p class="card-text"><?= htmlspecialchars($vehicleInfo->body_type ?? 'Не вказано') ?></p>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group" style="display: flex; justify-content: space-between;">
-                                    <p class="card-text"><?php
-                                        if (is_null($vehicleInfo->engine_capacity)) {
-                                            echo "Не вказано";
-                                        } else {
-                                            echo htmlspecialchars($vehicleInfo->engine_capacity) . "L";
-                                        }
-                                        ?></p>
+                                <div class="btn-group">
+                                    <p class="card-text"><?= htmlspecialchars($vehicleInfo->engine_capacity ? $vehicleInfo->engine_capacity . "L" : 'Не вказано') ?></p>
                                 </div>
-                                <p class="card-text"><?= htmlspecialchars($vehicleInfo->fuel_type) ?></p>
+                                <p class="card-text"><?= htmlspecialchars($vehicleInfo->fuel_type ?? 'Не вказано') ?></p>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group" style="display: flex; justify-content: space-between;">
-                                    <p class="card-text"><?= htmlspecialchars($vehicleInfo->transmission) ?></p>
+                                <div class="btn-group">
+                                    <p class="card-text"><?= htmlspecialchars($vehicleInfo->transmission ?? 'Не вказано') ?></p>
                                 </div>
-                                <p class="card-text"><?= htmlspecialchars($vehicleInfo->color) ?></p>
+                                <p class="card-text"><?= htmlspecialchars($vehicleInfo->color ?? 'Не вказано') ?></p>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
@@ -208,16 +181,12 @@ if ($user !== null && isset($user['id'])) {
                                     <?php if (\Models\Users::IsUserLogged()) : ?>
                                         <?php
                                         $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement[0]['id']);
-
                                         if (!$isFavorite) : ?>
                                             <a href="/announcements/addtofavorites/<?= $announcement[0]['id'] ?>"
                                                class="btn btn-sm btn-outline-secondary">Слідкувати &#9829;</a>
-                                        <?php endif; ?>
-
-                                        <?php if ($isFavorite) : ?>
+                                        <?php else: ?>
                                             <a href="/announcements/removefromfavorites/<?= $announcement[0]['id'] ?>"
-                                               class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується
-                                                &#9829;</a>
+                                               class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується &#9829;</a>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>

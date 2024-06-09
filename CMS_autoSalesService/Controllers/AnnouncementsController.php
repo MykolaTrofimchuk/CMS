@@ -362,46 +362,43 @@ class AnnouncementsController extends Controller
             $this->redirect('/');
         }
 
+        $userId = \core\Core::get()->session->get('user')['id'];
+
         $routeParams = $this->get->route;
         $queryParts = explode('/', $routeParams);
         $currentPage = end($queryParts);
+        $currentPage = ($currentPage === null || $currentPage === 'null' || (int)$currentPage < 1) ? 1 : (int)$currentPage;
 
-        $userId = \core\Core::get()->session->get('user')['id'];
+        $announcementsPerPage = 6;
 
-        if ($currentPage === null || $currentPage === 'null') {
-            $currentPage = 1;
-        } else {
-            $currentPage = (int)$currentPage;
+        $totalAnnouncements = Vehicles::CountAll(['user_id' => $userId], "INNER JOIN announcements a ON vehicles.id = a.vehicle_id");
+        $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
+
+        $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+
+        if ($currentPage > $totalPages) {
+            $this->redirect("/announcements/my/$totalPages");
         }
-        if ($currentPage < 1) {
-            $this->redirect("/announcements/my/1");
-        }
 
-        if ($currentPage !== null) {
-            $announcementsPerPage = 6;
-            $totalAnnouncements = Announcements::CountAll(); // Get the total number of announcements
-            $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
+        $offset = ($currentPage - 1) * $announcementsPerPage;
+        $vehicles = Announcements::SelectPaginated($announcementsPerPage, $offset, ['user_id' => $userId]);
 
-            $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
-            if ($currentPage > $totalPages) {
-                $this->redirect("$totalPages");
+        if (!empty($vehicles)) {
+            foreach ($vehicles as &$vehicle) {
+                $announcement = Announcements::findRowsByCondition('*', ['vehicle_id' => $vehicle['id']]);
+                $statusId = $announcement[0]['status_id'];
+                $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
+                $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
+                $announcement[0]['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement[0]['id']);
+                $announcements [] = $announcement;
             }
-            $offset = ($currentPage - 1) * $announcementsPerPage;
-            $announcements = Announcements::SelectByUserIdPaginated($userId, $announcementsPerPage, $offset);
-
-            foreach ($announcements as &$announcement) {
-                $statusId = $announcement['status_id'];
-                $announcement['statusText'] = $this->mapStatusToText($statusId);
-                $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
-                $announcement['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement['id']);
-            }
-
-            $GLOBALS['announcementsMy'] = $announcements;
-            $GLOBALS['currentPageMy'] = $currentPage;
-            $GLOBALS['totalPagesMy'] = $totalPages;
-            return $this->render();
         }
-        return $this->render('Views/announcements/my.php');
+
+        $GLOBALS['announcementsMy'] = $announcements;
+        $GLOBALS['currentPageMy'] = $currentPage;
+        $GLOBALS['totalPagesMy'] = $totalPages;
+
+        return $this->render();
     }
 
     public function actionAddtofavorites()
