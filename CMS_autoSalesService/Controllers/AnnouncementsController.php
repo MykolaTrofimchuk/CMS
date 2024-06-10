@@ -254,7 +254,6 @@ class AnnouncementsController extends Controller
                         }
                     }
                 }
-
                 $filterAssocArrayWithPrice = $filterAssocArray;
 
                 if (!empty($filterAssocArray)) {
@@ -273,7 +272,7 @@ class AnnouncementsController extends Controller
                 }
 
                 $announcementsPerPage = 6;
-                $totalAnnouncements = Vehicles::CountAll($filterAssocArrayWithPrice, "INNER JOIN announcements a ON vehicles.id = a.vehicle_id"); // Pass filters to count
+                $totalAnnouncements = Vehicles::CountAll($filterAssocArrayWithPrice, "INNER JOIN announcements a ON vehicles.id = a.vehicle_id");
                 $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
 
                 $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
@@ -285,25 +284,39 @@ class AnnouncementsController extends Controller
                     return $this->render();
                 }
                 if ($currentPage > $totalPages) {
-                    $this->redirect("$totalPages");
+                    $this->redirect("/announcements/view/$totalPages");
+                }
+                $vehicles = Announcements::SelectPaginatedByCondition($filterAssocArrayWithPrice);
+
+                $filteredAnnouncements = [];
+                $oneDayAgo = new DateTime();
+                $oneDayAgo->modify('-1 day');
+
+                foreach ($vehicles as $announcement) {
+                    $statusId = $announcement['status_id'];
+                    $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
+                    if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
+                        continue;
+                    }
+
+                    $announcement['statusText'] = $this->mapStatusToText($statusId);
+                    $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
+                    $announcement['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement['id']);
+
+                    $filteredAnnouncements[] = $announcement;
+                }
+                $totalAnnouncementsCount = count($filteredAnnouncements);
+                $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+                if ($currentPage > $totalPages) {
+                    $this->redirect("/announcements/view/$totalPages");
                 }
                 $offset = ($currentPage - 1) * $announcementsPerPage;
-                $vehicles = Announcements::SelectPaginated($announcementsPerPage, $offset, $filterAssocArrayWithPrice);
+                $paginatedAnnouncements = array_slice($filteredAnnouncements, $offset, $announcementsPerPage);
 
-                if (!empty($vehicles)) {
-                    foreach ($vehicles as &$vehicle) {
-                        $announcement = Announcements::findRowsByCondition('*', ['vehicle_id' => $vehicle['id']]);
-                        $statusId = $announcement[0]['status_id'];
-                        $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
-                        $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
-                        $announcement[0]['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement[0]['id']);
-                        $announcements [] = $announcement;
-                    }
-                }
-
-                $GLOBALS['statuses'] = $announcements;
+                $GLOBALS['statuses'] = $paginatedAnnouncements;
                 $GLOBALS['currentPage'] = $currentPage;
                 $GLOBALS['totalPages'] = $totalPages;
+
                 return $this->render();
             }
             $announcementsPerPage = 6;
@@ -321,26 +334,39 @@ class AnnouncementsController extends Controller
             if ($currentPage > $totalPages) {
                 $this->redirect("$totalPages");
             }
-            $offset = ($currentPage - 1) * $announcementsPerPage;
-            $vehicles = Announcements::SelectPaginated($announcementsPerPage, $offset);
+            $vehicles = Announcements::SelectPaginatedByCondition();
 
-            if (!empty($vehicles)) {
-                foreach ($vehicles as &$vehicle) {
-                    $announcement = Announcements::findRowsByCondition('*', ['vehicle_id' => $vehicle['id']]);
-                    $statusId = $announcement[0]['status_id'];
-                    $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
-                    $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
-                    $announcement[0]['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement[0]['id']);
-                    $announcements [] = $announcement;
+            $filteredAnnouncements = [];
+            $oneDayAgo = new DateTime();
+            $oneDayAgo->modify('-1 day');
+
+            foreach ($vehicles as $announcement) {
+                $statusId = $announcement['status_id'];
+                $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
+                if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
+                    continue;
                 }
-            }
 
-            $GLOBALS['statuses'] = $announcements;
+                $announcement['statusText'] = $this->mapStatusToText($statusId);
+                $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
+                $announcement['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement['id']);
+
+                $filteredAnnouncements[] = $announcement;
+            }
+            $totalAnnouncementsCount = count($filteredAnnouncements);
+            $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
+            if ($currentPage > $totalPages) {
+                $this->redirect("/announcements/view/$totalPages");
+            }
+            $offset = ($currentPage - 1) * $announcementsPerPage;
+            $paginatedAnnouncements = array_slice($filteredAnnouncements, $offset, $announcementsPerPage);
+
+            $GLOBALS['statuses'] = $paginatedAnnouncements;
             $GLOBALS['currentPage'] = $currentPage;
             $GLOBALS['totalPages'] = $totalPages;
+
             return $this->render();
         }
-        return $this->render('Views/announcements/view.php');
     }
 
     private function mapStatusToText($statusId)

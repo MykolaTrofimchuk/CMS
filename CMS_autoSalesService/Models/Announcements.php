@@ -21,11 +21,11 @@ class Announcements extends Model
 {
     public static $tableName = 'announcements';
 
-    public static function SelectPaginated($limit, $offset, $where = null)
+    public static function SelectPaginatedByCondition($where = null)
     {
         if (empty($where))
             $where = null;
-        $rows = Core::get()->db->select('vehicles v INNER JOIN announcements a ON v.id = a.vehicle_id', 'v.*', $where, $limit, $offset, );
+        $rows = Core::get()->db->select('vehicles v INNER JOIN announcements a ON v.id = a.vehicle_id', 'v.*, a.*', $where );
         return $rows;
     }
 
@@ -54,24 +54,6 @@ class Announcements extends Model
         return null;
     }
 
-    public static function SelectStatusAnnouncementById($announcementId)
-    {
-        $announcement = self::findById($announcementId);
-        if ($announcement) {
-            $statusId = $announcement->status_id;
-            if ($statusId) {
-                $status = AnnouncementStatuses::FindStatusById($statusId);
-                return $status;
-            }
-        }
-        return null;
-    }
-
-    public static function GetInfo($id)
-    {
-        return self::findByCondition(['id' => $id]);
-    }
-
     public static function AddAnnouncement($title, $price, $publicationDate, $userId, $statusId, $vehicleId,
                                            $description = null, $deactivationDate = null)
     {
@@ -96,31 +78,6 @@ class Announcements extends Model
         return null;
     }
 
-    public static function SelectByUserIdPaginated($userId, $limit, $offset)
-    {
-        $condition = ['user_id' => $userId];
-        $rows = self::findByCondition($condition, $limit, $offset);
-        $validAnnouncements = [];
-
-        $oneDayAgo = new DateTime();
-        $oneDayAgo->modify('-1 day');
-
-        if (!empty($rows)) {
-            foreach ($rows as $announcement) {
-                $statusId = $announcement['status_id'];
-                $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
-
-                if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
-                    continue;
-                }
-
-                $validAnnouncements[] = $announcement;
-            }
-        }
-
-        return $validAnnouncements;
-    }
-
     public static function EditAnnouncementInfo($announcementId, $dataToUpdate)
     {
         $announcement = Announcements::selectRowById($announcementId, 'Models\Announcements');
@@ -128,11 +85,10 @@ class Announcements extends Model
         if ($announcement) {
             foreach ($dataToUpdate as $field => $value) {
                 if (isset($value) && !empty($value)) {
-                    // Встановлюємо інші поля, якщо вони не порожні
                     $announcement->{$field} = $value;
                 }
             }
-            $announcement->save(); // Зберігаємо зміни в базі даних
+            $announcement->save();
             return true;
         } else {
             return false;
@@ -156,10 +112,5 @@ class Announcements extends Model
         if (empty($where))
             $where = null;
         return Core::get()->db->delete(self::$tableName, $where);
-    }
-
-    public static function findUserAnnouncementsWithVehicles($userId)
-    {
-        return Core::get()->db->select('announcements a INNER JOIN vehicles v ON v.id = a.vehicle_id', 'a.*, v.*', ['a.user_id' => $userId]);
     }
 }
