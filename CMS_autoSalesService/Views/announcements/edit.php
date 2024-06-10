@@ -124,6 +124,11 @@ $loggedUserId = \core\Core::get()->session->get('user')['id'];
                     </select>
                     <label for="status">Змінити статус оголошення</label>
                 </div>
+                <div class="form-floating mb-3">
+                    <input type="datetime-local" class="form-control bg-light" id="deactivationDate" placeholder="Дата деактивації оголошення"
+                           name="deactivationDate" value="<?= isset($announcementInfo[0]['deactivationDate']) && $announcementInfo[0]['deactivationDate'] !== null ? $announcementInfo[0]['deactivationDate'] : ''?>">
+                    <label for="deactivationDate">Дата видалення</label>
+                </div>
             <?php endif; ?>
             <br>
             <div class="form-row">

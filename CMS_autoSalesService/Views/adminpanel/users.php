@@ -67,9 +67,21 @@ $totalPages = $GLOBALS['totalPages'];
                     </a>
                 </li>
                 <li>
+                    <a href="/adminpanel/announcementstatuses/1" class="nav-link link-dark">
+                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                        Статуси оголошень
+                    </a>
+                </li>
+                <li>
                     <a href="/adminpanel/users/1" class="nav-link link-dark">
                         <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
                         Користувачі
+                    </a>
+                </li>
+                <li>
+                    <a href="/adminpanel/followedadds/1" class="nav-link link-dark">
+                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+                        Обрані оголошення
                     </a>
                 </li>
                 <hr>

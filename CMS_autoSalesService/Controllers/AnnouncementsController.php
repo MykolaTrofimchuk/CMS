@@ -279,7 +279,7 @@ class AnnouncementsController extends Controller
                 $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
 
                 if ($totalAnnouncementsCount === 0) {
-                    $GLOBALS['announcements'] = [];
+                    $GLOBALS['statuses'] = [];
                     $GLOBALS['currentPage'] = 1;
                     $GLOBALS['totalPages'] = 1;
                     return $this->render();
@@ -301,7 +301,7 @@ class AnnouncementsController extends Controller
                     }
                 }
 
-                $GLOBALS['announcements'] = $announcements;
+                $GLOBALS['statuses'] = $announcements;
                 $GLOBALS['currentPage'] = $currentPage;
                 $GLOBALS['totalPages'] = $totalPages;
                 return $this->render();
@@ -313,7 +313,7 @@ class AnnouncementsController extends Controller
             $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
 
             if ($totalAnnouncementsCount === 0) {
-                $GLOBALS['announcements'] = [];
+                $GLOBALS['statuses'] = [];
                 $GLOBALS['currentPage'] = 1;
                 $GLOBALS['totalPages'] = 1;
                 return $this->render();
@@ -335,7 +335,7 @@ class AnnouncementsController extends Controller
                 }
             }
 
-            $GLOBALS['announcements'] = $announcements;
+            $GLOBALS['statuses'] = $announcements;
             $GLOBALS['currentPage'] = $currentPage;
             $GLOBALS['totalPages'] = $totalPages;
             return $this->render();
@@ -487,7 +487,7 @@ class AnnouncementsController extends Controller
         $announcementsPerPage = 6;
 
         $totalAnnouncements = UserFavouritesAnnouncements::CountAll();
-        $totalAnnouncementsCount = isset($totalAnnouncements[0]['count']) ? (int)$totalAnnouncements[0]['count'] : 0;
+        $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
         $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
 
         if ($currentPage > $totalPages) {
@@ -624,13 +624,19 @@ class AnnouncementsController extends Controller
                     $modelYear = substr($this->post->modelYear, 0, 4);
                     $title = $this->post->title . " " . $this->post->brand . " " . $this->post->model . " " . $modelYear;
                     $price = (int)$this->post->price;
+                    $deactivationDate = $this->post->deactivationDate;
+                    $currentDateYear = intval(date('Y'));
+                    if ($deactivationDate < 1900 || $deactivationDate >= ($currentDateYear + 2) || $deactivationDate === null) {
+                        $this->addErrorMessage("Дату деактивації вказано НЕ КОРЕКТНО!");
+                    }
 
                     $announcementDataToUpdate = [
                         'title' => $title,
                         'description' => $this->post->description,
                         'price' => $price,
                         'user_id' => $this->post->userId,
-                        'status_id' => $this->post->statusId
+                        'status_id' => $this->post->statusId,
+                        'deactivationDate' => $deactivationDate
                     ];
 
                     $resUpdateVeh = Vehicles::EditVehicleInfo($vehicleInfo->id, $vehicleDataToUpdate);

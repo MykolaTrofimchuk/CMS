@@ -4,6 +4,7 @@ namespace Controllers;
 
 use core\Controller;
 use Models\Announcements;
+use Models\AnnouncementStatuses;
 use Models\CarImages;
 use Models\FilterModelBrands;
 use Models\UserFavouritesAnnouncements;
@@ -351,6 +352,199 @@ class AdminpanelController extends Controller
             if ($deletedRows === 0)
                 $this->redirect('/adminpanel/index');
             $this->redirect('/adminpanel/carbrands');
+        }
+    }
+
+    public function actionAnnouncementstatuses()
+    {
+        if (!Users::IsUserLogged())
+            $this->redirect('/');
+
+        $userId = \core\Core::get()->session->get('user')['id'];
+        if (!Users::IsAdmin($userId))
+            $this->redirect('/');
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $currentPage = end($queryParts);
+
+        if ($currentPage === null || $currentPage === 'null') {
+            $currentPage = 1;
+        } else {
+            $currentPage = (int)$currentPage;
+        }
+
+        if ($currentPage < 1) {
+            $this->redirect("/adminpanel/announcementstatuses/1");
+        }
+
+        $rowsPerPage = 8;
+
+        $totalRows = AnnouncementStatuses::CountAll();
+        $totalRowsCount = isset($totalRows) ? (int)$totalRows : 0;
+        $totalPages = ceil($totalRowsCount / $rowsPerPage);
+
+        if ($currentPage > $totalPages) {
+            $this->redirect("/adminpanel/announcements/$totalPages");
+        }
+
+        $offset = ($currentPage - 1) * $rowsPerPage;
+
+        $announcements = AnnouncementStatuses::getPaginatedRows($rowsPerPage, $offset);
+        $totalRows = AnnouncementStatuses::CountAll();
+
+        $totalPages = ceil($totalRows / $rowsPerPage);
+
+        $GLOBALS['admPanelStatuses'] = $announcements;
+        $GLOBALS['currentPage'] = $currentPage;
+        $GLOBALS['totalPages'] = $totalPages;
+
+        return $this->render();
+    }
+
+    public function actionStatus()
+    {
+        if (!Users::IsUserLogged())
+            $this->redirect('/');
+
+        $userId = \core\Core::get()->session->get('user')['id'];
+        if (!Users::IsAdmin($userId))
+            $this->redirect('/');
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $currentAction = end($queryParts);
+
+        if ($currentAction === 'add') {
+            if ($this->isPost) {
+                if (strlen($this->post->status) === 0)
+                    $this->addErrorMessage('Обов\'язково вкажіть назву статусу!');
+
+                if (!$this->isErrorMessagesExists()) {
+                    AnnouncementStatuses::AddRow(
+                        $this->post->status
+                    );
+
+                    $this->redirect('/adminpanel/announcementstatuses/1');
+                }
+            }
+            return $this->render();
+        } elseif (is_numeric($currentAction) && (int)$currentAction == $currentAction) {
+            $rowToUpdate = $currentAction;
+            $GLOBALS['statusInfo'] = AnnouncementStatuses::findById($rowToUpdate);
+            if ($this->isPost) {
+                if (strlen($this->post->status) === 0)
+                    $this->addErrorMessage('Обов\'язково вкажіть назву статусу!');
+
+                if (!$this->isErrorMessagesExists()) {
+                    AnnouncementStatuses::EditRowInfo(
+                        $rowToUpdate,
+                        [
+                            'status' => $this->post->status,
+                        ]
+                    );
+
+                    $this->redirect('/adminpanel/announcementstatuses/1');
+                }
+            }
+            return $this->render();
+        } else
+            $this->redirect('/adminpanel/index');
+        return $this->render();
+    }
+
+    public function actionStatusdelete()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $userId = \core\Core::get()->session->get('user')['id'];
+        if (!Users::IsAdmin($userId))
+            $this->redirect('/');
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $rowToDelete = $id;
+            $deletedRows = AnnouncementStatuses::DeleteRow(['id' => $rowToDelete]);
+
+            if ($deletedRows === 0)
+                $this->redirect('/adminpanel/index');
+            $this->redirect('/adminpanel/announcementstatuses/1');
+        }
+    }
+
+    public function actionFollowedadds()
+    {
+        if (!Users::IsUserLogged())
+            $this->redirect('/');
+
+        $userId = \core\Core::get()->session->get('user')['id'];
+        if (!Users::IsAdmin($userId))
+            $this->redirect('/');
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $currentPage = end($queryParts);
+
+        if ($currentPage === null || $currentPage === 'null') {
+            $currentPage = 1;
+        } else {
+            $currentPage = (int)$currentPage;
+        }
+
+        if ($currentPage < 1) {
+            $this->redirect("/adminpanel/followedadds/1");
+        }
+
+        $rowsPerPage = 8;
+
+        $totalRows = UserFavouritesAnnouncements::CountAll();
+        $totalRowsCount = isset($totalRows) ? (int)$totalRows : 0;
+        $totalPages = ceil($totalRowsCount / $rowsPerPage);
+
+        if ($currentPage > $totalPages) {
+            $this->redirect("/adminpanel/followedadds/$totalPages");
+        }
+
+        $offset = ($currentPage - 1) * $rowsPerPage;
+
+        $announcements = UserFavouritesAnnouncements::getPaginatedRows($rowsPerPage, $offset);
+        $totalRows = UserFavouritesAnnouncements::CountAll();
+
+        $totalPages = ceil($totalRows / $rowsPerPage);
+
+        $GLOBALS['admPanelSelectedAdds'] = $announcements;
+        $GLOBALS['currentPage'] = $currentPage;
+        $GLOBALS['totalPages'] = $totalPages;
+
+        return $this->render();
+    }
+
+    public function actionSelecteddelete()
+    {
+        if (!Users::IsUserLogged()) {
+            $this->redirect('/');
+        }
+
+        $userId = \core\Core::get()->session->get('user')['id'];
+        if (!Users::IsAdmin($userId))
+            $this->redirect('/');
+
+        $routeParams = $this->get->route;
+        $queryParts = explode('/', $routeParams);
+        $id = end($queryParts);
+
+        if ($id !== null) {
+            $rowToDelete = $id;
+            $deletedRows = UserFavouritesAnnouncements::DeleteRow(['id' => $rowToDelete]);
+
+            if ($deletedRows === 0)
+                $this->redirect('/adminpanel/index');
+            $this->redirect('/adminpanel/followedadds/1');
         }
     }
 }

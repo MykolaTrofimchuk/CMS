@@ -39,12 +39,6 @@ class UserFavouritesAnnouncements extends Model
         self::deleteByCondition(["user_id" => $user_id, "announcement_id" => $announcement_id]);
     }
 
-    public static function getSelectedAnnouncements($userId)
-    {
-        // Отримуємо обрані оголошення для певного користувача
-        return self::findByCondition(['user_id' => $userId]);
-    }
-
     public static function SelectByUserIdPaginated($userId, $limit, $offset)
     {
         // Вибираємо оголошення, які належать користувачеві з обмеженням та зміщенням
@@ -59,9 +53,10 @@ class UserFavouritesAnnouncements extends Model
         return $validAnnouncements;
     }
 
-    public static function CountAll()
+    public static function CountAll($where = null)
     {
-        return self::findRowsByCondition('COUNT(*) as count');
+        $result = self::findRowsByCondition('COUNT(*) as count', $where);
+        return isset($result[0]['count']) ? (int)$result[0]['count'] : 0;
     }
 
     public static function CountByAnnouncementId($announcementId)
@@ -73,5 +68,13 @@ class UserFavouritesAnnouncements extends Model
         if (empty($where))
             $where = null;
         return Core::get()->db->delete(self::$tableName, $where);
+    }
+
+    public static function getPaginatedRows($limit, $offset, $where = null)
+    {
+        if (empty($where))
+            $where = null;
+        $rows = Core::get()->db->select(self::$tableName, '*', $where, $limit, $offset, );
+        return $rows;
     }
 }

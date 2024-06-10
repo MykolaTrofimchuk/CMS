@@ -87,9 +87,9 @@ $isAdmin = $userId !== null && \Models\Users::IsAdmin($userId);
 <div class="album py-5 bg-light">
     <div class="container">
         <div class="row">
-            <?php foreach ($GLOBALS['announcements'] as $announcement): ?>
+            <?php foreach ($GLOBALS['statuses'] as $announcement): ?>
                 <?php
-                $isInactive = in_array($announcement[0]['statusText'], ['Продано', 'Видалено']);
+                $isInactive = in_array($announcement[0]['statusText'], ['Продано', 'Видалено', 'Невідомо']);
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
 
                 $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement[0]['id']);

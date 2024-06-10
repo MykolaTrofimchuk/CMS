@@ -2,10 +2,9 @@
 /** @var string $error_message Повідомлення про помилку */
 
 $this->Title = 'Додавання запису';
-if (isset($GLOBALS['brandInfo'])) {
-    $rowInfo = $GLOBALS['brandInfo'];
-    $brand = $rowInfo->brand;
-    $model = $rowInfo->model;
+if (isset($GLOBALS['statusInfo'])) {
+    $rowInfo = $GLOBALS['statusInfo'];
+    $status = $rowInfo->status;
 }
 ?>
 <!doctype html>
@@ -28,18 +27,11 @@ if (isset($GLOBALS['brandInfo'])) {
                     </div>
                 <?php endif; ?>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control rounded-3" id="brand" placeholder="Марка авто" name="brand"
-                           value="<?= isset($this->post->model) ? htmlspecialchars($this->post->model) : '' ?><?= isset($brand) && (strlen($brand) !== 0) ? htmlspecialchars($brand) : '' ?>">
-                    <label for="brand">Марка</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control rounded-3" id="model"
-                           placeholder="Модель (можливо комплектація / версія) авто" name="model"
-                           value="<?= isset($this->post->brand) ? htmlspecialchars($this->post->brand) : '' ?><?= isset($model) && strlen($model) !== 0 ? htmlspecialchars($model) : '' ?>">
-                    <label for="model">Модель</label>
+                    <input type="text" class="form-control rounded-3" id="brand" placeholder="Назва статусу" name="status"
+                           value="<?= isset($this->post->status) ? htmlspecialchars($this->post->status) : '' ?><?= isset($status) && (!empty($status)) ? htmlspecialchars($status) : '' ?>">
+                    <label for="brand">Статус</label>
                 </div>
                 <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Додати запис</button>
-                <hr class="my-4">
             </form>
         </div>
     </div>

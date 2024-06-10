@@ -1,19 +1,16 @@
 <?php
 $this->Title = 'Admin Adds';
 
-$announcements = $GLOBALS['admPanelAnnouncements'];
+$selectedAdds = $GLOBALS['admPanelSelectedAdds'];
 $currentPage = $GLOBALS['currentPage'];
 $totalPages = $GLOBALS['totalPages'];
 
-$vehicles = [];
-$statuses = [];
+$announcements = [];
 $users = [];
-foreach ($announcements as $an) {
-    $vehicle = \Models\Vehicles::FindVehicleById($an['vehicle_id']);
-    $vehicles[] = $vehicle;
-    $status = \Models\AnnouncementStatuses::FindStatusById($an['status_id']);
-    $statuses[] = $status;
-    $user = \Models\Users::GetUserInfo($an['user_id']);
+foreach ($selectedAdds as $add) {
+    $announcement = \Models\Announcements::SelectById($add['announcement_id']);
+    $announcements[] = $announcement;
+    $user = \Models\Users::GetUserInfo($add['user_id']);
     $users[] = $user;
 }
 ?>
@@ -131,34 +128,52 @@ foreach ($announcements as $an) {
         <!-- Контент -->
         <div class="col-md-9 p-4">
             <div class="alert alert-secondary" role="alert">
-                Всього зареєстрованих оголошень у системі:
-                <strong><?= \Models\Announcements::countAllAnnouncements() ?></strong>
+                Знайдено записів про обрані оголошення у системі:
+                <strong><?= \Models\UserFavouritesAnnouncements::CountAll() ?></strong>
             </div>
             <div class="table-wrapper">
                 <table class="table table-bordered w-100">
                     <thead>
                     <tr>
-                        <?php $keys = array_keys(current($announcements)); ?>
+                        <?php $keys = array_keys(current($selectedAdds)); ?>
                         <?php foreach ($keys as $key): ?>
                             <th><?php echo ucfirst($key); ?></th>
                         <?php endforeach; ?>
-                        <th>Редагувати</th>
                         <th>Видалити</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($announcements as $index => $announcement): ?>
+                    <?php foreach ($selectedAdds as $index => $announcement): ?>
                         <tr>
                             <?php foreach ($announcement as $key => $value): ?>
-                                <?php if ($key === "vehicle_id"): ?>
+                                <?php if ($key === "user_id"): ?>
+                                <td>
+                                    <div class="dropdown dlist dropend">
+                                        <?php if (!empty($users[$index][0])) : ?>
+                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                <?php echo $users[$index][0]['id']; ?>
+                                            </button>
+                                            <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
+                                                <?php foreach ($users[$index][0] as $user) : ?>
+                                                    <li>
+                                                        <button class="dropdown-item text-light"
+                                                                type="button"><?php echo $user; ?></button>
+                                                    </li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                                <?php elseif($key === "announcement_id"): ?>
                                     <td>
                                         <div class="dropdown dlist dropend">
                                             <button class="btn dropdown-toggle" type="button" id="dropdownMenu2"
                                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                                <?php echo $vehicles[$index]->id; ?>
+                                                <?php echo $announcements[$index]->id; ?>
                                             </button>
                                             <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
-                                                <?php foreach ($vehicles[$index] as $vh) : ?>
+                                                <?php foreach ($announcements[$index] as $vh) : ?>
                                                     <li>
                                                         <button class="dropdown-item text-light"
                                                                 type="button"><?php echo $vh; ?></button>
@@ -167,60 +182,14 @@ foreach ($announcements as $an) {
                                             </ul>
                                         </div>
                                     </td>
-                                <?php elseif ($key === "status_id"): ?>
-                                    <td>
-                                        <div class="dropdown dlist dropend">
-                                            <?php if (isset($statuses[$index]->id)) : ?>
-                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                <?php echo $statuses[$index]->id; ?>
-                                            </button>
-                                            <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
-                                                <?php foreach ($statuses[$index] as $status) : ?>
-                                                    <li>
-                                                        <button class="dropdown-item text-light"
-                                                                type="button"><?php echo $status; ?></button>
-                                                    </li>
-                                                <?php endforeach; ?>
-                                            </ul>
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
-                                <?php elseif ($key === "user_id"): ?>
-                                    <td>
-                                        <div class="dropdown dlist dropstart">
-                                            <?php if (!empty($users[$index][0])) : ?>
-                                                <button class="btn dropdown-toggle" type="button" id="dropdownMenu2"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <?php echo $users[$index][0]['id']; ?>
-                                                </button>
-                                                <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
-                                                    <?php foreach ($users[$index][0] as $user) : ?>
-                                                        <li>
-                                                            <button class="dropdown-item text-light"
-                                                                    type="button"><?php echo $user; ?></button>
-                                                        </li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
                                 <?php else: ?>
                                     <td><a><?php echo $value; ?></a></td>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                            <td class="text-center"><a href="/adminpanel/announcementedit/<?= $announcement['id'] ?>"
-                                                       class="btn btn-link">&#9998;</a></td>
-                            <th class="text-center"><a href="/adminpanel/announcementdelete/<?= $announcement['id'] ?>"
+                            <th class="text-center text-danger"><a href="/adminpanel/selecteddelete/<?= $announcement['id'] ?>"
                                                        class="btn btn-link">&#10008;</a></th>
                         </tr>
                     <?php endforeach; ?>
-                    <tr>
-                        <td colspan="<?= count($announcements[0]) + 2; ?>" class="text-center bg-secondary text-light">
-                            <a href="/adminpanel/announcementadd" class="btn btn-link">&#10010; Додати новий запис
-                                оголошення</a>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -230,17 +199,17 @@ foreach ($announcements as $an) {
                     <?php if ($currentPage > 1): ?>
                         <li class="page-item">
                             <a class="page-link"
-                               href="/adminpanel/announcements/<?= $currentPage - 1; ?>">Previous</a>
+                               href="/adminpanel/followedadds/<?= $currentPage - 1; ?>">Previous</a>
                         </li>
                     <?php endif; ?>
                     <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                         <li class="page-item <?= ($i == $currentPage) ? 'active' : ''; ?>">
-                            <a class="page-link" href="/adminpanel/announcements/<?= $i; ?>"><?= $i; ?></a>
+                            <a class="page-link" href="/adminpanel/followedadds/<?= $i; ?>"><?= $i; ?></a>
                         </li>
                     <?php endfor; ?>
                     <?php if ($currentPage < $totalPages): ?>
                         <li class="page-item">
-                            <a class="page-link" href="/adminpanel/announcements/<?= $currentPage + 1; ?>">Next</a>
+                            <a class="page-link" href="/adminpanel/followedadds/<?= $currentPage + 1; ?>">Next</a>
                         </li>
                     <?php endif; ?>
                 </ul>
