@@ -85,31 +85,32 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
         <div class="row">
             <?php foreach ($GLOBALS['announcementsMy'] as $announcement): ?>
                 <?php
-                $isInactive = in_array($announcement[0]['statusText'], ['Продано', 'Видалено']);
+                $isInactive = in_array($announcement['statusText'], ['Продано', 'Видалено']);
                 $inactiveClass = $isInactive ? 'inactive-announcement' : '';
 
-                $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement[0]['id']);
+                $vehicleInfo = \Models\Announcements::SelectVehicleFromAnnouncement($announcement['id']);
 
                 $imageSrc = "../../../../src/resourses/no-photo.jpg";
-                $imagesPath = "./" . $announcement[0]['pathToImages'];
+                $imagesPath = "./" . $announcement['pathToImages'];
                 $realImagesPath = realpath($imagesPath);
                 $realImagesPath = str_replace('\\', '/', $realImagesPath);
 
-                if (!is_null($announcement[0]['pathToImages']) && is_dir($realImagesPath)) {
+                if (!is_null($announcement['pathToImages']) && is_dir($realImagesPath)) {
                     $images = scandir($realImagesPath);
                     $images = array_diff($images, array('.', '..'));
                     $firstImage = !empty($images) ? reset($images) : null;
                     if (!is_null($firstImage)) {
-                        $imageSrc = "../../../../../" . $announcement[0]['pathToImages'] . "/" . $firstImage;
+                        $imageSrc = "../../../../../" . $announcement['pathToImages'] . "/" . $firstImage;
                     }
                 }
 
-                $deactiveDate = !empty($announcement[0]['deactivationDate']) ? $announcement[0]['deactivationDate'] : '...';
-                if ($deactiveDate !== null) {
+                $deactiveDate = !empty($announcement['deactivationDate']) ? $announcement['deactivationDate'] : '...';
+                if ($deactiveDate !== '...') {
                     $currentTime = new DateTime();
                     $deactivationDateTime = new DateTime($deactiveDate);
                     $interval = $currentTime->diff($deactivationDateTime);
-                    $hoursAgo = $interval->h;
+
+                    $hoursAgo = ($interval->days * 24) + $interval->h;
 
                     $deactiveDate = "годин тому: $hoursAgo";
                 } else {
@@ -118,13 +119,13 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                 ?>
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow <?= $inactiveClass ?>"
-                         data-status="<?= htmlspecialchars($announcement[0]['statusText']) ?>"
+                         data-status="<?= htmlspecialchars($announcement['statusText']) ?>"
                          data-status-date="<?= htmlspecialchars($deactiveDate) ?>">
                         <div class="card-img-top-container " style="position: relative;">
                             <img class="card-img-top" alt="<?php echo($imageSrc) ?>"
                                  style="height: 225px; width: 100%; display: block;" src="<?php echo($imageSrc) ?>"
                                  data-holder-rendered="true">
-                            <a href="/announcements/edit/<?= htmlspecialchars($announcement[0]['id']) ?>"
+                            <a href="/announcements/edit/<?= htmlspecialchars($announcement['id']) ?>"
                                class="btn btn-primary"
                                style="position: absolute; top: 10px; right: 10px;">Редагувати</a>
                         </div>
@@ -139,15 +140,15 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                                         <em>З пробігом</em>
                                     </p>
                                 <?php endif; ?>
-                                <p class="card-text fs-6 mb-1 fw-bold text-muted">&#9829; <?= htmlspecialchars($announcement[0]['countFavorite'][0]['count']) ?></p>
+                                <p class="card-text fs-6 mb-1 fw-bold text-muted">&#9829; <?= htmlspecialchars($announcement['countFavorite'][0]['count']) ?></p>
                             </div>
                             <p class="card-text fs-5"
                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <?= htmlspecialchars($announcement[0]['title']) ?>
+                                <?= htmlspecialchars($announcement['title']) ?>
                             </p>
-                            <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement[0]['price'])) . " $" ?></p>
-                            <?php if ($announcement[0]['description'] !== null): ?>
-                                <p class="card-text"><?= substr($announcement[0]['description'], 0, 64) . '...' ?></p>
+                            <p class="card-text fs-5 fw-bold"><?= htmlspecialchars(round($announcement['price'])) . " $" ?></p>
+                            <?php if ($announcement['description'] !== null): ?>
+                                <p class="card-text"><?= substr($announcement['description'], 0, 64) . '...' ?></p>
                             <?php else: ?>
                                 <p class="card-text">Опис відсутній</p>
                             <?php endif; ?>
@@ -187,37 +188,37 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <a href="/announcements/index/<?= $announcement[0]['id'] ?>"
+                                    <a href="/announcements/index/<?= $announcement['id'] ?>"
                                        class="btn btn-sm btn-outline-secondary">Переглянути</a>
                                     <?php if (\Models\Users::IsUserLogged()) : ?>
                                         <?php
-                                        $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement[0]['id']);
+                                        $isFavorite = \Models\UserFavouritesAnnouncements::IsFavorite($userInfo[0]['id'], $announcement['id']);
 
                                         if (!$isFavorite) : ?>
-                                            <a href="/announcements/addtofavorites/<?= $announcement[0]['id'] ?>"
+                                            <a href="/announcements/addtofavorites/<?= $announcement['id'] ?>"
                                                class="btn btn-sm btn-outline-secondary">Слідкувати &#9829;</a>
                                         <?php endif; ?>
 
                                         <?php if ($isFavorite) : ?>
-                                            <a href="/announcements/removefromfavorites/<?= $announcement[0]['id'] ?>"
+                                            <a href="/announcements/removefromfavorites/<?= $announcement['id'] ?>"
                                                class="btn btn-sm btn-outline-secondary bg-secondary text-white">Відслідковується
                                                 &#9829;</a>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
-                                <small class="text-muted"><?= htmlspecialchars($announcement[0]['publicationDate']) ?></small>
+                                <small class="text-muted"><?= htmlspecialchars($announcement['publicationDate']) ?></small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center w-100 mt-3">
-                                <a href="/announcements/sold/<?= $announcement[0]['id'] ?>"
+                                <a href="/announcements/sold/<?= $announcement['id'] ?>"
                                    class="btn btn-sm btn-outline-success w-50 m-0 text-center">Продано &#36;</a>
-                                <a href="/announcements/delete/<?= $announcement[0]['id'] ?>"
+                                <a href="/announcements/delete/<?= $announcement['id'] ?>"
                                    class="btn btn-sm btn-outline-danger w-50 m-0 text-center">Видалити &#215;</a>
                             </div>
                         </div>
                     </div>
                     <?php if ($isInactive): ?>
                         <div class="restore-button-container card mt-3 box-shadow">
-                            <a href="/announcements/restore/<?= $announcement[0]['id'] ?>"
+                            <a href="/announcements/restore/<?= $announcement['id'] ?>"
                                class="btn btn-sm btn-success w-100 m-0 text-center">Відновити</a>
                         </div>
                     <?php endif; ?>

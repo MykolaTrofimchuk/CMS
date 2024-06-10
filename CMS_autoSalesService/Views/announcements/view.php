@@ -112,7 +112,9 @@ $isAdmin = $userId !== null && \Models\Users::IsAdmin($userId);
                     $currentTime = new DateTime();
                     $deactivationDateTime = new DateTime($deactiveDate);
                     $interval = $currentTime->diff($deactivationDateTime);
-                    $hoursAgo = $interval->h;
+
+                    $hoursAgo = ($interval->days * 24) + $interval->h;
+
                     $deactiveDate = "годин тому: $hoursAgo";
                 }
                 ?>

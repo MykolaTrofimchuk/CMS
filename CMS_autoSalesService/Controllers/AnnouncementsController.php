@@ -368,13 +368,45 @@ class AnnouncementsController extends Controller
         $routeParams = $this->get->route;
         $queryParts = explode('/', $routeParams);
         $currentPage = end($queryParts);
-        $currentPage = ($currentPage === null || $currentPage === 'null' || (int)$currentPage < 1) ? 1 : (int)$currentPage;
+
+        if ($currentPage === null || $currentPage === 'null') {
+            $currentPage = 1;
+        } else {
+            $currentPage = (int)$currentPage;
+        }
+
+        if ($currentPage < 1) {
+            $this->redirect("/announcements/my/1");
+        }
 
         $announcementsPerPage = 6;
 
-        $totalAnnouncements = Vehicles::CountAll(['user_id' => $userId], "INNER JOIN announcements a ON vehicles.id = a.vehicle_id");
-        $totalAnnouncementsCount = isset($totalAnnouncements) ? (int)$totalAnnouncements : 0;
+        // Step 1: Fetch all announcements based on user ID
+        $allAnnouncements = Announcements::findByCondition(['user_id' => $userId]);
 
+        $filteredAnnouncements = [];
+        $oneDayAgo = new DateTime();
+        $oneDayAgo->modify('-1 day');
+
+        // Step 2: Filter announcements
+        foreach ($allAnnouncements as $announcement) {
+
+            $statusId = $announcement['status_id'];
+            $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
+
+            if (($statusId == 2 || $statusId == 3) && $deactivationDate !== null && $deactivationDate < $oneDayAgo) {
+                continue;
+            }
+
+            $announcement['statusText'] = $this->mapStatusToText($statusId);
+            $announcement['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement['id']);
+            $announcement['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement['id']);
+
+            $filteredAnnouncements[] = $announcement;
+        }
+
+        // Step 3: Calculate pagination based on filtered announcements
+        $totalAnnouncementsCount = count($filteredAnnouncements);
         $totalPages = ceil($totalAnnouncementsCount / $announcementsPerPage);
 
         if ($currentPage > $totalPages) {
@@ -382,20 +414,11 @@ class AnnouncementsController extends Controller
         }
 
         $offset = ($currentPage - 1) * $announcementsPerPage;
-        $vehicles = Announcements::SelectPaginated($announcementsPerPage, $offset, ['user_id' => $userId]);
 
-        if (!empty($vehicles)) {
-            foreach ($vehicles as &$vehicle) {
-                $announcement = Announcements::findRowsByCondition('*', ['vehicle_id' => $vehicle['id']]);
-                $statusId = $announcement[0]['status_id'];
-                $announcement[0]['statusText'] = $this->mapStatusToText($statusId);
-                $announcement[0]['pathToImages'] = CarImages::FindPathByAnnouncementId($announcement[0]['id']);
-                $announcement[0]['countFavorite'] = UserFavouritesAnnouncements::CountByAnnouncementId($announcement[0]['id']);
-                $announcements [] = $announcement;
-            }
-        }
+        // Step 4: Fetch paginated results
+        $paginatedAnnouncements = array_slice($filteredAnnouncements, $offset, $announcementsPerPage);
 
-        $GLOBALS['announcementsMy'] = $announcements;
+        $GLOBALS['announcementsMy'] = $paginatedAnnouncements;
         $GLOBALS['currentPageMy'] = $currentPage;
         $GLOBALS['totalPagesMy'] = $totalPages;
 
@@ -498,8 +521,6 @@ class AnnouncementsController extends Controller
 
         $announcements = UserFavouritesAnnouncements::SelectByUserIdPaginated($userId, $announcementsPerPage, $offset);
 
-        $oneDayAgo = new DateTime();
-        $oneDayAgo->modify('-1 day');
         $selectedAnnouncements = [];
 
         foreach ($announcements as &$announcement) {
@@ -732,11 +753,12 @@ class AnnouncementsController extends Controller
             return false;
         }
 
+        date_default_timezone_set('Europe/Kiev');
         $deactivationDate = date('Y-m-d H:i:s');
 
         $announcementDataToUpdate = [
             'status_id' => $statusId,
-            'deactivationDate' => $statusId === 1 ? null : $deactivationDate
+            'deactivationDate' => $statusId === 1 ? MYSQLI_TYPE_NULL: $deactivationDate
         ];
 
         return Announcements::EditAnnouncementInfo($announcementId, $announcementDataToUpdate);

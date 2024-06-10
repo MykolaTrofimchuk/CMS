@@ -86,12 +86,6 @@ $paginationLinks = createPaginationLinks($currentPage, $totalPages);
                     </a>
                 </li>
                 <li>
-                    <a href="/adminpanel/reports" class="nav-link link-dark">
-                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-                        Звіти
-                    </a>
-                </li>
-                <li>
                     <a href="/adminpanel/announcements/1" class="nav-link link-dark">
                         <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
                         Оголошення

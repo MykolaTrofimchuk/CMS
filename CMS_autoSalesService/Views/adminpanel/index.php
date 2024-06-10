@@ -28,12 +28,6 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
                     </a>
                 </li>
                 <li>
-                    <a href="/adminpanel/reports" class="nav-link link-dark">
-                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-                        Звіти
-                    </a>
-                </li>
-                <li>
                     <a href="/adminpanel/announcements/1" class="nav-link link-dark">
                         <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
                         Оголошення
@@ -68,6 +62,25 @@ $userInfo = \Models\Users::GetUserInfo(\core\Core::get()->session->get('user')['
             <hr>
         </div>
         <!-- Контент -->
+        <div class="col-md-9 p-4">
+            <div class="alert alert-secondary" role="alert">
+                Всього зареєстрованих оголошень у системі:
+                <strong><?= \Models\Announcements::countAllAnnouncements() ?></strong>
+            </div>
+            <div class="alert alert-secondary" role="alert">
+                Всього зареєстрованих користувачів у системі: <strong><?= \Models\Users::CountAll() ?></strong>
+            </div>
+            <div class="alert alert-secondary" role="alert">
+                Всього статусів оголошень у системі: <strong><?= \Models\AnnouncementStatuses::CountAll(); ?></strong>
+            </div>
+            <div class="alert alert-secondary" role="alert">
+                Всього зареєстрованих брендів та моделей у системі: <strong><?= \Models\FilterModelBrands::CountAll() ?></strong>
+            </div>
+            <div class="alert alert-secondary" role="alert">
+                Всього доданих у обрані оголошень у системі:
+                <strong><?= \Models\UserFavouritesAnnouncements::CountAll() ?></strong>
+            </div>
+        </div>
     </div>
 </div>
 </body>

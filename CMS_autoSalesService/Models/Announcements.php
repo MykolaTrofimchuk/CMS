@@ -104,7 +104,8 @@ class Announcements extends Model
 
         $oneDayAgo = new DateTime();
         $oneDayAgo->modify('-1 day');
-        if (!empty($rows))
+
+        if (!empty($rows)) {
             foreach ($rows as $announcement) {
                 $statusId = $announcement['status_id'];
                 $deactivationDate = isset($announcement['deactivationDate']) ? new DateTime($announcement['deactivationDate']) : null;
@@ -115,6 +116,7 @@ class Announcements extends Model
 
                 $validAnnouncements[] = $announcement;
             }
+        }
 
         return $validAnnouncements;
     }
@@ -154,5 +156,10 @@ class Announcements extends Model
         if (empty($where))
             $where = null;
         return Core::get()->db->delete(self::$tableName, $where);
+    }
+
+    public static function findUserAnnouncementsWithVehicles($userId)
+    {
+        return Core::get()->db->select('announcements a INNER JOIN vehicles v ON v.id = a.vehicle_id', 'a.*, v.*', ['a.user_id' => $userId]);
     }
 }

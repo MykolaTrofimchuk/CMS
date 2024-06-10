@@ -55,7 +55,6 @@ if (\Models\Users::IsUserLogged()) {
                         <button type="submit" class="nav-link px-2 link-secondary" name="veh_condition" value="З пробігом">Вживані авто</button>
                     </form>
                 </li>
-                <li><a href="/" class="nav-link px-2 link-secondary">Новини</a></li>
             </ul>
             <?php if (\Models\Users::IsUserLogged()): ?>
                 <a href="/announcements/add" class="btn btn-outline-secondary me-2">&#10010; Продати авто</a></li>
@@ -85,7 +84,6 @@ if (\Models\Users::IsUserLogged()) {
                         <li><a class="dropdown-item" href="/users/me">Профіль</a></li>
                         <li><a class="dropdown-item" href="/announcements/my">Мої оголошення</a></li>
                         <li><a class="dropdown-item" href="/announcements/selected">Обрані оголошення</a></li>
-                        <li><a class="dropdown-item" href="#">Налаштування</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
