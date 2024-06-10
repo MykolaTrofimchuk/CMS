@@ -53,6 +53,7 @@ foreach ($announcements as $an) {
             padding: 5px;
             z-index: 1000;
         }
+
         .table-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -75,40 +76,53 @@ foreach ($announcements as $an) {
     <div class="row">
         <!-- Бічна панель -->
         <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px; height: 40vw;">
-            <a href="/adminpanel/index" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <a href="/adminpanel/index"
+               class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
                 <span class="fs-4">Адмін панель</span>
             </a>
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
                     <a href="#" class="nav-link active" aria-current="page">
-                        <svg class="bi me-2 btn-toggle" width="16" height="16"><use xlink:href="#home"></use></svg>
+                        <svg class="bi me-2 btn-toggle" width="16" height="16">
+                            <use xlink:href="#home"></use>
+                        </svg>
                         Головна
                     </a>
                 </li>
                 <li>
                     <a href="/adminpanel/reports" class="nav-link link-dark">
-                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                        <svg class="bi me-2" width="16" height="16">
+                            <use xlink:href="#table"></use>
+                        </svg>
                         Звіти
                     </a>
                 </li>
                 <li>
                     <a href="/adminpanel/announcements/1" class="nav-link link-dark">
-                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                        <svg class="bi me-2" width="16" height="16">
+                            <use xlink:href="#grid"></use>
+                        </svg>
                         Оголошення
                     </a>
                 </li>
                 <li>
                     <a href="/adminpanel/users/1" class="nav-link link-dark">
-                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+                        <svg class="bi me-2" width="16" height="16">
+                            <use xlink:href="#people-circle"></use>
+                        </svg>
                         Користувачі
                     </a>
                 </li>
                 <hr>
                 <li>
                     <a href="/adminpanel/carbrands/1" class="nav-link link-dark">
-                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                        <svg class="bi me-2" width="16" height="16">
+                            <use xlink:href="#grid"></use>
+                        </svg>
                         Марки - моделі авто
                     </a>
                 </li>
@@ -137,15 +151,19 @@ foreach ($announcements as $an) {
                     <?php foreach ($announcements as $index => $announcement): ?>
                         <tr>
                             <?php foreach ($announcement as $key => $value): ?>
-                                <?php  if ($key === "vehicle_id"): ?>
+                                <?php if ($key === "vehicle_id"): ?>
                                     <td>
                                         <div class="dropdown dlist dropend">
-                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
                                                 <?php echo $vehicles[$index]->id; ?>
                                             </button>
                                             <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
-                                                <?php foreach ($vehicles[$index] as $vh) :?>
-                                                    <li><button class="dropdown-item text-light" type="button"><?php echo $vh; ?></button></li>
+                                                <?php foreach ($vehicles[$index] as $vh) : ?>
+                                                    <li>
+                                                        <button class="dropdown-item text-light"
+                                                                type="button"><?php echo $vh; ?></button>
+                                                    </li>
                                                 <?php endforeach; ?>
                                             </ul>
                                         </div>
@@ -153,12 +171,16 @@ foreach ($announcements as $an) {
                                 <?php elseif ($key === "status_id"): ?>
                                     <td>
                                         <div class="dropdown dlist dropend">
-                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
                                                 <?php echo $statuses[$index]->id; ?>
                                             </button>
                                             <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
-                                                <?php foreach ($statuses[$index] as $status) :?>
-                                                    <li><button class="dropdown-item text-light" type="button"><?php echo $status; ?></button></li>
+                                                <?php foreach ($statuses[$index] as $status) : ?>
+                                                    <li>
+                                                        <button class="dropdown-item text-light"
+                                                                type="button"><?php echo $status; ?></button>
+                                                    </li>
                                                 <?php endforeach; ?>
                                             </ul>
                                         </div>
@@ -166,14 +188,20 @@ foreach ($announcements as $an) {
                                 <?php elseif ($key === "user_id"): ?>
                                     <td>
                                         <div class="dropdown dlist dropstart">
-                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <?php echo $users[$index][0]['id']; ?>
-                                            </button>
-                                            <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
-                                                <?php foreach ($users[$index][0] as $user) :?>
-                                                    <li><button class="dropdown-item text-light" type="button"><?php echo $user; ?></button></li>
-                                                <?php endforeach; ?>
-                                            </ul>
+                                            <?php if (!empty($users[$index][0])) : ?>
+                                                <button class="btn dropdown-toggle" type="button" id="dropdownMenu2"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <?php echo $users[$index][0]['id']; ?>
+                                                </button>
+                                                <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenu2">
+                                                    <?php foreach ($users[$index][0] as $user) : ?>
+                                                        <li>
+                                                            <button class="dropdown-item text-light"
+                                                                    type="button"><?php echo $user; ?></button>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                 <?php else: ?>
@@ -219,8 +247,12 @@ foreach ($announcements as $an) {
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-JcKb8q3lIhq+Zab41lI39Alx5E5/8UzRC0sq4Eegp2x2QJLp7pruJ6p4UW3tBJQZ" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.min.js" integrity="sha384-q4U3eH/1dFwtmHrHIXdMKQPjN5f1gRVZ99F6tFZGJxTCvJymiqqWI4Ck/IpHhuC" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-JcKb8q3lIhq+Zab41lI39Alx5E5/8UzRC0sq4Eegp2x2QJLp7pruJ6p4UW3tBJQZ"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.min.js"
+        integrity="sha384-q4U3eH/1dFwtmHrHIXdMKQPjN5f1gRVZ99F6tFZGJxTCvJymiqqWI4Ck/IpHhuC"
+        crossorigin="anonymous"></script>
 
 
 </body>

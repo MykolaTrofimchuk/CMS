@@ -6,6 +6,8 @@ $this->Title = 'Редагування оголошення';
 $vehicleInfo = $GLOBALS['vehicleInfo'];
 $announcementInfo = $GLOBALS['announcementInfo'];
 $ownerInfo = $GLOBALS['userOwnerInfo'];
+
+$loggedUserId = \core\Core::get()->session->get('user')['id'];
 ?>
 <!doctype html>
 <html lang="en">
@@ -21,6 +23,7 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
             margin: 5px;
             transition: filter 0.3s ease;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
@@ -60,12 +63,13 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
                     ?>
                 </div>
             </div>
-            <p class="text-muted" style="font-style: italic;">(Порядок фотографій відповідає їх відображенню в оголошенні. Для видалення - клікніть по картинці)</p>
+            <p class="text-muted" style="font-style: italic;">(Порядок фотографій відповідає їх відображенню в
+                оголошенні. Для видалення - клікніть по картинці)</p>
             <input type="hidden" name="deletedImages" id="deletedImages" value="">
             <br><br><br>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" id="titleAnnouncement"
-                       placeholder="Заголовок оголошення" name="title" value="<?= $announcementInfo[0]['title'] ?>">
+                       placeholder="Заголовок оголошення" name="title" value="">
                 <label for="titleAnnouncement">Заголовок оголошення</label>
             </div>
             <div class="form-group">
@@ -82,10 +86,45 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
                 <select class="form-control" id="condition" name="condition">
                     <option value="">Оберіть стан автомобіля</option>
                     <option <?php echo ($vehicleInfo['veh_condition'] === 'Нове') ? 'selected' : ''; ?>>Нове</option>
-                    <option <?php echo ($vehicleInfo['veh_condition'] === 'З пробігом') ? 'selected' : ''; ?>>З пробігом</option>
+                    <option <?php echo ($vehicleInfo['veh_condition'] === 'З пробігом') ? 'selected' : ''; ?>>З
+                        пробігом
+                    </option>
                 </select>
                 <label for="condition">Стан авто</label>
             </div>
+            <?php if (\Models\Users::IsAdmin($loggedUserId)): ?>
+                <div class="form-floating mb-3">
+                    <select class="form-control bg-light" id="user" name="userId">
+                        <?php
+                        $users = \Models\Users::findAll();
+                        usort($users, function ($a, $b) {
+                            return strcmp($a['id'], $b['id']);
+                        });
+                        foreach ($users as $user) :
+                            $selected = ($announcementInfo[0]['user_id'] === $user['id']) ? 'selected' : '';
+                            ?>
+                            <option value='<?= $user['id'] ?>' <?= $selected ?>><?= $user['id'] ?>: <?= $user['login'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label for="user">Змінити власника оголошення </label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-control bg-light" id="status" name="statusId">
+                        <?php
+                        $statuses = \Models\AnnouncementStatuses::FindAllStatuses();
+                        usort($statuses, function ($a, $b) {
+                            return strcmp($a['id'], $b['id']);
+                        });
+                        foreach ($statuses as $status) :
+                            $selected = ($announcementInfo[0]['status_id'] === $status['id']) ? 'selected' : '';
+                            ?>
+                            <option value='<?= $status['id'] ?>' <?= $selected ?>><?= $status['id'] ?>
+                                : <?= $status['status'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label for="status">Змінити статус оголошення</label>
+                </div>
+            <?php endif; ?>
             <br>
             <div class="form-row">
                 <h3>Основна інформація про автомобіль: </h3>
@@ -126,11 +165,13 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
                     <div class="row">
                         <div class="col">
                             <label for="modelYear">Рік випуску</label>
-                            <input type="date" class="form-control" id="modelYear" placeholder="Рік випуску" name="modelYear" value="<?= $vehicleInfo['model_year'] ?>">
+                            <input type="date" class="form-control" id="modelYear" placeholder="Рік випуску"
+                                   name="modelYear" value="<?= $vehicleInfo['model_year'] ?>">
                         </div>
                         <div class="col">
                             <label for="millage">Пробіг (км)</label>
-                            <input type="number" class="form-control" id="millage" placeholder="пробіг авто (у км)" name="millage" value="<?= $vehicleInfo['millage'] ?>">
+                            <input type="number" class="form-control" id="millage" placeholder="пробіг авто (у км)"
+                                   name="millage" value="<?= $vehicleInfo['millage'] ?>">
                         </div>
                         <div class="col">
                             <label for="bodyType">Тип кузова</label>
@@ -157,14 +198,28 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
             </div>
             <div class="form-row">
                 <div class="form-group col">
+                    <?php
+                    $regionObl = '';
+                    $regionCity = '';
+
+                    if (!empty($vehicleInfo['region'])) {
+                        $regionParts = explode(',', $vehicleInfo['region']);
+                        $regionObl = isset($regionParts[0]) ? trim($regionParts[0]) : '';
+                        $regionCity = isset($regionParts[1]) ? trim($regionParts[1]) : '';
+                    }
+                    ?>
+
                     <div class="row">
                         <div class="col">
                             <label for="regionObl">Область</label>
-                            <input type="text" class="form-control" id="regionObl" placeholder="Область перебування" name="regionObl" value="<?= $this->controller->post->regionObl ?>">
+                            <input type="text" class="form-control" id="regionObl" placeholder="Область перебування"
+                                   name="regionObl" value="<?= htmlspecialchars($regionObl) ?>">
                         </div>
                         <div class="col">
                             <label for="regionCity">Місто</label>
-                            <input type="text" class="form-control" id="regionCity" placeholder="Місто у якому перебуваєте" name="regionCity" value="<?= $this->controller->post->regionCity ?>">
+                            <input type="text" class="form-control" id="regionCity"
+                                   placeholder="Місто у якому перебуваєте" name="regionCity"
+                                   value="<?= htmlspecialchars($regionCity) ?>">
                         </div>
                     </div>
                 </div>
@@ -216,13 +271,15 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
                         <div class="col">
                             <label for="engineCapacity">Об’єм двигуна (л)</label>
                             <input type="text" class="form-control" id="engineCapacity"
-                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity" value="<?= $vehicleInfo['engine_capacity'] ?>">
+                                   placeholder="Об'єм двигуна (літри \ кВт)" name="engineCapacity"
+                                   value="<?= $vehicleInfo['engine_capacity'] ?>">
                         </div>
 
                         <div class="col">
                             <label for="horsePowers">Потужність двигуна (к.с.)</label>
                             <input type="number" class="form-control" id="horsePowers"
-                                   placeholder="Потужність (кінських сил)" name="horsePower" value="<?= $vehicleInfo['horse_power'] ?>">
+                                   placeholder="Потужність (кінських сил)" name="horsePower"
+                                   value="<?= $vehicleInfo['horse_power'] ?>">
                         </div>
                     </div>
                 </div>
@@ -267,12 +324,14 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
                         <div class="col">
                             <label for="plate">Номерний знак</label>
                             <input type="text" class="form-control" id="plate"
-                                   placeholder="Номерний знак (АА0000АА)" name="plate" value="<?= $vehicleInfo['plate'] ?>">
+                                   placeholder="Номерний знак (АА0000АА)" name="plate"
+                                   value="<?= $vehicleInfo['plate'] ?>">
                         </div>
                         <div class="col">
                             <label for="vinCode">VIN-код</label>
                             <input type="text" class="form-control" id="vinCode"
-                                   placeholder="VIN-код (XXXXYYYYYXXXYXYXYXX)" name="vinCode" value="<?= $vehicleInfo['vin_code'] ?>">
+                                   placeholder="VIN-код (XXXXYYYYYXXXYXYXYXX)" name="vinCode"
+                                   value="<?= $vehicleInfo['vin_code'] ?>">
                         </div>
                     </div>
                 </div>
@@ -284,11 +343,11 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var carModelInput = document.getElementById('carModel');
         carModelInput.disabled = true;
 
-        document.getElementById('carBrand').addEventListener('change', function() {
+        document.getElementById('carBrand').addEventListener('change', function () {
             var selectedBrand = this.value;
             carModelInput.disabled = selectedBrand === "Оберіть марку авто";
         });
@@ -299,13 +358,14 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
         function toggleMillageInput() {
             millageInput.disabled = bodyTypeSelect.value === 'Нове';
         }
+
         toggleMillageInput();
 
         bodyTypeSelect.addEventListener('change', toggleMillageInput);
 
         var previewContainer = document.getElementById('preview');
 
-        document.getElementById('addPhoto').addEventListener('click', function() {
+        document.getElementById('addPhoto').addEventListener('click', function () {
             var newInput = document.createElement('input');
             newInput.type = 'file';
             newInput.accept = 'image/jpeg, image/png, image/gif, image/jpg';
@@ -327,16 +387,16 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
                 var file = files[i];
                 var reader = new FileReader();
 
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     var img = document.createElement('img');
                     img.src = e.target.result;
-                    img.addEventListener('click', function() {
+                    img.addEventListener('click', function () {
                         this.remove();
                     });
-                    img.addEventListener('mouseover', function() {
+                    img.addEventListener('mouseover', function () {
                         this.style.filter = 'blur(3px)';
                     });
-                    img.addEventListener('mouseout', function() {
+                    img.addEventListener('mouseout', function () {
                         this.style.filter = 'none';
                     });
 
@@ -352,7 +412,7 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
         }
 
         document.querySelectorAll('.preview img').forEach(img => {
-            img.addEventListener('click', function() {
+            img.addEventListener('click', function () {
                 var confirmed = confirm('Ви впевнені, що хочете видалити цю фотографію?');
                 if (confirmed) {
                     var deletedImagesInput = document.getElementById('deletedImages');
@@ -367,7 +427,7 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
             });
         });
 
-        document.getElementById("carBrand").addEventListener("change", function() {
+        document.getElementById("carBrand").addEventListener("change", function () {
             var selectedBrand = this.value;
             selectedBrand = selectedBrand.replace(/\s/g, '%20');
             var carModelSelect = document.getElementById("carModel");
@@ -382,7 +442,7 @@ $ownerInfo = $GLOBALS['userOwnerInfo'];
                     var models = data.match(/"(.*?)"/g);
                     carModelSelect.innerHTML = '<option value="">Оберіть модель авто</option>';
                     if (models) {
-                        models.forEach(function(model) {
+                        models.forEach(function (model) {
                             model = model.replace(/["]/g, "").trim();
                             carModelSelect.innerHTML += '<option value="' + model + '">' + model + '</option>';
                         });

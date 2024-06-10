@@ -425,12 +425,11 @@ class AnnouncementsController extends Controller
             $existingFavorite = \Models\UserFavouritesAnnouncements::findByCondition(['user_id' => $userId, 'announcement_id' => $announcementId]);
 
             if ($existingFavorite) {
-                $successMessage = "Це оголошення вже додане в обрані!";
+                $this->redirect('/announcements/selected/1');
             } else {
                 \Models\UserFavouritesAnnouncements::AddRow($userId, $announcementId);
-                $successMessage = "Оголошення успішно додане в обрані!";
+                $this->redirect('/announcements/selected/1');
             }
-            $GLOBALS['successMessage'] = isset($successMessage) ? $successMessage : null;
             return $this->render();
         }
     }
@@ -629,7 +628,9 @@ class AnnouncementsController extends Controller
                     $announcementDataToUpdate = [
                         'title' => $title,
                         'description' => $this->post->description,
-                        'price' => $price
+                        'price' => $price,
+                        'user_id' => $this->post->userId,
+                        'status_id' => $this->post->statusId
                     ];
 
                     $resUpdateVeh = Vehicles::EditVehicleInfo($vehicleInfo->id, $vehicleDataToUpdate);

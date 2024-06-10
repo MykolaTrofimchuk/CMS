@@ -196,7 +196,8 @@ class AdminpanelController extends Controller
         if ($id !== null) {
             $userToDelete = $id;
             $deletedRows = Users::DeleteRow(['id' => $userToDelete]);
-            if ($deletedRows === 0)
+            $deletedUserAdds = Announcements::DeleteRow([['user_id' => $userToDelete]]);
+            if ($deletedRows === 0 && $deletedUserAdds === 0)
                 $this->redirect('/adminpanel/index');
             $this->redirect('/adminpanel/users');
         }

@@ -154,16 +154,6 @@ $loggedUserId = isset(\core\Core::get()->session->get('user')['id']) ?? null;
                                 <span><?= htmlspecialchars($vehicle->veh_condition) ?></span>
                             </div>
                         <?php endif; ?>
-                        <?php if (!is_null($vehicle->plate) && strlen($vehicle->plate) >= 3): ?>
-                            <div class="border rounded p-3 mb-3 me-3">
-                                <span><?= htmlspecialchars($vehicle->plate) ?></span>
-                            </div>
-                        <?php endif; ?>
-                        <?php if (!is_null($vehicle->vin_code) && strlen($vehicle->vin_code) >= 16): ?>
-                            <div class="border rounded p-3 mb-3 me-3">
-                                <span><?= htmlspecialchars($vehicle->vin_code) ?></span>
-                            </div>
-                        <?php endif; ?>
                         <?php if (!is_null($vehicle->body_type)): ?>
                             <div class="border rounded p-3 mb-3">
                                 <span><?= htmlspecialchars($vehicle->body_type) ?></span>
@@ -184,7 +174,20 @@ $loggedUserId = isset(\core\Core::get()->session->get('user')['id']) ?? null;
                                 <span><?= htmlspecialchars($vehicle->color) ?></span>
                             </div>
                         <?php endif; ?>
+                        <div class="d-flex flex-wrap">
+                            <?php if (!is_null($vehicle->plate) && strlen($vehicle->plate) >= 3): ?>
+                                <div class="border rounded bg-light p-3 mb-3 me-3">
+                                    <span><?= htmlspecialchars($vehicle->plate) ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!is_null($vehicle->vin_code) && mb_strlen($vehicle->vin_code) >= 10): ?>
+                                <div class="border rounded bg-light p-3 mb-3 me-3">
+                                    <span><?= htmlspecialchars($vehicle->vin_code) ?></span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
+
                 <?php endif; ?>
                 <?php if (\Models\Users::IsUserLogged()) : ?>
                     <div class="d-flex justify-content-between align-items-center">
